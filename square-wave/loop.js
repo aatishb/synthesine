@@ -1,3 +1,7 @@
+function setup() {
+
+}
+
 function square(f, t) {
   let sum = 0;
 

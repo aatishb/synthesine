@@ -1,72 +1,36 @@
 <!doctype html>
 <html>
 <body>
-<div>
-<canvas id='scope' width=400 height=200></canvas>
-<canvas id='spectrum' width=400 height=200></canvas>
-</div>
+  <div>
+    <canvas id='scope' width=400 height=200></canvas>
+    <canvas id='spectrum' width=400 height=200></canvas>
+  </div>
+  <a href = "loop.js">View Source</a>
 </body>
-<a href = "loop.js">View Source</a>
 <script>
-
 let analyser;
 
-fetch('loop.js')
-  .then(response => response.text())
-  .then((data) => {
+fetch('../libraries/dsp.js').then(response => response.text())
+  .then((libraryCode) => {
 
-    const userCode = data;
+    fetch('loop.js').then(response => response.text())
+      .then((userCode) => {
+        const moduleDataUrl = `data:text/javascript;utf8,
+        ${userCode}
+        ${libraryCode}
+        `;
 
-    const moduleDataUrl = `data:text/javascript;utf8,
+        const audio = new AudioContext();
 
-		${userCode}
-
-		let time;
-
-		const updateTime = numSamples => {
-		  if(!time){
-		    time = new Array(numSamples).fill(0);
-		    time = time.map((e,i) => e + i / sampleRate);
-		  }
-		  else{
-		    time = time.map(t => t + numSamples / sampleRate);
-		  }
-		};
-
-		class AudioProcessor extends AudioWorkletProcessor {
-
-		  constructor(options) {
-		    super(options);
-		  }
-
-		  process(inputs, outputs, parameters) {
-		    let input = inputs[0][0];
-		    let output = outputs[0][0];
-		    let numSamples = output.length;
-
-		    updateTime(numSamples);
-		    loop(input, output, numSamples);
-
-		    return true;
-		  }
-		}
-
-		registerProcessor('audio-processor', AudioProcessor);
-		`;
-
-    const audio = new AudioContext();
-
-    // Loads module script via AudioWorklet.
-    audio.audioWorklet.addModule(moduleDataUrl).then(() => {
-      let sound = new AudioWorkletNode(audio, 'audio-processor');
-      sound.connect(audio.destination);
-
-      analyser = audio.createAnalyser();
-      sound.connect(analyser);
-
-			draw();
-
-    });
+        // Loads module script via AudioWorklet.
+        audio.audioWorklet.addModule(moduleDataUrl).then(() => {
+          let sound = new AudioWorkletNode(audio, 'audio-processor');
+          sound.connect(audio.destination);
+          analyser = audio.createAnalyser();
+          sound.connect(analyser);
+          draw();
+        });
+      });
   });
 
 </script>

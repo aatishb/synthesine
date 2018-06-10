@@ -1,3 +1,7 @@
+function setup() {
+
+}
+
 function sin(f, t) {
   return Math.sin(2 * Math.PI * f * t);
 }

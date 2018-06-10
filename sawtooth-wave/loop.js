@@ -1,3 +1,7 @@
+function setup() {
+
+}
+
 function saw(f, t) {
   let sum = 0;
 
