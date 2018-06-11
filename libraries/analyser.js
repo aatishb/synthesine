@@ -1,3 +1,5 @@
+// Spectrum Analyser from https://codepen.io/ContemporaryInsanity/pen/Mwvqpb
+
 var scopeCtx = document.getElementById('scope').getContext('2d');
 var spectCtx = document.getElementById('spectrum').getContext('2d');
 
