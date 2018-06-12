@@ -9,7 +9,9 @@ function sin(f, t) {
 function squareB(f, t) {
   let sum = 0;
 
-  for (let k = 1; f * k < sampleRate / 2; k += 2){
+  let maxIndex = sampleRate / (2 * f);
+
+  for (let k = 1; k < maxIndex; k += 2){
     sum += sin(f * k, t) / k;
   }
 

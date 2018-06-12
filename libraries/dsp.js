@@ -28,7 +28,7 @@ const clip = function(x, min = -1, max = 1) {
 
 const updateTime = numSamples => {
   if(!time){
-    time = new Array(numSamples).fill(0);
+    time = new Float32Array(numSamples).fill(0);
     time = time.map((e,i) => e + i / sampleRate);
   }
   else{
