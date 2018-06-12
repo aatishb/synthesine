@@ -1,17 +1,8 @@
 function setup() {
-
 }
 
 function saw(f, t) {
-  let sum = 0;
-
-  for (let k = 1; f * k < sampleRate / 2; k ++){
-    sum += Math.sin(2 * Math.PI * f * k * t) / k;
-  }
-
-  sum *= 1 / Math.PI;
-
-  return 0.5 - sum;
+  return 2 * (f * t - Math.floor(0.5 + f * t));
 }
 
 function loop(input, output, numSamples) {
