@@ -1,18 +1,20 @@
 function setup() {
 }
 
-function sin(f, t) {
-  return Math.sin(2 * Math.PI * f * t);
+function phasor(e) {
+  return e % 1;
 }
+
+const pow = Math.pow;
 
 function loop(input, output, numSamples) {
 
+  const amp = 0.2;
   const freq = 440;
-  const amp = 0.1;
 
   let myWave = time
-    .map(t => sin(freq, t))
-    .map(e => e * amp);
+    .map(t => phasor(freq * t))
+    .map(e => -1 * pow(e,3) + 1.2 * pow(e,2) - 0.2 * e);
 
   for (let i = 0; i < numSamples; i++){
     output[i] = myWave[i];

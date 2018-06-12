@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<body>
+  <div>
+    <canvas id='scope' width=400 height=200></canvas>
+    <canvas id='spectrum' width=400 height=200></canvas>
+  </div>
+  <a href = "loop.js">View Source</a>
+</body>
+<script>
+let analyser;
+
+fetch('../libraries/dsp.js').then(response => response.text())
+  .then((libraryCode) => {
+
+    fetch('loop.js').then(response => response.text())
+      .then((userCode) => {
+        const moduleDataUrl = `data:text/javascript;utf8,
+        ${userCode}
+        ${libraryCode}
+        `;
+
+        const audio = new AudioContext();
+
+        // Loads module script via AudioWorklet.
+        audio.audioWorklet.addModule(moduleDataUrl).then(() => {
+          let sound = new AudioWorkletNode(audio, 'audio-processor');
+          sound.connect(audio.destination);
+          analyser = audio.createAnalyser();
+          sound.connect(analyser);
+          draw();
+        });
+      });
+  });
+
+</script>
+<script src = "../libraries/analyser.js"></script>
+</html>

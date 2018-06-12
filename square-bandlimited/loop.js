@@ -25,7 +25,9 @@ function loop(input, output, numSamples) {
   const freq = 440;
   const amp = 0.1;
 
-  let myWave = time.map(t => squareB(freq, t)).map(e => e * amp);
+  let myWave = time
+    .map(t => squareB(freq, t))
+    .map(e => e * amp);
 
   for (let i = 0; i < numSamples; i++){
     output[i] = myWave[i];

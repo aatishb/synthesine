@@ -1,19 +1,8 @@
 function setup() {
-
 }
 
-function sin(f, t) {
-  return Math.sin(2 * Math.PI * f * t);
-}
-
-function square(f, t) {
-
-  /*
-  if(sin(f,t) >= 0){ return 1;}
-  else {return -1;}
-  */
-
-  return clip(sin(f,t) * 100000);
+function saw(f, t) {
+  return 2 * (f * t - Math.floor(0.5 + f * t));
 }
 
 function loop(input, output, numSamples) {
@@ -22,7 +11,8 @@ function loop(input, output, numSamples) {
   const amp = 0.1;
 
   let myWave = time
-    .map(t => square(freq, t))
+    .map(t => wrap(freq * t))
+    .map(e => 5 * Math.pow(e, 2))
     .map(e => e * amp);
 
   for (let i = 0; i < numSamples; i++){
