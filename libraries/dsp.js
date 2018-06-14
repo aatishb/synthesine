@@ -1,6 +1,11 @@
 // some custom functions (will add more as needed)
 
+Float32Array.prototype.applyFilter = function(myFilter, ...args) {
+  return myFilter(this, ...args);
+};
+
 let time;
+let numSamples;
 
 const zip = (f, a, b) => a.map((e, i) => f(e, b[i]));
 const spread = (f, ...args) => args.reduce((sum, e) => zip(f, sum, e));
@@ -48,7 +53,9 @@ class AudioProcessor extends AudioWorkletProcessor {
   process(inputs, outputs, parameters) {
     let input = inputs[0][0];
     let output = outputs[0][0];
-    let numSamples = output.length;
+    if(!numSamples){
+      numSamples = output.length;
+    }
 
     // calls to custom functions (these run on every frame of 128 samples)
     updateTime(numSamples);
