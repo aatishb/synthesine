@@ -1,4 +1,5 @@
 function setup() {
+
 }
 
 function sin(f, t) {
@@ -7,19 +8,17 @@ function sin(f, t) {
 
 function sawB(f, t) {
   let sum = 0;
-
   let maxIndex = sampleRate / (2 * f);
 
   for (let k = 1; k < maxIndex; k++){
     sum += sin(f * k, t) / k;
   }
-
   sum *= 1 / Math.PI;
 
   return (0.5 - sum) * 2 - 1;
 }
-function loop(input, output, numSamples) {
 
+function loop(input, output, numSamples) {
   const freq = 440;
   const amp = 0.1;
 

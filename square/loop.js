@@ -7,7 +7,6 @@ function sin(f, t) {
 }
 
 function square(f, t) {
-
   /*
   if(sin(f,t) >= 0){ return 1;}
   else {return -1;}
@@ -17,7 +16,6 @@ function square(f, t) {
 }
 
 function loop(input, output, numSamples) {
-
   const freq = 440;
   const amp = 0.1;
 

@@ -1,4 +1,5 @@
 function setup() {
+
 }
 
 function saw(f, t) {
@@ -6,7 +7,6 @@ function saw(f, t) {
 }
 
 function loop(input, output, numSamples) {
-
   const freq = 440;
   const amp = 0.1;
 

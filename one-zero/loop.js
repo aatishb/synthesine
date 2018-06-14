@@ -1,4 +1,5 @@
 function setup() {
+
 }
 
 function whiteNoise() {
@@ -11,15 +12,15 @@ function oneZero(input, b1 = 0.5, b2 = -0.5) {
   for (let i = 0; i < numSamples; i++) {
     if (i > 0){
       output[i] = b1 * input[i] + b2 * input[i - 1];
+    } else {
+      output[i] = b1 * input[i];
     }
   }
 
   return output;
 }
 
-
 function loop(input, output, numSamples) {
-
   let amp = 0.1;
 
   let myWave = time

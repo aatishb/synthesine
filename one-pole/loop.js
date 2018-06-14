@@ -1,4 +1,5 @@
 function setup() {
+
 }
 
 function whiteNoise() {
@@ -20,7 +21,6 @@ function onePole(input, alpha = 0.1) {
 }
 
 function loop(input, output, numSamples) {
-
   let amp = 0.1;
 
   let myWave = time
@@ -31,5 +31,4 @@ function loop(input, output, numSamples) {
   for (let i = 0; i < numSamples; i++) {
     output[i] = myWave[i];
   }
-
 }
