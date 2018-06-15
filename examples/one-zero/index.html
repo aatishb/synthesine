@@ -10,7 +10,7 @@
 <script>
 let analyser;
 
-fetch('/libraries/dsp.js').then(response => response.text())
+fetch('../../libraries/dsp.js').then(response => response.text())
   .then((libraryCode) => {
 
     fetch('loop.js').then(response => response.text())
@@ -34,5 +34,5 @@ fetch('/libraries/dsp.js').then(response => response.text())
   });
 
 </script>
-<script src = "/libraries/analyser.js"></script>
+<script src = "../../libraries/analyser.js"></script>
 </html>
