@@ -15,7 +15,7 @@ function square(f, t) {
   return clip(sin(f,t) * 100000);
 }
 
-function loop(input, output, numSamples) {
+function loop(input, output) {
   const freq = 440;
   const amp = 0.1;
 

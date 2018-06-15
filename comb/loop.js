@@ -1,33 +1,37 @@
-let filterAccumulator = 0;
-
 function setup() {
+
 }
 
 function whiteNoise() {
   return (2 * Math.random() - 1);
 }
 
-function lowPass(inputWave, alpha) {
-  let filteredWave = inputWave;
+
+function comb(input, g1 = 0.1, g2 = 0.1, m1, m2) {
+  let output = input.slice();
+  let x_m1 = 0;
+  let y_m2 = 0;
 
   for (let i = 0; i < numSamples; i++) {
-    if (i == 0) {
-      filteredWave[i] = alpha * inputWave[i] + (1 - alpha) * filterAccumulator;
-    } else {
-      filteredWave[i] = alpha * inputWave[i] + (1 - alpha) * inputWave[i - 1];
+    if (i - m1 >= 0) {
+      x_m1 = input[i - m1];
     }
+    if (i - m2 >= 0) {
+      y_m2 = output[i - m2];
+    }
+    output[i] = input[i] + g1 * x_m1 - g2 * y_m2;
   }
 
-  filterAccumulator = inputWave[numSamples - 1];
-
-  return filteredWave;
+  return output;
 }
 
-function loop(input, output, numSamples) {
+function loop(input, output) {
+  let amp = 0.1;
 
-  let amp = 0.5;
-  let myWave = time.map(t => whiteNoise()).map(e => amp * e);
-  myWave = lowPass(myWave, 0.1);
+  let myWave = time
+    .map(t => whiteNoise())
+    .map(e => amp * e)
+    .applyFilter(comb, -0.5, 0.8, 3, 10);
 
   for (let i = 0; i < numSamples; i++) {
     output[i] = myWave[i];

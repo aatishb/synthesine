@@ -20,7 +20,7 @@ function onePole(input, alpha = 0.1) {
   return output;
 }
 
-function loop(input, output, numSamples) {
+function loop(input, output) {
   let amp = 0.1;
 
   let myWave = time

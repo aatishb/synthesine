@@ -18,7 +18,7 @@ function sawB(f, t) {
   return (0.5 - sum) * 2 - 1;
 }
 
-function loop(input, output, numSamples) {
+function loop(input, output) {
   const freq = 440;
   const amp = 0.1;
 

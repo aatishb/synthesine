@@ -18,7 +18,7 @@ function squareB(f, t) {
   return sum;
 }
 
-function loop(input, output, numSamples) {
+function loop(input, output) {
   const freq = 440;
   const amp = 0.1;
 

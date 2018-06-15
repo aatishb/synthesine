@@ -8,7 +8,7 @@ function phasor(e) {
 
 const pow = Math.pow;
 
-function loop(input, output, numSamples) {
+function loop(input, output) {
   const amp = 0.2;
   const freq = 440;
 

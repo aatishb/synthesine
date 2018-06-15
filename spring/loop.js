@@ -6,7 +6,7 @@ function whiteNoise() {
   return (2 * Math.random() - 1);
 }
 
-function oneZero(input, b1 = 0.5, b2 = -0.5) {
+function oneZero(input, m = 1, k = 1, c = 1) {
   let output = input.slice();
 
   for (let i = 0; i < numSamples; i++) {

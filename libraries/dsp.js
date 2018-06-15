@@ -31,7 +31,7 @@ const clip = function(x, min = -1, max = 1) {
   }
 };
 
-const updateTime = numSamples => {
+const updateTime = () => {
   if(!time){
     time = new Float32Array(numSamples).fill(0);
     time = time.map((e,i) => e + i / sampleRate);
@@ -58,8 +58,8 @@ class AudioProcessor extends AudioWorkletProcessor {
     }
 
     // calls to custom functions (these run on every frame of 128 samples)
-    updateTime(numSamples);
-    loop(input, output, numSamples);
+    updateTime();
+    loop(input, output);
 
     return true;
   }

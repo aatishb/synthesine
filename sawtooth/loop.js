@@ -6,7 +6,7 @@ function saw(f, t) {
   return 2 * (f * t - Math.floor(0.5 + f * t));
 }
 
-function loop(input, output, numSamples) {
+function loop(input, output) {
   const freq = 440;
   const amp = 0.1;
 

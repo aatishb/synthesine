@@ -6,7 +6,7 @@ function sin(f, t) {
   return Math.sin(2 * Math.PI * f * t);
 }
 
-function loop(input, output, numSamples) {
+function loop(input, output) {
 
   const freq = 440;
   const amp = 0.1;
