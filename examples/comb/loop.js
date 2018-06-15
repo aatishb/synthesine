@@ -6,7 +6,6 @@ function whiteNoise() {
   return (2 * Math.random() - 1);
 }
 
-
 function comb(input, g1 = 0.1, g2 = 0.1, m1, m2) {
   let output = input.slice();
   let x_m1 = 0;
