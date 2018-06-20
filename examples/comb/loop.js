@@ -30,7 +30,7 @@ function loop(input, output) {
   let myWave = time
     .map(t => whiteNoise())
     .map(e => amp * e)
-    .applyFilter(comb, -0.5, 0.8, 3, 10);
+    .applyFilter(comb, -1, 0, 20, 20);
 
   for (let i = 0; i < numSamples; i++) {
     output[i] = myWave[i];

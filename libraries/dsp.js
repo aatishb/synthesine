@@ -14,20 +14,17 @@ const diff = (x,y) => x - y;
 const mult = (x,y) => x * y;
 const div = (x,y) => x / y;
 
-const clip = function(x, min = -1, max = 1) {
-  if (max >= min) {
-    if (x > max) {
-      return max;
-    }
-    else if (x < min) {
-      return min;
-    }
-    else {
-      return x;
-    }
+const clip = (val = 0.1) => e => {
+  let max = Math.abs(val);
+  let min = -max;
+  if (e > max) {
+    return max;
+  }
+  else if (e < min) {
+    return min;
   }
   else {
-    return 0;
+    return e;
   }
 };
 
