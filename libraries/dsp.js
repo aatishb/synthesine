@@ -14,7 +14,7 @@ const diff = (x,y) => x - y;
 const mult = (x,y) => x * y;
 const div = (x,y) => x / y;
 
-const clip = (val = 0.1) => e => {
+const clip = (e, val = 0.1) => {
   let max = Math.abs(val);
   let min = -max;
   if (e > max) {

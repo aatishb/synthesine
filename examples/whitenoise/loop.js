@@ -1,3 +1,5 @@
+let amp = 0.1;
+
 function setup() {
 
 }
@@ -7,13 +9,9 @@ function whiteNoise() {
 }
 
 function loop(input, output) {
-  let amp = 0.1;
-
-  let myWave = time
-    .map(t => whiteNoise())
-    .map(e => amp * e);
-
-  for (let i = 0; i < numSamples; i++) {
-    output[i] = myWave[i];
-  }
+  output.set(
+    time
+      .map(t => whiteNoise())
+      .map(e => amp * e)
+  );
 }

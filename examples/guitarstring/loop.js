@@ -1,3 +1,4 @@
+let amp = 0.1;
 let noiseWave;
 
 function setup() {
@@ -7,13 +8,8 @@ function setup() {
 }
 
 function loop(input, output) {
-
-  const amp = 0.1;
   noiseWave = noiseWave.map(delay(1)).map(average);
-
-  for (let i = 0; i < numSamples; i++){
-    output[i] = noiseWave[i];
-  }
+  output.set(noiseWave);
 }
 
 function whiteNoise() {

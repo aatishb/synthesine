@@ -1,3 +1,5 @@
+let amp = 0.1;
+
 function setup() {
 
 }
@@ -21,15 +23,10 @@ function oneZero(input, m = 1, k = 1, c = 1) {
 }
 
 function loop(input, output) {
-  let amp = 0.1;
-
-  let myWave = time
-    .map(t => whiteNoise())
-    .map(e => amp * e)
-    .applyFilter(oneZero, 0.5, -0.5);
-
-  for (let i = 0; i < numSamples; i++) {
-    output[i] = myWave[i];
-  }
-
+  output.set(
+    time
+      .map(t => whiteNoise())
+      .map(e => amp * e)
+      .applyFilter(oneZero, 0.5, -0.5)
+  );
 }

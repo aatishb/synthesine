@@ -1,3 +1,7 @@
+let freq = 440;
+let amp = 0.1;
+let myWave, myWave2, myWave3;
+
 function setup() {
 
 }
@@ -7,18 +11,11 @@ function sin(f, t) {
 }
 
 function loop(input, output) {
+  myWave = time.map(t => sin(freq, t));
+  myWave2 = time.map(t => sin(1.5 * freq, t));
+  myWave3 = time.map(t => sin(1.25 * freq, t));
 
-  const freq = 440;
-  const amp = 0.1;
-
-  let myWave = time.map(t => sin(freq, t));
-  let myWave2 = time.map(t => sin(1.5 * freq, t));
-  let myWave3 = time.map(t => sin(1.25 * freq, t));
-  myWave = spread(sum, myWave, myWave2, myWave3);
-
-  myWave = myWave.map(e => e*amp);
-
-  for (let i = 0; i < numSamples; i++){
-    output[i] = myWave[i];
-  }
+  output.set(
+    spread(sum, myWave, myWave2, myWave3).map(e => e*amp)
+  );
 }

@@ -1,3 +1,5 @@
+let amp = 0.1;
+
 function setup() {
 
 }
@@ -21,14 +23,10 @@ function onePole(input, alpha = 0.1) {
 }
 
 function loop(input, output) {
-  let amp = 0.1;
-
-  let myWave = time
-    .map(t => whiteNoise())
-    .map(e => amp * e)
-    .applyFilter(onePole, 0.1);
-
-  for (let i = 0; i < numSamples; i++) {
-    output[i] = myWave[i];
-  }
+  output.set(
+    time
+      .map(t => whiteNoise())
+      .map(e => amp * e)
+      .applyFilter(onePole, 0.1)
+  );
 }

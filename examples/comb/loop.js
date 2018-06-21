@@ -1,3 +1,5 @@
+let amp = 0.1;
+
 function setup() {
 
 }
@@ -25,15 +27,10 @@ function comb(input, g1 = 0.1, g2 = 0.1, m1, m2) {
 }
 
 function loop(input, output) {
-  let amp = 0.1;
-
-  let myWave = time
-    .map(t => whiteNoise())
-    .map(e => amp * e)
-    .applyFilter(comb, -1, 0, 20, 20);
-
-  for (let i = 0; i < numSamples; i++) {
-    output[i] = myWave[i];
-  }
-
+  output.set(
+    time
+      .map(t => whiteNoise())
+      .map(e => amp * e)
+      .applyFilter(comb, -1, 0, 20, 20)
+  );
 }

@@ -20,9 +20,7 @@ function loop(input, output) {
 
   travellingWave = travellingWave.map(delay(1));
 
-  let myWave = spread(sum, travellingWave, noiseWave);
-
-  for (let i = 0; i < numSamples; i++){
-    output[i] = myWave[i];
-  }
+  output.set(
+    spread(sum, travellingWave, noiseWave)
+  );
 }
