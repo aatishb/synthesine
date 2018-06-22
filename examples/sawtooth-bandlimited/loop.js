@@ -5,26 +5,22 @@ function setup() {
 
 }
 
-function sin(f, t) {
-  return Math.sin(2 * Math.PI * f * t);
-}
-
 function sawB(f, t) {
-  let sum = 0;
+  let mySum = 0;
   let maxIndex = sampleRate / (2 * f);
 
   for (let k = 1; k < maxIndex; k++){
-    sum += sin(f * k, t) / k;
+    mySum += sin(f * k)(t) / k;
   }
-  sum *= 1 / Math.PI;
+  mySum *= 1 / Math.PI;
 
-  return (0.5 - sum) * 2 - 1;
+  return (0.5 - mySum) * 2 - 1;
 }
 
 function loop(input, output) {
   output.set(
     time
       .map(t => sawB(freq, t))
-      .mult(amp)
+      .map(mult(amp))
   );
 }

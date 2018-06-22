@@ -5,14 +5,10 @@ function setup() {
 
 }
 
-function saw(f, t) {
-  return 2 * (f * t - Math.floor(0.5 + f * t));
-}
-
 function loop(input, output) {
   output.set(
     time
-      .map(t => saw(freq, t))
-      .mult(amp)
+      .map(saw(freq))
+      .map(mult(amp))
   );
 }

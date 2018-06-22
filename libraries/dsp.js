@@ -1,60 +1,30 @@
-// some custom functions (will add more as needed)
-/*
-Float32Array.prototype.applyFilter = function(myFilter, ...args) {
-  return myFilter(this, ...args);
-};
-*/
-
 Float32Array.prototype.applyFilter = function(clause) {
   let output = this.slice();
   let filterOutput = i => clause(this, output, i);
-  let f;
 
   for (let i = 0; i < numSamples; i++) {
-    f = filterOutput(i);
-    output[i] = f ? f : 0;
+    output[i] = filterOutput(i);
   }
 
   return output;
 };
 
-Float32Array.prototype.add = function(vector) {
-  for (let i = 0; i < numSamples; i++) {
-    this[i] += vector[i];
-  }
-  return this;
-};
-
-Float32Array.prototype.subtract = function(vector) {
-  for (let i = 0; i < numSamples; i++) {
-    this[i] -= vector[i];
-  }
-  return this;
-};
-
-Float32Array.prototype.mult = function(scalar) {
-  for (let i = 0; i < numSamples; i++) {
-    this[i] *= scalar;
-  }
-  return this;
-};
-
-Float32Array.prototype.div = function(scalar) {
-  for (let i = 0; i < numSamples; i++) {
-    this[i] /= scalar;
-  }
-  return this;
-};
+const mult = s => e => e * s;
+const div = s => e => e * s;
+const add = v => (e, i) => e + v[i];
+const sub = v => (e, i) => e - v[i];
 
 let time;
 let numSamples;
 
+/*
 const zip = (f, a, b) => a.map((e, i) => f(e, b[i]));
 const spread = (f, ...args) => args.reduce((sum, e) => zip(f, sum, e));
 const sum = (x,y) => x + y;
 const diff = (x,y) => x - y;
 const mult = (x,y) => x * y;
 const div = (x,y) => x / y;
+*/
 
 const clip = (e, val = 0.1) => {
   let max = Math.abs(val);
@@ -67,6 +37,70 @@ const clip = (e, val = 0.1) => {
   }
   else {
     return e;
+  }
+};
+
+const delay = m => (e, i, x) => x[(i + m) % numSamples];
+
+const average = (e, i, x) => {
+  if (i > 0) {
+    return 0.5 * (x[i] + x[i - 1]);
+  } else {
+    return e;
+  }
+};
+
+const whiteNoise = t => (2 * Math.random() - 1);
+
+
+const sin = f => t => {
+  return Math.sin(2 * Math.PI * f * t);
+};
+
+const saw = f => t => {
+  return 2 * (f * t - Math.floor(0.5 + f * t));
+};
+
+const square = f => t => {
+  /*
+  if(sin(f)(t) >= 0){ return 1;}
+  else {return -1;}
+  */
+
+  return clip(sin(f)(t) * 100000, 1);
+};
+
+const phasor = f => t => (f * t) % 1;
+
+const pow = Math.pow;
+
+const comb = (g1, g2, m1, m2) => (input, output, i) => {
+  let x_m1 = 0;
+  let y_m2 = 0;
+
+  if (i - m1 >= 0) {
+    x_m1 = input[i - m1];
+  }
+  if (i - m2 >= 0) {
+    y_m2 = output[i - m2];
+  }
+
+  return input[i] + g1 * x_m1 - g2 * y_m2;
+};
+
+const highPass = (b1, b2) => (input, output, i) => {
+  if (i >= 1){
+    return b1 * input[i] + b2 * input[i - 1];
+  } else {
+    return b1 * input[i];
+  }
+};
+
+const lowpass = alpha => (input, output, i) => {
+  if (i >= 1) {
+    return alpha * input[i] +  (1 - alpha) * output[i - 1];
+  } else {
+    return alpha * input[i];
   }
 };
 

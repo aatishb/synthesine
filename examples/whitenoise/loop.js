@@ -4,14 +4,10 @@ function setup() {
 
 }
 
-function whiteNoise() {
-  return (2 * Math.random() - 1);
-}
-
 function loop(input, output) {
   output.set(
     time
-      .map(t => whiteNoise())
-      .mult(amp)
+      .map(whiteNoise)
+      .map(mult(amp))
   );
 }
