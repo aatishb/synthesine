@@ -22,6 +22,6 @@ function loop(input, output) {
   output.set(
     time
       .map(t => square(freq, t))
-      .map(e => e * amp)
+      .mult(amp)
   );
 }

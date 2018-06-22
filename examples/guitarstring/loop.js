@@ -4,7 +4,7 @@ let noiseWave;
 function setup() {
   noiseWave = new Float32Array(128)
     .map(e => whiteNoise())
-    .map(e => 0.1 * e);
+    .mult(0.1);
 }
 
 function loop(input, output) {

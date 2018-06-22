@@ -16,6 +16,6 @@ function loop(input, output) {
   myWave3 = time.map(t => sin(1.25 * freq, t));
 
   output.set(
-    spread(sum, myWave, myWave2, myWave3).map(e => e*amp)
+    myWave.add(myWave2).add(myWave3).mult(amp)
   );
 }

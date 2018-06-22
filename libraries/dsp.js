@@ -1,7 +1,49 @@
 // some custom functions (will add more as needed)
-
+/*
 Float32Array.prototype.applyFilter = function(myFilter, ...args) {
   return myFilter(this, ...args);
+};
+*/
+
+Float32Array.prototype.applyFilter = function(clause) {
+  let output = this.slice();
+  let filterOutput = i => clause(this, output, i);
+  let f;
+
+  for (let i = 0; i < numSamples; i++) {
+    f = filterOutput(i);
+    output[i] = f ? f : 0;
+  }
+
+  return output;
+};
+
+Float32Array.prototype.add = function(vector) {
+  for (let i = 0; i < numSamples; i++) {
+    this[i] += vector[i];
+  }
+  return this;
+};
+
+Float32Array.prototype.subtract = function(vector) {
+  for (let i = 0; i < numSamples; i++) {
+    this[i] -= vector[i];
+  }
+  return this;
+};
+
+Float32Array.prototype.mult = function(scalar) {
+  for (let i = 0; i < numSamples; i++) {
+    this[i] *= scalar;
+  }
+  return this;
+};
+
+Float32Array.prototype.div = function(scalar) {
+  for (let i = 0; i < numSamples; i++) {
+    this[i] /= scalar;
+  }
+  return this;
 };
 
 let time;

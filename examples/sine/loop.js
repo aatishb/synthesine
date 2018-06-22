@@ -13,6 +13,6 @@ function loop(input, output) {
   output.set(
     time
       .map(t => sin(freq, t))
-      .map(e => e * amp)
+      .mult(amp)
   );
 }

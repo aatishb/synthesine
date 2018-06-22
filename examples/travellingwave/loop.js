@@ -5,7 +5,7 @@ function setup() {
 
   noiseWave = new Float32Array(128)
     .map(e => whiteNoise())
-    .map(e => amp * e);
+    .mult(amp);
 
   travellingWave = noiseWave.slice();
 }

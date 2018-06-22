@@ -8,29 +8,25 @@ function whiteNoise() {
   return (2 * Math.random() - 1);
 }
 
-function comb(input, g1 = 0.1, g2 = 0.1, m1, m2) {
-  let output = input.slice();
+const comb = (g1, g2, m1, m2) => (input, output, i) => {
   let x_m1 = 0;
   let y_m2 = 0;
 
-  for (let i = 0; i < numSamples; i++) {
-    if (i - m1 >= 0) {
-      x_m1 = input[i - m1];
-    }
-    if (i - m2 >= 0) {
-      y_m2 = output[i - m2];
-    }
-    output[i] = input[i] + g1 * x_m1 - g2 * y_m2;
+  if (i - m1 >= 0) {
+    x_m1 = input[i - m1];
+  }
+  if (i - m2 >= 0) {
+    y_m2 = output[i - m2];
   }
 
-  return output;
-}
+  return input[i] + g1 * x_m1 - g2 * y_m2;
+};
 
 function loop(input, output) {
   output.set(
     time
       .map(t => whiteNoise())
-      .map(e => amp * e)
-      .applyFilter(comb, -1, 0, 20, 20)
+      .applyFilter(comb(0, -0.9, 0, 20))
+      .mult(amp)
   );
 }

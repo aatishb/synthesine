@@ -14,6 +14,6 @@ function loop(input, output) {
     time
       .map(t => wrap(freq * t))
       .map(e => 5 * Math.pow(e, 2))
-      .map(e => e * amp)
+      .mult(amp)
   );
 }
