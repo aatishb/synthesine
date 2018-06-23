@@ -43,33 +43,17 @@ const clip = (e, val = 0.1) => {
 const delay = m => (e, i, x) => x[(i + m) % numSamples];
 
 const average = (e, i, x) => {
-  if (i > 0) {
+  if (i >= 1) {
     return 0.5 * (x[i] + x[i - 1]);
   } else {
     return e;
   }
 };
 
-const whiteNoise = t => (2 * Math.random() - 1);
-
-
-const sin = f => t => {
-  return Math.sin(2 * Math.PI * f * t);
-};
-
-const saw = f => t => {
-  return 2 * (f * t - Math.floor(0.5 + f * t));
-};
-
-const square = f => t => {
-  /*
-  if(sin(f)(t) >= 0){ return 1;}
-  else {return -1;}
-  */
-
-  return clip(sin(f)(t) * 100000, 1);
-};
-
+const whiteNoise = t => 2 * Math.random() - 1;
+const sin = f => t => Math.sin(2 * Math.PI * f * t);
+const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
+const square = f => t => clip(sin(f)(t) * 100000, 1);
 const phasor = f => t => (f * t) % 1;
 
 const pow = Math.pow;
