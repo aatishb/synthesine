@@ -18,9 +18,5 @@ function sawB(f, t) {
 }
 
 function loop(input, output) {
-  output.set(
-    time
-      .map(t => sawB(freq, t))
-      .map(mult(amp))
-  );
+  output.set(time.map(t => sawB(freq, t)).mult(amp));
 }

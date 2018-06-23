@@ -5,12 +5,10 @@ function setup() {
 
 }
 
-const dampedSine = f => t => Math.exp(- t) * sin(f)(t);
-
 function loop(input, output) {
   output.set(
     time
-      .map(dampedSine(freq))
-      .map(mult(amp))
+      .map(sinDamped(freq, 1))
+      .mult(amp)
   );
 }

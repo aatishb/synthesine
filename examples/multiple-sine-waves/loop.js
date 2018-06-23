@@ -11,10 +11,5 @@ function loop(input, output) {
   myWave2 = time.map(sin(1.5 * freq));
   myWave3 = time.map(sin(1.25 * freq));
 
-  output.set(
-    myWave
-      .map(add(myWave2))
-      .map(add(myWave3))
-      .map(mult(amp))
-  );
+  output.set(myWave.add(myWave2).add(myWave3).mult(amp));
 }

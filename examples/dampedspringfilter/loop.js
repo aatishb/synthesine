@@ -23,7 +23,7 @@ function loop(input, output) {
   output.set(
     zeroes
       .map(dampedSpring)
-      .map(mult(amp))
+      .mult(amp)
   );
 }
 

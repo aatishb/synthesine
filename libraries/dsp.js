@@ -1,3 +1,24 @@
+Float32Array.prototype.add = function(v) {
+  return this.map(add(v));
+};
+
+Float32Array.prototype.sub = function(v) {
+  return this.map(sub(v));
+};
+
+Float32Array.prototype.mult = function(s) {
+  return this.map(mult(s));
+};
+
+Float32Array.prototype.div = function(s) {
+  return this.map(div(s));
+};
+
+Float32Array.prototype.delay = function(m) {
+  return this.map(delay(m));
+};
+
+
 Float32Array.prototype.applyFilter = function(clause) {
   let output = this.slice();
   let filterOutput = i => clause(this, output, i);
@@ -55,6 +76,8 @@ const sin = f => t => Math.sin(2 * Math.PI * f * t);
 const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
 const square = f => t => clip(sin(f)(t) * 100000, 1);
 const phasor = f => t => (f * t) % 1;
+
+const sinDamped = (f, tau) => t => Math.exp(- t / tau) * sin(f)(t);
 
 const pow = Math.pow;
 

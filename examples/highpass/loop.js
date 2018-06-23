@@ -9,6 +9,6 @@ function loop(input, output) {
     time
       .map(whiteNoise)
       .applyFilter(highPass(0.5, -0.5))
-      .map(mult(amp))
+      .mult(amp)
   );
 }

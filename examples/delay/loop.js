@@ -11,6 +11,6 @@ function loop(input, output) {
     .map(mult(amp));
 
   output.set(
-    myWave1.map(sub(myWave1.map(delay(20))))
+    myWave1.sub(myWave1.delay(20))
   );
 }

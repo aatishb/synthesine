@@ -5,9 +5,5 @@ function setup() {
 }
 
 function loop(input, output) {
-  output.set(
-    time
-      .map(whiteNoise)
-      .map(mult(amp))
-  );
+  output.set(time.map(whiteNoise).mult(amp));
 }

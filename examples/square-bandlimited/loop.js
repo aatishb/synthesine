@@ -18,9 +18,5 @@ const squareB = f => t => {
 };
 
 function loop(input, output) {
-  output.set(
-    time
-      .map(squareB(freq))
-      .map(mult(amp))
-  );
+  output.set(time.map(squareB(freq)).mult(amp));
 }

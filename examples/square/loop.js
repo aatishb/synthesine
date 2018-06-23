@@ -6,9 +6,5 @@ function setup() {
 }
 
 function loop(input, output) {
-  output.set(
-    time
-      .map(square(freq))
-      .map(mult(amp))
-  );
+  output.set(time.map(square(freq)).mult(amp));
 }

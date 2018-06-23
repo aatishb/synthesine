@@ -5,16 +5,12 @@ function setup() {
 
   noiseWave = new Float32Array(128)
     .map(whiteNoise)
-    .map(mult(amp));
+    .mult(amp);
 
   travellingWave = noiseWave.slice();
 }
 
 function loop(input, output) {
-
-  travellingWave = travellingWave.map(delay(1));
-
-  output.set(
-    travellingWave.map(add(noiseWave))
-  );
+  travellingWave = travellingWave.delay(1);
+  output.set(travellingWave.add(noiseWave));
 }
