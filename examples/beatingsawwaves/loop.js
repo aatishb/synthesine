@@ -8,11 +8,10 @@ let freq;
 
 function setup() {
   zeroWave = new Float32Array(128);
+
   freq = new Float32Array(maxIndex);
-
   let baseFreq = 150; // play with changing this
-  freq = freq.map((e,i) => baseFreq + 0.2 * i);
-
+  freq = freq.map((e,i) => baseFreq + 0.1 * i);
   // change a few of the frequencies in the array to get interesting beats
   freq[1] = 105.2;
   freq[2] = 105;
@@ -23,12 +22,11 @@ function setup() {
 function loop(input, output) {
   myWave = zeroWave;
 
-  for (let i = 0; i < maxIndex; i++){
+  freq.forEach(f => {
     myWave = myWave.add(
-      time.map(t => sawB(freq[i], t))
-      //time.map(saw(100 + 0.1*i)) // it sounds AWFUL without bandlimiting
+      time.map(t => sawB(f, t))
     );
-  }
+  });
 
   output.set(myWave.mult(0.1));
 }

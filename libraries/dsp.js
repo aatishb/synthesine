@@ -72,12 +72,30 @@ const average = (e, i, x) => {
 };
 
 const whiteNoise = t => 2 * Math.random() - 1;
-const sin = f => t => Math.sin(2 * Math.PI * f * t);
-const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
-const square = f => t => clip(sin(f)(t) * 100000, 1);
+const sin = (f, phase = 0) => {
+  if (!phase.length) {
+    return t => Math.sin(2 * Math.PI * f * t + phase);
+  } else {
+    return (t, i) => Math.sin(2 * Math.PI * f * t + phase[i]);
+  }
+};
+const saw = (f, phase = 0) => {
+  if (!phase.length) {
+    return t => 2 * ((f * t + phase) - Math.floor(0.5 + (f * t + phase)));
+  } else {
+    return (t,i) => 2 * ((f * t + phase[i]) - Math.floor(0.5 + (f * t + phase[i])));
+  }
+};
+const square = (f, phase = 0) => t => clip(sin(f, phase)(t) * 100000, 1);
 const phasor = f => t => (f * t) % 1;
 
-const sinDamped = (f, tau) => t => Math.exp(- t / tau) * sin(f)(t);
+const sinDamped = (f, tau, phase = 0) => {
+  if (!phase.length) {
+    return t => Math.exp(- t / tau) * sin(f, phase)(t);
+  } else {
+    return (t,i) => Math.exp(- t / tau) * sin(f, phase[i])(t);
+  }
+};
 
 const pow = Math.pow;
 
