@@ -18,6 +18,9 @@ Float32Array.prototype.delay = function(m) {
   return this.map(delay(m));
 };
 
+Float32Array.prototype.modulate = function(carrier) {
+  return this.map((e,i) => e * (1 + carrier[i]));
+};
 
 Float32Array.prototype.applyFilter = function(clause) {
   let output = this.slice();
@@ -71,33 +74,24 @@ const average = (e, i, x) => {
   }
 };
 
-const whiteNoise = t => 2 * Math.random() - 1;
-const sin = (f, phase = 0) => {
-  if (!phase.length) {
-    return t => Math.sin(2 * Math.PI * f * t + phase);
+const index = (varOrArray, i) => {
+  if (!varOrArray.length) {
+    return varOrArray;
   } else {
-    return (t, i) => Math.sin(2 * Math.PI * f * t + phase[i]);
+    return varOrArray[i];
   }
 };
-const saw = (f, phase = 0) => {
-  if (!phase.length) {
-    return t => 2 * ((f * t + phase) - Math.floor(0.5 + (f * t + phase)));
-  } else {
-    return (t,i) => 2 * ((f * t + phase[i]) - Math.floor(0.5 + (f * t + phase[i])));
-  }
-};
+
+const whiteNoise = () => 2 * Math.random() - 1;
+const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + index(phase, i));
+const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
 const square = (f, phase = 0) => t => clip(sin(f, phase)(t) * 100000, 1);
 const phasor = f => t => (f * t) % 1;
 
-const sinDamped = (f, tau, phase = 0) => {
-  if (!phase.length) {
-    return t => Math.exp(- t / tau) * sin(f, phase)(t);
-  } else {
-    return (t,i) => Math.exp(- t / tau) * sin(f, phase[i])(t);
-  }
-};
+const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / tau) * sin(f, phase)(t);
 
 const pow = Math.pow;
+
 
 const comb = (g1, g2, m1, m2) => (input, output, i) => {
   let x_m1 = 0;
@@ -112,6 +106,14 @@ const comb = (g1, g2, m1, m2) => (input, output, i) => {
 
   return input[i] + g1 * x_m1 - g2 * y_m2;
 };
+
+/*
+const biQuad = (g, b1, b2, a1, a2) => (input, output, i) => {
+  if (i >= 2){
+    return g * (input[x] + b1 *
+  }
+};
+*/
 
 const highPass = (b1, b2) => (input, output, i) => {
   if (i >= 1){
