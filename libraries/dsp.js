@@ -87,11 +87,11 @@ const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + index(pha
 const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
 const square = (f, phase = 0) => t => clip(sin(f, phase)(t) * 100000, 1);
 const phasor = f => t => (f * t) % 1;
+const triangle = f => t => 2 * Math.abs(saw(f)(t)) - 1;
 
 const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / tau) * sin(f, phase)(t);
 
 const pow = Math.pow;
-
 
 const comb = (g1, g2, m1, m2) => (input, output, i) => {
   let x_m1 = 0;
