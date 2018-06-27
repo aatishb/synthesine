@@ -6,8 +6,8 @@
     <canvas id='spectrum' width=400 height=200></canvas>
   </div>
   <a href = "loop.js">View Source</a>
-</body>
-<script src="https://unpkg.com/audioworklet-polyfill/dist/audioworklet-polyfill.js"></script>
+
+<script src = "../../libraries/audioworklet-polyfill.js"></script>
 <script>
 let analyser;
 
@@ -33,7 +33,8 @@ fetch('../../libraries/dsp.js').then(response => response.text())
         });
       });
   });
-
 </script>
 <script src = "../../libraries/analyser.js"></script>
+
+</body>
 </html>
