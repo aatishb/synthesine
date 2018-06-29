@@ -7,17 +7,6 @@ let y_m2 = 1;
 let y_m1 = 0;
 
 let t = 1 / sampleRate;
-
-// using eqn 33 & 42 from https://arxiv.org/pdf/physics/0507182.pdf
-
-/*
-let gamma = 1;
-let w = 2 * Math.PI * 440;
-let b1 = 2 * Math.exp(- gamma * t) * Math.cos(w * t);
-let b2 = -1 * Math.exp(- 2 * gamma * t);
-let b3 = b2 * 0.001;
-*/
-
 let k = 500000;
 let q = 1000  * 100;
 let r = 2;
