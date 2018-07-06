@@ -13,7 +13,7 @@
         <ul>
         {% for ex  in site.examples %}
             {% if ex.category == cat %}
-            <li><a href="{{ ex.url }}">{{ ex.title }}</a></li>
+            <li><a href="{{ ex.url | relative_url }}">{{ ex.title }}</a></li>
             {% endif %}
         {% endfor %}
     </ul>

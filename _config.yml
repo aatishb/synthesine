@@ -5,3 +5,5 @@ collections:
     output: true
 
 category-list: [oscillator, modulation, filter, synthesis, waveguide, diffeq]
+
+baseurl: /synthfromscratch
