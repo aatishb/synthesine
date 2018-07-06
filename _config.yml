@@ -1,0 +1,7 @@
+name: Sound Synthesis From Scratch
+
+collections:
+  examples:
+    output: true
+
+category-list: [oscillator, modulation, filter, synthesis, waveguide, diffeq]

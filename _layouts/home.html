@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{{page.title}}</title>
+</head>
+
+<body>
+<h1>{{page.title}}</h1>
+
+{% for cat in site.category-list %}
+    <h2>{{ cat | capitalize}}:</h2>
+        <ul>
+        {% for ex  in site.examples %}
+            {% if ex.category == cat %}
+            <li><a href="{{ ex.url }}">{{ ex.title }}</a></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endfor %}
+
+<p>{{page.content}}</p>
+</body>
+
+</html>

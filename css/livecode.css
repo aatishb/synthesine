@@ -1,0 +1,51 @@
+body {
+  margin: 0;
+}
+
+#container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#menu {
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+  background-color: rgb(39,41,34);
+}
+
+.button {
+  height: 50px;
+  display: block;
+  color: red;
+}
+
+#main {
+  display: flex;
+  flex-direction: row;
+}
+
+#editor {
+  width: 50%;
+  height: 400px;
+}
+
+#display {
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.scope {
+  height: 200;
+  width: 400;
+}
+
+.spectrum {
+  height: 200;
+  width: 400;
+}
+

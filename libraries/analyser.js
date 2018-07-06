@@ -3,7 +3,6 @@
 var scopeCtx = document.getElementById('scope').getContext('2d');
 var spectCtx = document.getElementById('spectrum').getContext('2d');
 
-
 function draw() {
   drawSpectrum(analyser, spectCtx);
   drawScope(analyser, scopeCtx);
