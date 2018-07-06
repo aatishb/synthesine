@@ -1,12 +1,6 @@
-<!doctype html>
-<html>
-
-<head>
-  <link rel="stylesheet" href={{ "/css/livecode.css" | relative_url }}>
-</head>
-
-<body>
-
+---
+layout: nav
+---
 
 <div id="container">
   <div id="menu">
@@ -92,9 +86,10 @@ fetch('../../libraries/dsp.js').then(response => response.text())
 
         document.querySelector('#editor').innerHTML = userCode;
         editor = ace.edit("editor");
-        editor.setTheme("ace/theme/monokai");
+        editor.setTheme("ace/theme/clouds");
         editor.getSession().setMode("ace/mode/javascript");
         editor.session.setOptions({ tabSize: 2, useSoftTabs: true });
+        editor.setFontSize(20);
 
         var editorDiv = document.getElementById("editor");     // its container
         var doc = editor.getSession().getDocument();  // a reference to the doc
@@ -132,6 +127,3 @@ fetch('../../libraries/dsp.js').then(response => response.text())
 
 
 </script>
-
-</body>
-</html>

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Nonlinear (Cubic) Spring</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href=/synthfromscratch/css/nav.css>
+    <link rel="stylesheet" href=/synthfromscratch/css/livecode.css>
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    <!-- Font Awesome JS
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+     -->
+
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>Synth Examples</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li class="active">
+                  
+                    <a href="#oscillatorSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Oscillator</a>
+                        <ul class="collapse list-unstyled" id="oscillatorSubmenu">
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/dampedspring/index.html">Damped Sine</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/multiple-sine-waves/index.html">Adding Sine Waves</a></li>
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/polynomial/index.html">Polynomial</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/sawtooth/index.html">Saw Wave</a></li>
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/sine/index.html">Sine Wave</a></li>
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/square/index.html">Square Wave</a></li>
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/triangle/index.html">Triangle Wave</a></li>
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/whitenoise/index.html">White Noise</a></li>
+                              
+                          
+                      </ul>
+                  
+                    <a href="#modulationSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Modulation</a>
+                        <ul class="collapse list-unstyled" id="modulationSubmenu">
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/am/index.html">Amplitude Modulation</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/fm-inharmonic/index.html">Inharmonic FM (bell)</a></li>
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/fm-vary-index/index.html">Modulating FM Index</a></li>
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/fm/index.html">Frequency Modulation</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                      </ul>
+                  
+                    <a href="#filterSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Filter</a>
+                        <ul class="collapse list-unstyled" id="filterSubmenu">
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/comb/index.html">Comb</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/delay/index.html">Delay</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/highpass/index.html">High Pass Filter</a></li>
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/lowpass/index.html">Low Pass Filter</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                      </ul>
+                  
+                    <a href="#synthesisSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Synthesis</a>
+                        <ul class="collapse list-unstyled" id="synthesisSubmenu">
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/beatingsawwaves/index.html">Space Drone (Beating Saw Waves)</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/glassclink/index.html">Glass Clink</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/sawtooth-bandlimited/index.html">Saw Wave (Band Limited)</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/square-bandlimited/index.html">Square Wave (Bandlimited)</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/trianglewavedecay/index.html">Triangle Wave With Decay</a></li>
+                              
+                          
+                              
+                          
+                      </ul>
+                  
+                    <a href="#waveguideSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Waveguide</a>
+                        <ul class="collapse list-unstyled" id="waveguideSubmenu">
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/guitarstring/index.html">Guitar String</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/reed/index.html">Reed</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/travellingwave/index.html">Travelling Wave</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                      </ul>
+                  
+                    <a href="#diffeqSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Diffeq</a>
+                        <ul class="collapse list-unstyled" id="diffeqSubmenu">
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/dampedspringfilter/index.html">Damped Spring</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                              <li><a href="/synthfromscratch/examples/nonlinearspring/index.html">Nonlinear (Cubic) Spring</a></li>
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                              
+                          
+                      </ul>
+                  
+                </li>
+              </ul>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-align-left"></i>
+                    </button>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav ml-auto">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="/synthfromscratch/">Home</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div id="container">
+  <div id="menu">
+    <svg id="play" aria-hidden="true" data-prefix="far" data-icon="play-circle" class="button" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M371.7 238l-176-107c-15.8-8.8-35.7 2.5-35.7 21v208c0 18.4 19.8 29.8 35.7 21l176-101c16.4-9.1 16.4-32.8 0-42zM504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256z"></path></svg>
+    <svg id="stop" aria-hidden="true" data-prefix="far" data-icon="stop-circle" class="button" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256zm296-80v160c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h160c8.8 0 16 7.2 16 16z"></path></svg>
+  </div>
+  <div id="main">
+    <div id="editor"></div>
+    <div id="display">
+      <canvas id="scope"></canvas>
+      <canvas id="spectrum"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="/synthfromscratch/libraries/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="/synthfromscratch/libraries/analyser.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+let analyser;
+let sound, audio;
+let editor;
+let processorCount = 0;
+
+function getCode(libraryCode, userCode, processorName){
+  return `data:text/javascript;utf8,
+${libraryCode}
+${userCode}
+setup(); // this runs once
+
+// stuff below is the standard way to start an audioProcessor
+class AudioProcessor extends AudioWorkletProcessor {
+
+  constructor(options) {
+    super(options);
+  }
+
+  process(inputs, outputs, parameters) {
+    let input = inputs[0][0];
+    let output = outputs[0][0];
+    if(!numSamples){
+      numSamples = output.length;
+    }
+
+    // calls to custom functions (these run on every frame of 128 samples)
+    updateTime();
+    output.set(loop().clip(0.5));
+
+    return true;
+  }
+}
+
+registerProcessor('${processorName}', AudioProcessor);
+  `;
+}
+
+function startWorklet(myLibraryCode, myUserCode){
+  let processorName = 'audio-processor' + processorCount;
+  processorCount++;
+
+  let moduleDataUrl = getCode(myLibraryCode, myUserCode, processorName);
+
+  if (!audio) {
+    audio = new AudioContext();
+  }
+
+  // Loads module script via AudioWorklet.
+  audio.audioWorklet.addModule(moduleDataUrl).then(() => {
+    sound = new AudioWorkletNode(audio, processorName);
+    analyser = audio.createAnalyser();
+    sound.connect(audio.destination);
+    sound.connect(analyser);
+    draw();
+  });
+}
+
+
+fetch('../../libraries/dsp.js').then(response => response.text())
+  .then((libraryCode) => {
+
+    fetch('loop.js').then(response => response.text())
+      .then((userCode) => {
+
+        document.querySelector('#editor').innerHTML = userCode;
+        editor = ace.edit("editor");
+        editor.setTheme("ace/theme/clouds");
+        editor.getSession().setMode("ace/mode/javascript");
+        editor.session.setOptions({ tabSize: 2, useSoftTabs: true });
+        editor.setFontSize(20);
+
+        var editorDiv = document.getElementById("editor");     // its container
+        var doc = editor.getSession().getDocument();  // a reference to the doc
+
+        /*
+        editor.on("change", function() {
+          var lineHeight = editor.renderer.lineHeight;
+          editorDiv.style.height = lineHeight * doc.getLength() + "px";
+          editor.resize();
+        });
+        */
+
+        //startWorklet(libraryCode, userCode);
+
+      });
+
+    document.getElementById("play").onclick = function(){
+      //console.log("playing");
+      var updatedCode = editor.getSession().getValue();
+      if(sound) {
+        sound.disconnect();
+      }
+      startWorklet(libraryCode, updatedCode);
+    };
+
+    document.getElementById("stop").onclick = function(){
+      //console.log("stopping");
+      if (sound) {
+        sound.disconnect();
+      }
+    };
+
+  });
+
+
+
+</script>
+
+
+        </div>
+    </div>
+
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+    <!-- Popper.JS
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    -->
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <!-- jQuery Custom Scroller CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#sidebar").mCustomScrollbar({
+                theme: "minimal"
+            });
+
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar, #content').toggleClass('active');
+                $('.collapse.in').toggleClass('in');
+                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+            });
+        });
+    </script>
+</body>
+
+</html>
