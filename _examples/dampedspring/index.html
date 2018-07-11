@@ -1,9 +1,10 @@
 ---
 layout: livecode
-title: White Noise
+title: Damped Sine
 category: oscillator
 ---
-let amp = 0.05;
+let amp = 0.5;
+let freq = 440;
 
 function setup() {
 
@@ -11,6 +12,6 @@ function setup() {
 
 function loop() {
   return time
-    .map(whiteNoise)
+    .map(sinDamped(freq, 1))
     .mult(amp);
 }

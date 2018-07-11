@@ -1,8 +1,9 @@
 ---
 layout: livecode
-title: White Noise
+title: Square Wave
 category: oscillator
 ---
+let freq = 440;
 let amp = 0.05;
 
 function setup() {
@@ -11,6 +12,6 @@ function setup() {
 
 function loop() {
   return time
-    .map(whiteNoise)
+    .map(square(freq))
     .mult(amp);
 }

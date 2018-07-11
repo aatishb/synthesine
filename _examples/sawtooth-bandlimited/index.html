@@ -1,6 +1,6 @@
 ---
 layout: livecode
-title: Square Wave (Bandlimited)
+title: Saw Wave (Band Limited)
 category: synthesis
 ---
 let freq = 440;
@@ -10,20 +10,20 @@ function setup() {
 
 }
 
-const squareB = f => t => {
+function sawB(f, t) {
   let mySum = 0;
   let maxIndex = sampleRate / (2 * f);
 
-  for (let k = 1; k < maxIndex; k += 2){
+  for (let k = 1; k < maxIndex; k++){
     mySum += sin(f * k)(t) / k;
   }
-  mySum *= 4 / Math.PI;
+  mySum *= 1 / Math.PI;
 
-  return mySum;
-};
+  return (0.5 - mySum) * 2 - 1;
+}
 
 function loop() {
   return time
-    .map(squareB(freq))
+    .map(t => sawB(freq, t))
     .mult(amp);
 }

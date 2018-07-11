@@ -457,8 +457,8 @@
 
             <div id="container">
   <div id="menu">
-    <svg id="play" aria-hidden="true" data-prefix="far" data-icon="play-circle" class="button" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M371.7 238l-176-107c-15.8-8.8-35.7 2.5-35.7 21v208c0 18.4 19.8 29.8 35.7 21l176-101c16.4-9.1 16.4-32.8 0-42zM504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256z"></path></svg>
-    <svg id="stop" aria-hidden="true" data-prefix="far" data-icon="stop-circle" class="button" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256zm296-80v160c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h160c8.8 0 16 7.2 16 16z"></path></svg>
+    <img src="/synthfromscratch/assets/play.svg" alt="Play" id="play" class="button">
+    <img src="/synthfromscratch/assets/stop.svg" alt="Stop" id="stop" class="button">
   </div>
   <div id="main">
     <div id="editor"></div>
@@ -470,116 +470,43 @@
 </div>
 
 <script src="/synthfromscratch/libraries/ace.js" type="text/javascript" charset="utf-8"></script>
-<script src="/synthfromscratch/libraries/analyser.js" type="text/javascript" charset="utf-8"></script>
+<script src="/synthfromscratch/libraries/dsp.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
-let analyser;
-let sound, audio;
-let editor;
-let processorCount = 0;
+  synth.load(`// not sure why this is off by a factor of 16 from the exact version
+// it happens to be sqrt( 2 * 128) ?
+let amp = 0.5 * 1/16;
+let zeroes;
 
-function getCode(libraryCode, userCode, processorName){
-  return `data:text/javascript;utf8,
-${libraryCode}
-${userCode}
-setup(); // this runs once
+let y_m2 = 1;
+let y_m1 = 0;
 
-// stuff below is the standard way to start an audioProcessor
-class AudioProcessor extends AudioWorkletProcessor {
+let t = 1 / sampleRate;
+let gamma = 1;
+let w = 2 * Math.PI * 440;
 
-  constructor(options) {
-    super(options);
-  }
+// using eqn 33 & 42 from https://arxiv.org/pdf/physics/0507182.pdf
+let b1 = 2 * Math.exp(- gamma * t) * Math.cos(w * t);
+let b2 = -1 * Math.exp(- 2 * gamma * t);
 
-  process(inputs, outputs, parameters) {
-    let input = inputs[0][0];
-    let output = outputs[0][0];
-    if(!numSamples){
-      numSamples = output.length;
-    }
-
-    // calls to custom functions (these run on every frame of 128 samples)
-    updateTime();
-    output.set(loop().clip(0.5));
-
-    return true;
-  }
+function setup() {
+  zeroes = new Float32Array(128);
 }
 
-registerProcessor('${processorName}', AudioProcessor);
-  `;
+function loop() {
+  return zeroes
+    .map(dampedSpring)
+    .mult(amp);
 }
 
-function startWorklet(myLibraryCode, myUserCode){
-  let processorName = 'audio-processor' + processorCount;
-  processorCount++;
-
-  let moduleDataUrl = getCode(myLibraryCode, myUserCode, processorName);
-
-  if (!audio) {
-    audio = new AudioContext();
-  }
-
-  // Loads module script via AudioWorklet.
-  audio.audioWorklet.addModule(moduleDataUrl).then(() => {
-    sound = new AudioWorkletNode(audio, processorName);
-    analyser = audio.createAnalyser();
-    sound.connect(audio.destination);
-    sound.connect(analyser);
-    draw();
-  });
-}
-
-
-fetch('../../libraries/dsp.js').then(response => response.text())
-  .then((libraryCode) => {
-
-    fetch('loop.js').then(response => response.text())
-      .then((userCode) => {
-
-        document.querySelector('#editor').innerHTML = userCode;
-        editor = ace.edit("editor");
-        editor.setTheme("ace/theme/clouds");
-        editor.getSession().setMode("ace/mode/javascript");
-        editor.session.setOptions({ tabSize: 2, useSoftTabs: true });
-        editor.setFontSize(20);
-
-        var editorDiv = document.getElementById("editor");     // its container
-        var doc = editor.getSession().getDocument();  // a reference to the doc
-
-        /*
-        editor.on("change", function() {
-          var lineHeight = editor.renderer.lineHeight;
-          editorDiv.style.height = lineHeight * doc.getLength() + "px";
-          editor.resize();
-        });
-        */
-
-        //startWorklet(libraryCode, userCode);
-
-      });
-
-    document.getElementById("play").onclick = function(){
-      //console.log("playing");
-      var updatedCode = editor.getSession().getValue();
-      if(sound) {
-        sound.disconnect();
-      }
-      startWorklet(libraryCode, updatedCode);
-    };
-
-    document.getElementById("stop").onclick = function(){
-      //console.log("stopping");
-      if (sound) {
-        sound.disconnect();
-      }
-    };
-
-  });
-
-
-
+const dampedSpring = () => {
+  let y = b1 * y_m1 + b2 * y_m2;
+  y_m2 = y_m1;
+  y_m1 = y;
+  return y;
+};`);
 </script>
+
 
 
         </div>

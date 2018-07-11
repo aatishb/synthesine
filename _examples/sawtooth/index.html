@@ -1,9 +1,10 @@
 ---
 layout: livecode
-title: White Noise
+title: Saw Wave
 category: oscillator
 ---
-let amp = 0.05;
+let freq = 440;
+let amp = 0.1;
 
 function setup() {
 
@@ -11,6 +12,6 @@ function setup() {
 
 function loop() {
   return time
-    .map(whiteNoise)
+    .map(saw(freq))
     .mult(amp);
 }

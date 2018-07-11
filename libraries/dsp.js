@@ -1,3 +1,5 @@
+const libraryCode = `
+
 const add = v => (e, i) => e + v[i];
 
 Float32Array.prototype.add = function(v) {
@@ -135,3 +137,163 @@ const updateTime = () => {
     time = time.map(t => t + numSamples / sampleRate);
   }
 };
+`;
+
+const defaultCode = `function setup() {
+}
+
+function loop() {
+  return time
+    .map(sin(440))
+    .mult(0.1);
+}
+`;
+
+
+var synth = (function () {
+  let analyser;
+  let sound, audio;
+  let editor;
+  let processorCount = 0;
+
+  document.querySelector('#editor').innerHTML = defaultCode;
+  editor = ace.edit("editor");
+  editor.setTheme("ace/theme/clouds");
+  editor.session.setMode("ace/mode/javascript");
+  editor.session.setOptions({ tabSize: 2, useSoftTabs: true });
+  editor.setFontSize(16);
+
+  function getCode(userCode, processorName){
+    return `data:text/javascript;utf8,
+  ${libraryCode}
+  ${userCode}
+  setup(); // this runs once
+
+  // stuff below is the standard way to start an audioProcessor
+  class AudioProcessor extends AudioWorkletProcessor {
+
+    constructor(options) {
+      super(options);
+    }
+
+    process(inputs, outputs, parameters) {
+      let input = inputs[0][0];
+      let output = outputs[0][0];
+      if(!numSamples){
+        numSamples = output.length;
+      }
+
+      // calls to custom functions (these run on every frame of 128 samples)
+      updateTime();
+      output.set(loop().clip(0.5));
+
+      return true;
+    }
+  }
+
+  registerProcessor('${processorName}', AudioProcessor);
+    `;
+  }
+
+  function startWorklet(userCode){
+    let processorName = 'audio-processor' + processorCount;
+    processorCount++;
+
+    let moduleDataUrl = getCode(userCode, processorName);
+
+    if (!audio) {
+      audio = new AudioContext();
+    }
+
+    // Loads module script via AudioWorklet.
+    audio.audioWorklet.addModule(moduleDataUrl).then(() => {
+      sound = new AudioWorkletNode(audio, processorName);
+      analyser = audio.createAnalyser();
+      sound.connect(audio.destination);
+      sound.connect(analyser);
+      draw();
+    });
+  }
+
+  function load(userCode) {
+    editor.session.setValue(userCode);
+  }
+
+  document.getElementById("play").onclick = function(){
+    var updatedCode = editor.getSession().getValue();
+    if(sound) {sound.disconnect();}
+    startWorklet(updatedCode);
+  };
+
+  document.getElementById("stop").onclick = function(){
+    if (sound) {sound.disconnect();}
+  };
+
+  // Spectrum Analyser from https://codepen.io/ContemporaryInsanity/pen/Mwvqpb
+
+  var scopeCtx = document.getElementById('scope').getContext('2d');
+  var spectCtx = document.getElementById('spectrum').getContext('2d');
+
+  function draw() {
+    drawSpectrum(analyser, spectCtx);
+    drawScope(analyser, scopeCtx);
+
+    requestAnimationFrame(draw);
+  }
+
+  function drawSpectrum(analyser, ctx) {
+    var width = ctx.canvas.width;
+    var height = ctx.canvas.height;
+    var freqData = new Uint8Array(analyser.frequencyBinCount);
+    var scaling = height / 256;
+
+    analyser.getByteFrequencyData(freqData);
+
+    ctx.fillStyle = '#eef5db';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'dodgerblue';
+    ctx.beginPath();
+
+    for (var x = 0; x < width; x++)
+      ctx.lineTo(x, height - freqData[x] * scaling - 1);
+
+    ctx.stroke();
+  }
+
+  function drawScope(analyser, ctx) {
+    var width = ctx.canvas.width;
+    var height = ctx.canvas.height;
+    var timeData = new Uint8Array(analyser.frequencyBinCount);
+    var scaling = height / 256;
+    var risingEdge = 0;
+    var edgeThreshold = 5;
+
+    analyser.getByteTimeDomainData(timeData);
+
+    ctx.fillStyle = '#eef5db';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'dodgerblue';
+    ctx.beginPath();
+
+    // No buffer overrun protection
+    while (timeData[risingEdge++] - 128 > 0 && risingEdge <= width);
+    if (risingEdge >= width) risingEdge = 0;
+
+    while (timeData[risingEdge++] - 128 < edgeThreshold && risingEdge <= width);
+    if (risingEdge >= width) risingEdge = 0;
+
+    for (var x = risingEdge; x < timeData.length && x - risingEdge < width; x++)
+      ctx.lineTo(x - risingEdge, height - timeData[x] * scaling);
+
+    ctx.stroke();
+  }
+
+  return {
+    load: load
+  };
+
+})();

@@ -1,16 +1,16 @@
 ---
 layout: livecode
-title: White Noise
+title: Sine Wave
 category: oscillator
 ---
-let amp = 0.05;
+let freq = 440;
+let amp = 0.1;
 
 function setup() {
-
 }
 
 function loop() {
   return time
-    .map(whiteNoise)
+    .map(sin(freq))
     .mult(amp);
 }
