@@ -25,12 +25,14 @@ a:focus {
 }
 
 .navbar {
+    /*
     padding: 15px 10px;
     background: #fff;
     border: none;
     border-radius: 0;
     margin-bottom: 40px;
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    */
 }
 
 .navbar-btn {
@@ -150,11 +152,24 @@ a.article:hover {
 #content {
     width: calc(100% - 250px);
     padding: 40px;
+    padding-top: 0px;
     min-height: 100vh;
     transition: all 0.3s;
     position: absolute;
     top: 0;
     right: 0;
+}
+
+#topbar {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#topbar > img {
+    padding: 0px;
+    height: 30px;
+    background: none;
+    border: none;
 }
 
 #content.active {
