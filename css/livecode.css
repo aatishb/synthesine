@@ -34,6 +34,11 @@ body {
   display: flex;
   flex-direction: row;
   background-color: #fff;
+  flex-wrap: wrap;
+}
+
+#main > * {
+  flex: 1 1 250px;
 }
 
 #editor {
