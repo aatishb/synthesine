@@ -69,7 +69,7 @@ const average = (e, i, x) => {
 
 const whiteNoise = () => 2 * Math.random() - 1;
 const phasor = f => t => (f * t) % 1;
-const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + (phase[i] || phase));
+const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + (phase[i] || 0));
 const square = (f, phase = 0) => (t, i) => clip(1)(sin(f, phase)(t, i) * 1000);
 const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
 const triangle = f => t => 2 * Math.abs(saw(f)(t)) - 1;
