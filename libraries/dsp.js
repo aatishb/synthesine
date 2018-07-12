@@ -64,66 +64,28 @@ Float32Array.prototype.applyFilter = function(clause) {
 };
 
 const average = (e, i, x) => {
-  if (i >= 1) {
-    return 0.5 * (x[i] + x[i - 1]);
-  } else {
-    return e;
-  }
-};
-
-const index = (varOrArray, i) => {
-  if (!varOrArray.length) {
-    return varOrArray;
-  } else {
-    return varOrArray[i];
-  }
+  return 0.5 * (x[i] + x[i - 1]) || x[i];
 };
 
 const whiteNoise = () => 2 * Math.random() - 1;
-const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + index(phase, i));
-const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
-const square = (f, phase = 0) => (t, i) => clip(1)(sin(f, phase)(t, i) * 1000);
 const phasor = f => t => (f * t) % 1;
+const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + (phase[i] || phase));
+const square = (f, phase = 0) => (t, i) => clip(1)(sin(f, phase)(t, i) * 1000);
+const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
 const triangle = f => t => 2 * Math.abs(saw(f)(t)) - 1;
 const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / tau) * sin(f, phase)(t);
 const pow = Math.pow;
 
 const comb = (g1, g2, m1, m2) => (input, output, i) => {
-  let x_m1 = 0;
-  let y_m2 = 0;
-
-  if (i - m1 >= 0) {
-    x_m1 = input[i - m1];
-  }
-  if (i - m2 >= 0) {
-    y_m2 = output[i - m2];
-  }
-
-  return input[i] + g1 * x_m1 - g2 * y_m2;
+   return input[i] + g1 * (input[i - m1] || 0) - g2 * (output[i - m2] || 0);
 };
-
-/*
-const biQuad = (g, b1, b2, a1, a2) => (input, output, i) => {
-  if (i >= 2){
-    return g * (input[x] + b1 *
-  }
-};
-*/
 
 const highPass = (b1, b2) => (input, output, i) => {
-  if (i >= 1){
-    return b1 * input[i] + b2 * input[i - 1];
-  } else {
-    return b1 * input[i];
-  }
+  return b1 * input[i] + b2 * (input[i - 1] || 0);
 };
 
 const lowpass = alpha => (input, output, i) => {
-  if (i >= 1) {
-    return alpha * input[i] +  (1 - alpha) * output[i - 1];
-  } else {
-    return alpha * input[i];
-  }
+  return alpha * input[i] +  (1 - alpha) * (output[i - 1] || 0);
 };
 
 let time, numSamples;
@@ -246,6 +208,7 @@ var synth = (function () {
     var height = ctx.canvas.height;
     var freqData = new Uint8Array(analyser.frequencyBinCount);
     var scaling = height / 256;
+    let xScale = 1024 / width;
 
     analyser.getByteFrequencyData(freqData);
 
@@ -256,8 +219,9 @@ var synth = (function () {
     ctx.strokeStyle = 'dodgerblue';
     ctx.beginPath();
 
+
     for (var x = 0; x < width; x++)
-      ctx.lineTo(x, height - freqData[x] * scaling - 1);
+      ctx.lineTo(x, height - freqData[Math.round(x * xScale)] * scaling - 1);
 
     ctx.stroke();
   }
@@ -271,6 +235,7 @@ var synth = (function () {
     var edgeThreshold = 5;
 
     analyser.getByteTimeDomainData(timeData);
+    var xRange = timeData.length;
 
     ctx.fillStyle = '#eef5db';
     ctx.fillRect(0, 0, width, height);
@@ -286,7 +251,7 @@ var synth = (function () {
     while (timeData[risingEdge++] - 128 < edgeThreshold && risingEdge <= width);
     if (risingEdge >= width) risingEdge = 0;
 
-    for (var x = risingEdge; x < timeData.length && x - risingEdge < width; x++)
+    for (var x = risingEdge; x < xRange && x - risingEdge < width; x++)
       ctx.lineTo(x - risingEdge, height - timeData[x] * scaling);
 
     ctx.stroke();

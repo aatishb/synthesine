@@ -1,0 +1,17 @@
+---
+layout: livecode
+title: Moving Average
+category: filter
+---
+let amp = 0.05;
+
+function setup() {
+
+}
+
+function loop() {
+  return time
+    .map(whiteNoise)
+    .map(average)
+    .mult(amp);
+}
