@@ -1,7 +1,33 @@
 ---
 layout: livecode
-title: Moving Average
+title: Average
 category: filter
+blurb: |
+  This is a simple two-point average. It replaces every sample of the wave with the average of the sample and the one before it. Mathematically, this says `output[t] = 0.5 * (input[t] + input[t-1])`.
+
+  You could implement this from scratch like this:
+
+  ```javascript
+  function loop() {
+    return time
+      .map(whiteNoise)
+      .map((e, i, x) => 0.5 * (x[i] + x[i - 1]) || x[i];)
+      .mult(0.05);
+  }
+  ```
+  The `|| x[i]` part prevents an error from calling samples with a negative index (the first sample in an audio frame has no previous sample).
+
+  Averaging smooths out the wave a little bit, which eliminates the highest frequencies. That's why the audio spectrum isn't flat like for [white noise](https://aatishb.com/synthfromscratch/examples/whitenoise/index.html), but instead goes down to zero at the high end.
+
+  So a two-point average (also sometimes called a 'one-zero filter') is the simplest possible 'low pass filter'. However, it doesn't do as good a job of filtering out high frequencies as a standard [low pass filter](https://aatishb.com/synthfromscratch/examples/lowpass/index.html).
+
+  The average function is defined like this:
+  ```javascript
+  const average = (e, i, x) => 0.5 * (x[i] + x[i - 1]) || x[i];
+  ```
+
+  What happens if you flip the sign, so the + becomes -? Try it out!
+
 ---
 let amp = 0.05;
 

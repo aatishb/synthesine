@@ -63,10 +63,6 @@ Float32Array.prototype.applyFilter = function(clause) {
   return output;
 };
 
-const average = (e, i, x) => {
-  return 0.5 * (x[i] + x[i - 1]) || x[i];
-};
-
 const whiteNoise = () => 2 * Math.random() - 1;
 const phasor = f => t => (f * t) % 1;
 const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + (phase[i] || 0));
@@ -76,16 +72,20 @@ const triangle = f => t => 2 * Math.abs(saw(f)(t)) - 1;
 const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / tau) * sin(f, phase)(t);
 const pow = Math.pow;
 
+const average = (e, i, x) => 0.5 * (x[i] + x[i - 1]) || x[i];
+
 const comb = (g1, g2, m1, m2) => (input, output, i) => {
    return input[i] + g1 * (input[i - m1] || 0) - g2 * (output[i - m2] || 0);
 };
 
 const highPass = (b1, b2) => (input, output, i) => {
-  return b1 * input[i] + b2 * (input[i - 1] || 0);
+  return (b1 * input[i] + b2 * input[i - 1])
+    || input[i];
 };
 
-const lowpass = alpha => (input, output, i) => {
-  return alpha * input[i] +  (1 - alpha) * (output[i - 1] || 0);
+const lowPass = alpha => (input, output, i) => {
+  return ( alpha * input[i] +  (1 - alpha) * output[i - 1] )
+    || input[i];
 };
 
 let time, numSamples;
