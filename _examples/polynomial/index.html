@@ -19,6 +19,6 @@ function setup() {
 function loop() {
   return time
     .map(phasor(freq))
-    .map(e => -1 * pow(e,3) + 1.2 * pow(e,2) - 0.2 * e)
+    .map(e => -1 * Math.pow(e,3) + 1.2 * Math.pow(e,2) - 0.2 * e)
     .clip(0.3);
 }

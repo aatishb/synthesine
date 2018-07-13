@@ -4,6 +4,6 @@ collections:
   examples:
     output: true
 
-category-list: [oscillator, modulation, filter, synthesis, waveguide, diffeq]
+category-list: [oscillator, envelope, modulation, filter, synthesis, waveguide, diffeq]
 
 baseurl: /synthfromscratch

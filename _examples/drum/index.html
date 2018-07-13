@@ -1,0 +1,19 @@
+---
+layout: livecode
+title: Drum
+category: envelope
+blurb:
+---
+let noise, envelope;
+
+function setup() {
+
+}
+
+function loop() {
+
+  noise = time.map(whiteNoise).mult(0.1);
+  envelope = time.map(t => Math.exp(- t / 0.1));
+
+  return noise.convolve(envelope);
+}

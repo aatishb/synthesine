@@ -1,12 +1,12 @@
 const libraryCode = `
 
-const add = v => (e, i) => e + v[i];
+const add = v => (e, i) => e + (v[i] || v);
 
 Float32Array.prototype.add = function(v) {
   return this.map(add(v));
 };
 
-const sub = v => (e, i) => e - v[i];
+const sub = v => (e, i) => e - (v[i] || v);
 
 Float32Array.prototype.sub = function(v) {
   return this.map(sub(v));
@@ -48,6 +48,10 @@ Float32Array.prototype.clip = function(g) {
   return this.map(clip(g));
 };
 
+Float32Array.prototype.convolve = function(carrier) {
+  return this.map((e,i) => e * carrier[i]);
+};
+
 Float32Array.prototype.modulate = function(carrier) {
   return this.map((e,i) => e * (1 + carrier[i]));
 };
@@ -70,7 +74,6 @@ const square = (f, phase = 0) => (t, i) => clip(1)(sin(f, phase)(t, i) * 1000);
 const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
 const triangle = f => t => 2 * Math.abs(saw(f)(t)) - 1;
 const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / tau) * sin(f, phase)(t);
-const pow = Math.pow;
 
 const average = (e, i, x) => 0.5 * (x[i] + x[i - 1]) || x[i];
 
@@ -86,6 +89,55 @@ const highPass = (b1, b2) => (input, output, i) => {
 const lowPass = alpha => (input, output, i) => {
   return ( alpha * input[i] +  (1 - alpha) * output[i - 1] )
     || input[i];
+};
+
+const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
+  (input, output, i) => {
+    return gain
+    * (input[i]
+        - 2 * resZero * Math.cos(2 * Math.PI * freqZero / sampleRate) * input[i-1]
+        + resZero * resZero * input[i-2]
+    )
+      + 2 * resPole * Math.cos(2 * Math.PI * freqPole / sampleRate) * output[i-1]
+      - resPole * resPole * output[i-2]
+    || gain * input[i];
+  };
+
+const resonator = (freq, q) => {
+  let gain = Math.sqrt((1 - q * q)/2);
+  return (input, output, i) => {
+    return gain * (input[i] - input[i-2])
+      + 2 * q * Math.cos(2 * Math.PI * (freq[i] || freq) / sampleRate) * output[i-1]
+      - q * q * output[i-2]
+      || gain * input[i];
+  };
+};
+
+const adsr = (startTime, attackTime, delayTime, sustainTime, releaseTime) => t => {
+  if (t < startTime) {
+    return 0;
+  }
+  if (t < startTime + attackTime) {
+    let deltaT = t - startTime;
+    let slope = (1 - 0) / attackTime;
+    return slope * deltaT;
+  }
+  else if (t < startTime + attackTime + delayTime) {
+    let deltaT = t - startTime - attackTime;
+    let slope = (0.5 - 1) / delayTime;
+    return slope * deltaT + 1;
+  }
+  else if (t < startTime + attackTime + delayTime + sustainTime) {
+    return 0.5;
+  }
+  else if (t < startTime + attackTime + delayTime + sustainTime + releaseTime) {
+    let deltaT = t - startTime - attackTime - delayTime - sustainTime;
+    let slope = (0 - 0.5) / releaseTime;
+    return slope * deltaT + 0.5;
+  }
+  else {
+    return 0;
+  }
 };
 
 let time, numSamples;
@@ -129,7 +181,6 @@ var synth = (function () {
     return `data:text/javascript;utf8,
   ${libraryCode}
   ${userCode}
-  setup(); // this runs once
 
   // stuff below is the standard way to start an audioProcessor
   class AudioProcessor extends AudioWorkletProcessor {
@@ -143,11 +194,13 @@ var synth = (function () {
       let output = outputs[0][0];
       if(!numSamples){
         numSamples = output.length;
+        updateTime();
+        setup(); // this runs once
       }
 
       // calls to custom functions (these run on every frame of 128 samples)
-      updateTime();
       output.set(loop().clip(0.5));
+      updateTime();
 
       return true;
     }

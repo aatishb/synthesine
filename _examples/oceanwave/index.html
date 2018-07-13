@@ -1,0 +1,27 @@
+---
+layout: livecode
+title: Ocean Wave
+category: filter
+blurb: |
+  Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character.
+
+---
+let freq, amp;
+
+function setup() {
+}
+
+function loop() {
+
+  amp = time.map(sin(0.09));
+
+  freq = time.map(sin(0.08))
+    .mult(500)
+    .add(1000);
+
+  return time
+    .map(whiteNoise)
+    .mult(0.01)
+    .applyFilter(resonator(freq, 0.9))
+    .modulate(amp);
+}

@@ -1,0 +1,20 @@
+---
+layout: livecode
+title: ADSR
+category: envelope
+blurb: |
+  An ADSR envelope.
+---
+let sine, envelope;
+
+function setup() {
+
+}
+
+function loop() {
+
+  sine = time.map(sin(300)).mult(0.5);
+  envelope = time.map(adsr(0,0.001, 0.5, 0.1, 0.5));
+
+  return sine.convolve(envelope);
+}
