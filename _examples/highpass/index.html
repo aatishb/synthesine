@@ -2,6 +2,18 @@
 layout: livecode
 title: High Pass Filter
 category: filter
+blurb: |
+  Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character. A high pass filter leaves high frequencies unaffected, and filters out low frequencies.
+
+  It's defined like this:
+  ```javascript
+  const highPass = (b1, b2) => (input, output, i) => {
+    return (b1 * input[i] - b2 * input[i - 1])
+      || input[i];
+  };
+  ```
+  Note if b1 = -b2 = 0.5, this becomes the [moving average](https://aatishb.com/synthfromscratch/examples/average/index.html).
+
 ---
 let amp = 0.05;
 
@@ -12,6 +24,6 @@ function setup() {
 function loop() {
   return time
     .map(whiteNoise)
-    .applyFilter(highPass(0.5, -0.5))
+    .applyFilter(highPass(0.5, 0.5))
     .mult(amp);
 }

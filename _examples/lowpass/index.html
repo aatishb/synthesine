@@ -2,6 +2,23 @@
 layout: livecode
 title: Low Pass Filter
 category: filter
+blurb: |
+  Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character. A low pass filter leaves low frequencies unaffected, and filters out high frequencies.
+
+  It's a very simple, efficient one-line algorithm, and is used everywhere that you need to smooth out some noisy real-world data (e.g. the gyroscopes and accelerometers in smartphones).
+
+  It's defined like this:
+  ```javascript
+  const lowPass = alpha => (input, output, i) => {
+    return ( alpha * input[i] +  (1 - alpha) * output[i - 1] )
+      || input[i];
+  };
+  ```
+
+  What happens to the spectrum as you change the parameter of the lowPass filter?
+
+  Remember that the parameter is only a low pass filter for values between 0 and 1.
+
 ---
 let amp = 0.05;
 
@@ -12,6 +29,6 @@ function setup() {
 function loop() {
   return time
     .map(whiteNoise)
-    .applyFilter(lowpass(0.1))
+    .applyFilter(lowPass(0.1))
     .mult(amp);
 }

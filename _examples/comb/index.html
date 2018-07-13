@@ -2,6 +2,21 @@
 layout: livecode
 title: Comb
 category: filter
+blurb: |
+  This is a called a comb filter, because of the shape of its frequency spectrum looks a bit like the teeth of a comb. Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character.
+
+  Mathematically, a general [comb filter](https://ccrma.stanford.edu/~jos/pasp/Comb_Filters.html) is of the form `input[t] + g1 * input[t - m1] - g2 * output[t - m2]`.
+
+  If g1 = 0, this is called a [feedforward comb filter](https://ccrma.stanford.edu/~jos/pasp/Feedforward_Comb_Filters.html), and if g2 = 0, this is called a [feedback comb filter](https://ccrma.stanford.edu/~jos/pasp/Feedback_Comb_Filters.html).
+
+  In code, this looks like:
+
+  ```javascript
+  const comb = (g1, g2, m1, m2) => (input, output, i) => {
+   return input[i] + g1 * (input[i - m1] || 0) - g2 * (output[i - m2] || 0);
+  };
+  ```
+
 ---
 let amp = 0.05;
 

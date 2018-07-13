@@ -2,6 +2,12 @@
 layout: livecode
 title: Polynomial
 category: oscillator
+blurb: |
+  We start with a phasor, and then map the wave using the polynomial `-x^3 + 1.2x^2 - 0.2x` to create a custom wave shape. By changing the polynomial, you can create arbitrary wave shapes.
+
+  What happens to the wave when you tweak the parameters in the polynomial? See if you can produce other interesting sounds.
+
+  BE CAREFUL when using polynomials as the output can get big very fast, so you can produce all kinds of loud sounds. It's a good idea to clip your output sound to prevent this from happening. By default, this library clips sounds at 0.5 amplitude to protect your ears.
 ---
 let amp = 0.2;
 let freq = 440;
@@ -13,5 +19,6 @@ function setup() {
 function loop() {
   return time
     .map(phasor(freq))
-    .map(e => -1 * pow(e,3) + 1.2 * pow(e,2) - 0.2 * e);
+    .map(e => -1 * pow(e,3) + 1.2 * pow(e,2) - 0.2 * e)
+    .clip(0.3);
 }
