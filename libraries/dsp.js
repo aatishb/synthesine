@@ -151,6 +151,22 @@ const updateTime = () => {
     time = time.map(t => t + numSamples / sampleRate);
   }
 };
+
+function askToCreateSlider(label, val, min, max, step) {
+  this.port.postMessage(
+    {
+      'type': 'slider',
+      'label': label,
+      'val': val,
+      'min': min,
+      'max': max,
+      'step': step
+    }
+  );
+};
+
+let createSlider;
+
 `;
 
 const defaultCode = `function setup() {
@@ -166,7 +182,7 @@ function loop() {
 
 var synth = (function () {
   let analyser;
-  let sound, audio;
+  let node, audioCtx;
   let editor;
   let processorCount = 0;
 
@@ -177,6 +193,7 @@ var synth = (function () {
   editor.session.setOptions({ tabSize: 2, useSoftTabs: true });
   editor.setFontSize(16);
 
+  // this code will be loaded into the worklet
   function getCode(userCode, processorName){
     return `data:text/javascript;utf8,
   ${libraryCode}
@@ -187,15 +204,33 @@ var synth = (function () {
 
     constructor(options) {
       super(options);
+
+      createSlider = askToCreateSlider.bind(this);
+
+      // listens for messages from the node, which is in the global scope
+      this.port.onmessage = (event) => {
+        let msg = event.data;
+
+        // if receives a variable pair, it updates the variable
+        if(typeof msg === 'object') {
+          if(msg['type'] === 'update') {
+            eval(msg['var'] + ' = ' + msg['val'])
+          }
+        }
+      };
+
     }
 
     process(inputs, outputs, parameters) {
       let input = inputs[0][0];
       let output = outputs[0][0];
+
       if(!numSamples){
         numSamples = output.length;
         updateTime();
-        setup(); // this runs once
+        setup.call(this); // setup runs once
+                          // pass 'this' along so we can send messages
+                          // using this page's messageport
       }
 
       // calls to custom functions (these run on every frame of 128 samples)
@@ -216,17 +251,36 @@ var synth = (function () {
 
     let moduleDataUrl = getCode(userCode, processorName);
 
-    if (!audio) {
-      audio = new AudioContext();
+    if (!audioCtx) {
+      audioCtx = new AudioContext();
     }
 
     // Loads module script via AudioWorklet.
-    audio.audioWorklet.addModule(moduleDataUrl).then(() => {
-      sound = new AudioWorkletNode(audio, processorName);
-      analyser = audio.createAnalyser();
-      sound.connect(audio.destination);
-      sound.connect(analyser);
+    audioCtx.audioWorklet.addModule(moduleDataUrl).then(() => {
+      node = new AudioWorkletNode(audioCtx, processorName);
+      analyser = audioCtx.createAnalyser();
+      node.connect(audioCtx.destination);
+      node.connect(analyser);
+
       draw();
+
+      // listens for messages from worklet
+
+      node.port.onmessage = (event) => {
+
+        let msg = event.data;
+
+        if (typeof msg === 'object') {
+          if (msg["type"] == "slider") {
+            makeSlider(msg["label"], msg["val"], msg["min"], msg["max"], msg["step"]);
+          }
+        }
+
+      };
+
+      // sends messages to the worklet
+      //node.port.postMessage('Hello!');
+
     });
   }
 
@@ -234,14 +288,41 @@ var synth = (function () {
     editor.session.setValue(userCode);
   }
 
+  function makeSlider(label, val, min, max, step) {
+
+    let innerHTML = `<div class="slidecontainer"><input type="range" min="${min}" max="${max}" value="${val}" step="${step}" class="slider" id="slider${label}"></div>`;
+    $('#dom').append(innerHTML);
+    var slider = document.getElementById('slider' + label);
+
+    updateVar(label, val);
+
+    slider.onchange = function() {
+      updateVar(label, this.value);
+    };
+  }
+
+  function updateVar(myVar, myVal) {
+    sendMessage({
+      type: 'update',
+      var: myVar,
+      val: myVal
+    });
+  }
+
+  function sendMessage(msg) {
+    if(node) {node.port.postMessage(msg);}
+  }
+
   document.getElementById("play").onclick = function(){
     var updatedCode = editor.getSession().getValue();
-    if(sound) {sound.disconnect();}
+    if(node) {node.disconnect();}
+    $( "#dom" ).empty();
     startWorklet(updatedCode);
   };
 
   document.getElementById("stop").onclick = function(){
-    if (sound) {sound.disconnect();}
+    if (node) {node.disconnect();}
+    $( "#dom" ).empty();
   };
 
   // Spectrum Analyser from https://codepen.io/ContemporaryInsanity/pen/Mwvqpb

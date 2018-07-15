@@ -1,0 +1,19 @@
+---
+layout: livecode
+title: Sine Wave
+category: interact
+blurb: |
+  This example creates a sine wave, controlled by a slider.
+
+---
+let freq = 440;
+
+function setup() {
+  createSlider('freq', 440, 100, 1000, 1);
+}
+
+function loop() {
+  return time
+    .map(sin(freq))
+    .mult(0.1);
+}
