@@ -296,7 +296,7 @@ var synth = (function () {
 
     updateVar(label, val);
 
-    slider.onchange = function() {
+    slider.oninput = function() {
       updateVar(label, this.value);
     };
   }
