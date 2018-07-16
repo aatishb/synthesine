@@ -2,6 +2,10 @@
     SIDEBAR STYLE
 ----------------------------------------------------- */
 
+/* ---------------------------------------------------
+    LAYOUT
+----------------------------------------------------- */
+
 .wrapper {
     display: flex;
     width: 100%;
@@ -14,8 +18,6 @@
     left: 0;
     height: 100vh;
     z-index: 999;
-    background: #6c5b7b;
-    color: #fff;
     transition: all 0.3s;
 }
 
@@ -25,7 +27,6 @@
 
 #sidebar .sidebar-header {
     padding: 20px;
-    background: #6c5b7b;
 }
 
 #sidebar ul.components {
@@ -34,38 +35,16 @@
 }
 
 #sidebar ul p {
-    color: #fff;
     padding: 10px;
 }
 
 #sidebar ul li a {
     padding: 10px;
-    font-size: 1.1em;
     display: block;
 }
 
-#sidebar h3 > a {
-    font-size: 0.8em;
-    font-weight: 500;
-}
-
 #sidebar a {
-    font-size: 1.1em;
-    font-weight: 500;
-    color: inherit;
-    text-decoration: none;
     transition: all 0.3s;
-}
-
-
-#sidebar ul li a:hover {
-    background: #c06c84;
-}
-
-#sidebar ul li.active>a,
-a[aria-expanded="true"] {
-    color: #fff;
-    background: #6c5b7b;
 }
 
 a[data-toggle="collapse"] {
@@ -81,7 +60,6 @@ a[data-toggle="collapse"] {
 }
 
 #sidebar ul ul a {
-    font-size: 1em !important;
     padding-left: 30px !important;
 }
 
@@ -90,22 +68,77 @@ ul.CTAs {
 }
 
 ul.CTAs a {
-    text-align: center;
-    font-size: 0.9em !important;
     display: block;
     border-radius: 5px;
     margin-bottom: 5px;
 }
 
+/* ---------------------------------------------------
+    COLORS & FONTS
+----------------------------------------------------- */
+
+#sidebar {
+    background: #1564b2;
+    color: #fff;
+}
+
+#sidebar .sidebar-header {
+    background: #1564b2;
+}
+
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
+    color: #fff;
+    background: #1564b2;
+}
+
+#sidebar ul p {
+    color: #fff;
+}
+
+#sidebar ul li a:hover {
+    background: dodgerblue;
+}
+
 a.download {
     background: #fff;
-    color: #7386D5;
+    color: gray;
 }
 
 a.article,
 a.article:hover {
-    background: #6d7fcc !important;
+    background: gray !important;
     color: #fff !important;
+}
+
+a:hover {
+  background-color: #bbddff;
+  text-decoration: none;
+}
+
+#sidebar ul li a {
+    font-size: 1.1em;
+}
+
+#sidebar h3 > a {
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+#sidebar a {
+    font-size: 1.1em;
+    font-weight: 500;
+    color: inherit;
+    text-decoration: none;
+}
+
+#sidebar ul ul a {
+    font-size: 1em !important;
+}
+
+ul.CTAs a {
+    text-align: center;
+    font-size: 0.9em !important;
 }
 
 /* ---------------------------------------------------

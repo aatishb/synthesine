@@ -290,15 +290,24 @@ var synth = (function () {
 
   function makeSlider(label, val, min, max, step) {
 
-    let innerHTML = `<div class="slidecontainer"><input type="range" min="${min}" max="${max}" value="${val}" step="${step}" class="slider" id="slider${label}"></div>`;
+    let innerHTML =
+    `
+    <h5>${label}: <output id="parameter_${label}">${val}</output></h5>
+    <div class="slidecontainer">
+      <input type="range" min="${min}" max="${max}" value="${label}" step = "${step}"
+      class="slider" id="slider${label}" oninput="parameter_${label}.value=value">
+    </div>
+    `;
     $('#dom').append(innerHTML);
     var slider = document.getElementById('slider' + label);
+    console.log(slider);
 
     updateVar(label, val);
 
-    slider.oninput = function() {
+    slider.addEventListener('input', function() {
       updateVar(label, this.value);
-    };
+    });
+
   }
 
   function updateVar(myVar, myVal) {

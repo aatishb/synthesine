@@ -2,19 +2,28 @@
 layout: nav
 ---
 
+<h3>{{page.title}}</h3>
+
 <div id="container">
   <div id="menu">
     <img src="{{"/assets/play.svg" | relative_url }}" alt="Play" id="play" class="button">
     <img src="{{"/assets/stop.svg" | relative_url }}" alt="Stop" id="stop" class="button">
   </div>
-  <div id="main">
+  <!-- <div id="main"> -->
     <div id="editor"></div>
     <div id="display">
-      <canvas id="scope"></canvas>
-      <canvas id="spectrum"></canvas>
-      <div id="dom"></canvas>
+      <div class="plot">
+        <h5>Waveform</h5>
+        <canvas id="scope"></canvas>
+      </div>
+      <div class="plot">
+        <h5>Frequency Spectrum</h5>
+        <canvas id="spectrum"></canvas>
+      </div>
+      <div id="dom">
+      </div>
     </div>
-  </div>
+  <!-- </div> -->
 </div>
 
 <script src="{{"/libraries/ace.js" | relative_url }}" type="text/javascript" charset="utf-8"></script>
@@ -24,7 +33,6 @@ layout: nav
   synth.load(`{{content}}`);
 </script>
 
-<h3>{{page.title}}</h3>
 {{page.blurb | markdownify}}
 
 <hr>
@@ -33,4 +41,3 @@ layout: nav
 
   <p>Spotted a typo? Have an idea for how to improve this page? Suggest an edit <a href="{{page.url | replace: 'examples', '_examples' | prepend: "https://github.com/aatishb/synthfromscratch/edit/master"}}">here</a>!</p>
 </footer>
-
