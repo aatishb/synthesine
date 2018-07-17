@@ -152,12 +152,12 @@ const updateTime = () => {
   }
 };
 
-function askToCreateSlider(label, val, min, max, step) {
+function askToCreateSlider(label, min, max, step) {
   this.port.postMessage(
     {
       'type': 'slider',
       'label': label,
-      'val': val,
+      'val': eval(label),
       'min': min,
       'max': max,
       'step': step
@@ -294,7 +294,7 @@ var synth = (function () {
     `
     <div class="slidercontainer">
       <h5>${label}: <output id="parameter_${label}">${val}</output></h5>
-      <input type="range" min="${min}" max="${max}" value="${label}" step = "${step}"
+      <input type="range" min="${min}" max="${max}" value="${val}" step = "${step}"
       class="slider" id="slider${label}" oninput="parameter_${label}.value=value">
     </div>
     `;
@@ -358,7 +358,7 @@ var synth = (function () {
     ctx.fillRect(0, 0, width, height);
 
     ctx.lineWidth = 2;
-    ctx.strokeStyle = '#c06c84';
+    ctx.strokeStyle = '#1C2541';
     ctx.beginPath();
 
 
@@ -383,7 +383,7 @@ var synth = (function () {
     ctx.fillRect(0, 0, width, height);
 
     ctx.lineWidth = 2;
-    ctx.strokeStyle = '#c06c84';
+    ctx.strokeStyle = '#1C2541';
     ctx.beginPath();
 
     // No buffer overrun protection

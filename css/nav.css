@@ -78,18 +78,18 @@ ul.CTAs a {
 ----------------------------------------------------- */
 
 #sidebar {
-    background: #6c5b7b;
+    background: #3A506B;
     color: #fff;
 }
 
 #sidebar .sidebar-header {
-    background: #6c5b7b;
+    background: #3A506B;
 }
 
 #sidebar ul li.active>a,
 a[aria-expanded="true"] {
     color: #fff;
-    background: #6c5b7b;
+    background: #3A506B;
 }
 
 #sidebar ul p {
@@ -97,7 +97,7 @@ a[aria-expanded="true"] {
 }
 
 #sidebar ul li a:hover {
-    background: #a58fa8;
+    background: #5BC0BE;
 }
 
 a.download {
@@ -159,9 +159,6 @@ ul.CTAs a {
     right: 0;
 }
 
-#content > h3 {
-    color: #3a3a59
-}
 #topbar {
     padding-top: 10px;
     padding-bottom: 10px;

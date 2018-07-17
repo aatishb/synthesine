@@ -6,7 +6,11 @@ blurb: |
   Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character.
 
 ---
+let q = 0.99, freq = 2000;
+
 function setup() {
+  slider('q', 0, 0.99, 0.01);
+  slider('freq', 20, 20000, 1);
 }
 
 function loop() {
@@ -14,5 +18,5 @@ function loop() {
   return time
     .map(whiteNoise)
     .mult(0.05)
-    .applyFilter(resonator(2000, 0.99));
+    .applyFilter(resonator(freq, q));
 }
