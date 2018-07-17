@@ -23,6 +23,15 @@ footer > p {
 .plot {
   height: 50%;
   margin: 5px;
+  color: #c06c84; /*#3a3a59;*/
+}
+
+.slidercontainer {
+  margin: 5px;
+}
+
+#dom {
+  color: #c06c84;
 }
 
 .button {
@@ -38,14 +47,14 @@ footer > p {
 
 #container {
   border-style: solid;
-  border-color: dodgerblue;
+  border-color: #c06c84;
   border-width: 1px;
   margin-bottom: 1em;
 }
-
+/*c06c84*/
 #menu {
-  background-color: #bbddff;
-  border-bottom: 1px solid dodgerblue;
+  background-color: #ffffd8;
+  border-bottom: 1px solid #c06c84;
 }
 
 #display {

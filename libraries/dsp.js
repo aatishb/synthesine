@@ -165,7 +165,7 @@ function askToCreateSlider(label, val, min, max, step) {
   );
 };
 
-let createSlider;
+let slider;
 
 `;
 
@@ -205,7 +205,7 @@ var synth = (function () {
     constructor(options) {
       super(options);
 
-      createSlider = askToCreateSlider.bind(this);
+      slider = askToCreateSlider.bind(this);
 
       // listens for messages from the node, which is in the global scope
       this.port.onmessage = (event) => {
@@ -292,19 +292,18 @@ var synth = (function () {
 
     let innerHTML =
     `
-    <h5>${label}: <output id="parameter_${label}">${val}</output></h5>
-    <div class="slidecontainer">
+    <div class="slidercontainer">
+      <h5>${label}: <output id="parameter_${label}">${val}</output></h5>
       <input type="range" min="${min}" max="${max}" value="${label}" step = "${step}"
       class="slider" id="slider${label}" oninput="parameter_${label}.value=value">
     </div>
     `;
     $('#dom').append(innerHTML);
-    var slider = document.getElementById('slider' + label);
-    console.log(slider);
+    var domSlider = document.getElementById('slider' + label);
 
     updateVar(label, val);
 
-    slider.addEventListener('input', function() {
+    domSlider.addEventListener('input', function() {
       updateVar(label, this.value);
     });
 
@@ -359,7 +358,7 @@ var synth = (function () {
     ctx.fillRect(0, 0, width, height);
 
     ctx.lineWidth = 2;
-    ctx.strokeStyle = 'dodgerblue';
+    ctx.strokeStyle = '#c06c84';
     ctx.beginPath();
 
 
@@ -384,7 +383,7 @@ var synth = (function () {
     ctx.fillRect(0, 0, width, height);
 
     ctx.lineWidth = 2;
-    ctx.strokeStyle = 'dodgerblue';
+    ctx.strokeStyle = '#c06c84';
     ctx.beginPath();
 
     // No buffer overrun protection
