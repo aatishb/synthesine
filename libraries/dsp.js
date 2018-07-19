@@ -189,6 +189,7 @@ var synth = (function () {
   document.querySelector('#editor').innerHTML = defaultCode;
   editor = ace.edit("editor");
   editor.setTheme("ace/theme/clouds");
+  editor.setAutoScrollEditorIntoView(true);
   editor.session.setMode("ace/mode/javascript");
   editor.session.setOptions({ tabSize: 2, useSoftTabs: true });
   editor.setFontSize(16);
@@ -300,6 +301,7 @@ var synth = (function () {
     `;
     $('#dom').append(innerHTML);
     var domSlider = document.getElementById('slider' + label);
+    editor.resize();
 
     updateVar(label, val);
 
@@ -325,12 +327,14 @@ var synth = (function () {
     var updatedCode = editor.getSession().getValue();
     if(node) {node.disconnect();}
     $( "#dom" ).empty();
+    editor.resize();
     startWorklet(updatedCode);
   };
 
   document.getElementById("stop").onclick = function(){
     if (node) {node.disconnect();}
     $( "#dom" ).empty();
+    editor.resize();
   };
 
   // Spectrum Analyser from https://codepen.io/ContemporaryInsanity/pen/Mwvqpb
