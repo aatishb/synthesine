@@ -1,12 +1,12 @@
 const libraryCode = `
 
-const add = v => (e, i) => e + (v[i] || v);
+const add = v => (e, i) => e + (v[i] || 0);
 
 Float32Array.prototype.add = function(v) {
   return this.map(add(v));
 };
 
-const sub = v => (e, i) => e - (v[i] || v);
+const sub = v => (e, i) => e - (v[i] || 0);
 
 Float32Array.prototype.sub = function(v) {
   return this.map(sub(v));
@@ -77,12 +77,12 @@ const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / tau) * sin(f, phase
 
 const average = (e, i, x) => 0.5 * (x[i] + x[i - 1]) || x[i];
 
-const comb = (g1, g2, m1, m2) => (input, output, i) => {
+const comb = (g1, m1, g2, m2) => (input, output, i) => {
    return input[i] + g1 * (input[i - m1] || 0) - g2 * (output[i - m2] || 0);
 };
 
-const highPass = (b1, b2) => (input, output, i) => {
-  return (b1 * input[i] + b2 * input[i - 1])
+const highPass = (a) => (input, output, i) => {
+  return (input[i] - a * output[i - 1])
     || input[i];
 };
 

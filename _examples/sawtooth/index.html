@@ -3,13 +3,13 @@ layout: livecode
 title: Saw Wave
 category: oscillator
 blurb: |
-  A sawtooth wave.
+  A sawtooth wave linearly goes from -1 to 1, and then jumps back to -1. It repeats itself at a given frequency.
 ---
 let freq = 440;
 let amp = 0.1;
 
 function setup() {
-
+  slider('freq', 20, 600, 1);
 }
 
 function loop() {

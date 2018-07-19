@@ -3,7 +3,7 @@ layout: livecode
 title: ADSR
 category: envelope
 blurb: |
-  An ADSR envelope.
+  An envelope takes a sound and makes its amplitude (loudness) change in a desired way. An ADSR (attack, delay, sustain, release) envelope is a commonly used envelope to fade in, hold, and fade out a sound.
 ---
 let sine, envelope;
 
@@ -14,7 +14,7 @@ function setup() {
 function loop() {
 
   sine = time.map(sin(300)).mult(0.5);
-  envelope = time.map(adsr(0,0.001, 0.5, 0.1, 0.5));
+  envelope = time.map(adsr(0,0.001, 0.05, 0.05, 0.5));
 
   return sine.convolve(envelope);
 }

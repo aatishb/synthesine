@@ -5,28 +5,29 @@ category: filter
 blurb: |
   This is a called a comb filter, because of the shape of its frequency spectrum looks a bit like the teeth of a comb. Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character.
 
-  Mathematically, a general [comb filter](https://ccrma.stanford.edu/~jos/pasp/Comb_Filters.html) is of the form `input[t] + g1 * input[t - m1] - g2 * output[t - m2]`.
+  Mathematically, a general [comb filter](https://ccrma.stanford.edu/~jos/pasp/Comb_Filters.html) is of the form `input[t] + g1 * input[t - m1] - g2 * output[t - m2]`. If g1 = 0, this is called a [feedforward comb filter](https://ccrma.stanford.edu/~jos/pasp/Feedforward_Comb_Filters.html), and if g2 = 0, this is called a [feedback comb filter](https://ccrma.stanford.edu/~jos/pasp/Feedback_Comb_Filters.html).
 
-  If g1 = 0, this is called a [feedforward comb filter](https://ccrma.stanford.edu/~jos/pasp/Feedforward_Comb_Filters.html), and if g2 = 0, this is called a [feedback comb filter](https://ccrma.stanford.edu/~jos/pasp/Feedback_Comb_Filters.html).
+  What happens if you change the delay?
 
-  In code, this looks like:
+  We can create a comb filter by calling the comb function `comb(g1, m2, g2, m2)`. The comb function is defined like this:
 
   ```javascript
-  const comb = (g1, g2, m1, m2) => (input, output, i) => {
+  const comb = (g1, m1, g2, m2) => (input, output, i) => {
    return input[i] + g1 * (input[i - m1] || 0) - g2 * (output[i - m2] || 0);
   };
   ```
 
 ---
 let amp = 0.05;
+let combDelay = 20;
 
 function setup() {
-
+  slider('combDelay', 0, 40, 1);
 }
 
 function loop() {
   return time
     .map(whiteNoise)
-    .applyFilter(comb(0, -0.9, 0, 20))
+    .applyFilter(comb(0, 0, -0.9, combDelay))
     .mult(amp);
 }

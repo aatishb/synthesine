@@ -3,38 +3,27 @@ layout: livecode
 title: Frequency Modulation
 category: modulation
 blurb: |
-  Frequency Modulation, or FM, is the technique that led to the sound of the 80s. It's behind the sound of all the electric keyboards that define the classic 1980s synth sounds. FM is a very clever technique where you can use two sine waves in combination to create a universe of sounds.
+  Frequency Modulation (FM) is the technique that defined the sound of the 80s. FM lets you create a whole class of sounds with just two sine waves as input. In this example, we modulate the frequency of a 300 Hz sine wave signal with a new 1 Hz 'carrier' sine wave with an amplitude of 200.
 
-  In this simple example, we set the phase of a 300 Hz sine wave signal with a new 1 Hz 'carrier' sine wave with an amplitude of 200.
+  FM synthesis for sound was [introduced](https://ccrma.stanford.edu/sites/default/files/user/jc/fm_synthesispaper-2.pdf) by John Chowning in 1973. Soon after, it was [licensed to Yamaha](https://www.youtube.com/watch?v=Q1Ha0MMT0aA), which lead to the first wildly popular [digital synthesizer](https://en.wikipedia.org/wiki/Yamaha_DX7), and defined that classic [synth sound](https://www.youtube.com/watch?v=dQw4w9WgXcQ) of the 80s.
 
-  Mathematically, the equation for modulating the frequency of a signal with amplitude A and frequency B, with a carrier wave with amplitude C and frequency D is:
-
-  `A sin(2 * PI * B * t + C * sin(2 * PI * D * t))`
-
-  This is known as the FM equation, and [first published](https://ccrma.stanford.edu/sites/default/files/user/jc/fm_synthesispaper-2.pdf) by John Chowning in 1973. Soon after, it was [licensed to Yamaha](https://www.youtube.com/watch?v=Q1Ha0MMT0aA), which lead to the first wildly popular [digital synthesizer](https://en.wikipedia.org/wiki/Yamaha_DX7), and defined that classic [synth sound](https://www.youtube.com/watch?v=dQw4w9WgXcQ) of the 80s. In this equation, D is known as the frequency of modulation, and C is called the modulation index.
-
-  To implement this from scratch, you could do something like this:
-  ```javascript
-  function loop() {
-    return time
-      .map(t => Math.sin(2 * Math.PI * 300 * t + 200 * Math.sin(2 * Math.PI * t)))
-      .mult(0.1);
-  }
-  ```
-
-  Here's where it gets interesting. In the original example, what happens if you turn down the modulation index, and increase the modulation frequency so that its in the audio frequency range? Play with a bunch of different values of these parameters. You've just entered the strange sounding world of FM synthesis!
+  What happens if you turn down the modulation index, and increase the modulation frequency so that it's in the audio frequency range?
 
 ---
 let carrier, signal;
+let modulationFrequency = 1, modulationIndex = 200;
+let signalFrequency = 300;
 
 function setup() {
-
+  slider('signalFrequency', 20, 600, 1);
+  slider('modulationFrequency', 1, 600, 1);
+  slider('modulationIndex', 1, 600, 1);
 }
 
 function loop() {
 
-  carrier = time.map(sin(1)).mult(200);
-  signal = time.map(sin(300, carrier));
+  carrier = time.map(sin(modulationFrequency)).mult(modulationIndex);
+  signal = time.map(sin(signalFrequency, carrier));
 
   return signal.mult(0.1);
 }

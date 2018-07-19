@@ -3,18 +3,19 @@ layout: livecode
 title: High Pass Filter
 category: filter
 blurb: |
-  Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character. A high pass filter leaves high frequencies unaffected, and filters out low frequencies.
+  A high pass filter leaves high frequencies unaffected, and filters out low frequencies. Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character. We can call it as `highPass(a)` where the parameter `a` is called the cutoff and can range between 0 and 1. This cutoff determines the frequency spectrum of the low pass filter.
 
-  It's defined like this:
+  What happens to the spectrum as you change the cutoff?
+
+  Mathematically, a high pass filter can be expressed as `output[i] = input[i] - a * output[i - 1]`. This type of high pass filter is sometimes also called a one-pole filter.
+
+  So the highPass function is defined like this:
   ```javascript
-  const highPass = (b1, b2) => (input, output, i) => {
-    return (b1 * input[i] - b2 * input[i - 1])
+  const highPass = (a) => (input, output, i) => {
+    return (input[i] - a * output[i - 1])
       || input[i];
   };
   ```
-  This type of high pass filter is sometimes also referred to as a one-pole filter.
-
-  Note if b1 = -b2 = 0.5, this becomes the [moving average](https://aatishb.com/synthfromscratch/examples/average/index.html).
 
 ---
 let amp = 0.05;
@@ -26,6 +27,6 @@ function setup() {
 function loop() {
   return time
     .map(whiteNoise)
-    .applyFilter(highPass(0.5, 0.5))
+    .applyFilter(highPass(0.9))
     .mult(amp);
 }

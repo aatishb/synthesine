@@ -2,12 +2,14 @@
 layout: livecode
 title: Square Wave
 category: oscillator
+blurb: |
+  A square wave jumps from -1 to 1, and repeats itself at a given frequency.
 ---
 let freq = 440;
 let amp = 0.05;
 
 function setup() {
-
+  slider('freq', 20, 600, 1);
 }
 
 function loop() {

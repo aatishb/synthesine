@@ -3,28 +3,7 @@ layout: livecode
 title: Amplitude Modulation
 category: modulation
 blurb: |
-  Amplitude Moduation, or AM, refers to using a wave to vary (modulate) the volume of another wave. Let's start with a signal, here a 440 Hz sine wave with an amplitude of 0.1. And let's add a 'carrier wave', here a slowly varying 1 Hz sine wave with an amplitude of 0.5. Modulating the signal with this carrier means that the amplitude of the signal goes up and down by 50% once a second.
-
-  You could implement this from scratch like this:
-
-  ```javascript
-  function loop() {
-    carrier = time.map(sin(1)).mult(0.5);
-    signal = time.map(sin(440)).mult(0.1);
-
-    return signal.map((e,i) => e * (1 + carrier[i]));
-  }
-  ```
-
-  To make this easier to implement, we've added in a modulate function, defined as:
-
-  ```javascript
-  Float32Array.prototype.modulate = function(carrier) {
-    return this.map((e,i) => e * (1 + carrier[i]));
-  };
-  ```
-
-  so you can write `signal.modulate(carrier)`
+  Amplitude Moduation (AM) refers to using a wave to set the volume of another wave. We start with a signal (a 440 Hz sine wave) and a 'carrier wave', here a 5 Hz sine wave with an amplitude of 0.5. Modulating the signal with this carrier means that the amplitude of the signal varies by 50%, five times a second.
 
 ---
 let carrier, signal;
@@ -35,10 +14,10 @@ function setup() {
 
 function loop() {
 
-  carrier = time.map(sin(1)).mult(0.5);
-  signal = time.map(sin(440)).mult(0.1);
+  carrier = time.map(sin(5)).mult(0.5);
+  signal = time.map(sin(440));
 
   signal = signal.modulate(carrier);
 
-  return signal;
+  return signal.mult(0.1);
 }

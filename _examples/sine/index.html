@@ -3,30 +3,16 @@ layout: livecode
 title: Sine Wave
 category: oscillator
 blurb: |
-  This example creates a sine wave. The sine wave is the 'hello world' of sound. You can create a 440 Hz sine wave from scratch like this:
+  This example creates a sine wave. The sine wave is the 'hello world' of sound.
 
-  ```javascript
-  function loop() {
-    return time
-      .map(t => Math.sin(2 * Math.PI * 440 * t))
-      .mult(0.1);
-  }
-  ```
-  Remember to always multiply your output down so it isn't too loud! To protect your ears, we automatically clip sound waves with an amplitude exceeding 0.5.
-
-  This example uses a predefined sin function to create this wave, defined as:
-
-  ```javascript
-  const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + (phase[i] || 0));
-  ```
-
-  so you can create a 440 Hz sine wave like this: `time.map(sin(440))`. The sin function also allows us to pass in an optional wave to control its phase, which we'll use to make some neat sounds in the frequency modulation section.
+  You can create a 440 Hz sine wave like this: `time.map(sin(440))`. The sin function also allows us to pass in an optional wave to control its phase, which we'll use to make some neat sounds in the frequency modulation section. You can add sine waves together to create any repeating sound, this is known as Fourier Synthesis, or additive synthesis.
 
 ---
 let freq = 440;
 let amp = 0.1;
 
 function setup() {
+  slider('freq', 20, 600, 1);
 }
 
 function loop() {

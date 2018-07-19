@@ -1,0 +1,24 @@
+---
+layout: livecode
+title: Damped Sine
+category: oscillator
+blurb: |
+  This is a [sine wave](https://aatishb.com/synthfromscratch/examples/sine/index.html) whose amplitude decays exponentially.
+
+  `sinDamped(frequency, timeConstant)` requires two arguments: the frequency of the wave, and the time constant. If tau is 1, it means the wave will shrink to 1/e (~ 37%) of its height in 1 second.
+
+  What happens to the sound as you make the time constant tau smaller?
+
+---
+let amp = 0.5;
+let freq = 440;
+
+function setup() {
+
+}
+
+function loop() {
+  return time
+    .map(sinDamped(freq, 1))
+    .mult(amp);
+}

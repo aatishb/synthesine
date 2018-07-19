@@ -3,25 +3,26 @@ layout: livecode
 title: Adding Sine Waves
 category: oscillator
 blurb: |
-  Three sine waves are added together to create a dial-tone like sound.
+  Three sine waves are added together to create a dial-tone like sound. This is a major triad, the lowest note is A4, and the next two are a major third (5/4 ratio) and perfect fifth (3/2 ratio) above.
 
-  What happens if you add sine waves together that are very close to each other in frequency?
+  Try moving the sliders around to change the sound. Can you make other melodic sounds? What happends when two of the notes are very close together?
 ---
-let freq = 440;
-let amp = 0.1;
+let freq = 440, mult1 = 1.25, mult2 = 1.5;
 let myWave, myWave2, myWave3;
 
 function setup() {
-
+  slider('freq', 50, 1000, 1);
+  slider('mult1', 1, 2, 0.01);
+  slider('mult2', 1, 2, 0.01);
 }
 
 function loop() {
   myWave = time.map(sin(freq));
-  myWave2 = time.map(sin(1.5 * freq));
-  myWave3 = time.map(sin(1.25 * freq));
+  myWave2 = time.map(sin(mult1 * freq));
+  myWave3 = time.map(sin(mult2 * freq));
 
   return myWave
     .add(myWave2)
     .add(myWave3)
-    .mult(amp);
+    .mult(0.1);
 }

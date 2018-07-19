@@ -3,13 +3,19 @@ layout: livecode
 title: Delay
 category: filter
 blurb: |
-  The delay function implements a delay of m samples. You can think of it like a tiny echo. This is one of the basic building blocks of sound synthesis, and is used to do things like create the sound of a [plucked guitar string](https://aatishb.com/synthfromscratch/examples/guitarstring/index.html). Delays are key to simulating sounds, because when a sound wave travels down something like a string, this [travelling wave](https://aatishb.com/synthfromscratch/examples/travellingwave/index.html) can be implemented as a looped delay.
+  The delay function implements a delay of m samples. You can think of it like a tiny echo. This is one of the building blocks of sound synthesis, and is used to do things like create the sound of a [plucked guitar string](https://aatishb.com/synthfromscratch/examples/guitarstring/index.html).
+
+  Delays are key to simulating sounds, because when a sound wave travels down something like a string, this [travelling wave](https://aatishb.com/synthfromscratch/examples/travellingwave/index.html) can be implemented as a looped delay.
+
+  In this example, we recreate a comb filter using a delay.
 
   We implement a delay as a circular shift, where a delay of m samples shifts an audio wave by m samples, with wrap-around.
 
-  The function is defined like this:
+  The delay function is defined like this:
 
+  ```javascript
   const delay = m => (e, i, x) => x[(i + m) % numSamples];
+  ```
 
   Note that this definition only works for integer values of m, with 0 <= m <= 128.
 
@@ -23,10 +29,9 @@ function setup() {
 
 function loop() {
   myWave = time
-    .map(whiteNoise)
-    .map(mult(amp));
+    .map(whiteNoise);
 
-  myWave = myWave.sub(myWave.delay(20));
+  myWave = myWave.delay(10).sub(myWave);
 
-  return myWave;
+  return myWave.mult(amp);
 }
