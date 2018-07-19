@@ -1,18 +1,21 @@
 ---
 layout: livecode
-title: Reed
+title: Clarinet
 blurb: |
   Implementation of a reed model from [this reference](https://ccrma.stanford.edu/~jos/pasp/Computational_Methods.html).
 ---
 let amp = 0.1, freq = 440;
 let embochure = 0.6, brightness = 5, stiffness = 1;
 let reedTable, slope;
+let wave;
 
 function setup() {
   slider('freq', 1, 600, 1);
   slider('embochure', 0, 1, 0.01);
   slider('brightness', 0, 25, 0.1);
   slider('stiffness', 0, 1, 0.01);
+
+  wave = new Freq32Array(128);
 }
 
 function loop() {
@@ -20,7 +23,7 @@ function loop() {
   return time
     .map(sin(freq))
     .map(e => e/2)
-    .map(e => e * (1 - ramp(e)))
+    .map((e, i) => e - ramp(e - wave[i]) * (e - wave[i]) )
     .mult(amp);
 }
 
