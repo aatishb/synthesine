@@ -2,33 +2,36 @@
 layout: livecode
 title: Reed
 category: waveguide
+blurb: |
+  Implementation of a reed model from [this reference](https://ccrma.stanford.edu/~jos/pasp/Computational_Methods.html).
 ---
 let amp = 0.1;
-let breath;
-
-let embochure = 0.1;
-let brightness = 5;
-let stiffness = 1;
-
-let m = stiffness / (embochure + 1);
+let embochure = 0.1, brightness = 5, stiffness = 1;
+let reedTable, slope;
 
 function setup() {
+  slider('embochure', 0, 1, 0.01);
+  slider('brightness', 0, 40, 0.1);
+  slider('stiffness', 0, 5, 0.1);
 }
 
 function loop() {
-  breath = time
+
+  return time
     .map(sin(440))
     .map(e => e/2)
     .map(e => e * (1 - ramp(e)))
     .mult(amp);
-
-  return breath;
 }
 
-const ramp = e => {
+function ramp(e) {
   if (e < embochure) {
-    return Math.pow(1 - m * (embochure - e), brightness);
+    slope = stiffness / (embochure + 1);
+    reedTable = 1 - slope * (embochure - e);
+    if (reedTable < 0) {reedTable = 0;}
+    if (reedTable > 1) {reedTable = 1;}
+    return Math.pow(reedTable, brightness);
   } else {
     return 1;
   }
-};
+}

@@ -12,7 +12,7 @@ function setup() {
 
 const squareB = f => t => {
   let mySum = 0;
-  let maxIndex = sampleRate / (2 * f);
+  let maxIndex = sampleRate / (4 * f);
 
   for (let k = 1; k < maxIndex; k += 2){
     mySum += sin(f * k)(t) / k;
