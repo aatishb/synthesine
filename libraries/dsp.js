@@ -379,7 +379,7 @@ var synth = (function () {
     var scaling = 2 * height / 256;
     var offset = 2 * height - height/2;
     var risingEdge = 0;
-    var edgeThreshold = 1;
+    var edgeThreshold = 5;
 
     analyser.getByteTimeDomainData(timeData);
     var xRange = timeData.length;
