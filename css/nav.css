@@ -184,7 +184,7 @@ ul.CTAs a {
         margin-left: -250px;
     }
     #sidebar.active {
-        margin-left: 0;
+        margin-left: 0px;
     }
     #content {
         width: 100%;

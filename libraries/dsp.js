@@ -376,9 +376,10 @@ var synth = (function () {
     var width = ctx.canvas.width;
     var height = ctx.canvas.height;
     var timeData = new Uint8Array(analyser.frequencyBinCount);
-    var scaling = height / 256;
+    var scaling = 2 * height / 256;
+    var offset = 2 * height - height/2;
     var risingEdge = 0;
-    var edgeThreshold = 5;
+    var edgeThreshold = 1;
 
     analyser.getByteTimeDomainData(timeData);
     var xRange = timeData.length;
@@ -398,7 +399,7 @@ var synth = (function () {
     if (risingEdge >= width) risingEdge = 0;
 
     for (var x = risingEdge; x < xRange && x - risingEdge < width; x++)
-      ctx.lineTo(x - risingEdge, height - timeData[x] * scaling);
+      ctx.lineTo(x - risingEdge, offset - timeData[x] * scaling);
 
     ctx.stroke();
   }
