@@ -56,12 +56,17 @@ Float32Array.prototype.modulate = function(carrier) {
   return this.map((e,i) => e * (1 + carrier[i]));
 };
 
-Float32Array.prototype.applyFilter = function(clause) {
-  let output = this.slice();
-  let filterOutput = i => clause(this, output, i);
+Float32Array.prototype.applyFilter = function(filter) {
+  // in this function, 'this' refers to the input wave
+  if (filter.equation) {filter = filter.equation;}
 
-  for (let i = 0; i < numSamples; i++) {
-    output[i] = filterOutput(i);
+  // make a copy of input to store output
+  let output = this.slice();
+
+  let i;
+
+  for (i = 0; i < numSamples; i++) {
+    output[i] = filter(this, output, i);
   }
 
   return output;
@@ -81,16 +86,82 @@ const comb = (g1, m1, g2, m2) => (input, output, i) => {
    return input[i] + g1 * (input[i - m1] || 0) - g2 * (output[i - m2] || 0);
 };
 
-const highPass = (a) => (input, output, i) => {
-  return (input[i] - a * output[i - 1])
-    || input[i];
-};
+function highPass(...args) {
 
-const lowPass = alpha => (input, output, i) => {
-  return ( alpha * input[i] +  (1 - alpha) * output[i - 1] )
-    || input[i];
-};
+  this.alpha;
 
+  this.filterOutput = 0;
+  this.y1 = 0;
+
+  this.set = function(...args){
+    this.alpha = args[0];
+  };
+  this.set(...args);
+
+  this.equation = (x, y, i) => {
+    this.filterOutput = x[i] - this.alpha * this.y1;
+    this.y1 = this.filterOutput;
+    return this.filterOutput;
+  };
+}
+
+function lowPass(...args) {
+
+  this.alpha;
+
+  this.filterOutput = 0;
+  this.y1 = 0;
+
+  this.set = function(...args){
+    this.alpha = args[0];
+  };
+  this.set(...args);
+
+  this.equation = (x, y, i) => {
+    this.filterOutput = this.alpha * x[i] +  (1 - this.alpha) * this.y1;
+    this.y1 = this.filterOutput;
+    return this.filterOutput;
+  };
+}
+
+function biquad(...args) {
+
+  this.filterOutput = 0;
+  this.y1 = 0;
+  this.y2 = 0;
+  this.x1 = 0;
+  this.x2 = 0;
+
+  this.set = function(...args){
+    this.b0 = args[0];
+    this.b1 = args[1];
+    this.b2 = args[2];
+    this.a0 = args[3];
+    this.a1 = args[4];
+    this.a2 = args[5];
+  };
+
+  if(args.length){
+    this.set(...args);
+  }
+
+  this.equation =  (x, y, i) => {
+    this.filterOutput = (this.b0/this.a0) * x[i] + (this.b1/this.a0) * this.x1
+    + (this.b2/this.a0) * this.x2
+    - (this.a1/this.a0) * this.y1 - (this.a2/this.a0) * this.y2;
+
+    this.y2 = this.y1;
+    this.y1 = this.filterOutput;
+
+    this.x2 = this.x1;
+    this.x1 = x[i];
+
+    return this.filterOutput;
+  };
+}
+
+
+/*
 const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
   (input, output, i) => {
     return gain
@@ -102,16 +173,48 @@ const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
       - resPole * resPole * output[i-2]
     || gain * input[i];
   };
+*/
 
-const resonator = (freq, q) => {
-  let gain = Math.sqrt((1 - q * q)/2);
-  return (input, output, i) => {
-    return gain * (input[i] - input[i-2])
-      + 2 * q * Math.cos(2 * Math.PI * (freq[i] || freq) / sampleRate) * output[i-1]
-      - q * q * output[i-2]
-      || gain * input[i];
+function resonator(...args) {
+
+  this.freq;
+  this.bandwidth;
+  this.q;
+  this.gain;
+  this.cosPoleAngle;
+
+  this.filterOutput = 0;
+  this.y1 = 0;
+  this.y2 = 0;
+  this.x1 = 0;
+  this.x2 = 0;
+
+  this.set = function(...args){
+    this.freq = args[0];
+    this.bandwidth = args[1];
+
+    this.q = Math.exp(- Math.PI * this.bandwidth / sampleRate);
+    this.gain = Math.sqrt((1 - this.q * this.q) / 2);
+    this.cosPoleAngle = ((1 + this.q * this.q) / 2 * this.q)
+      * Math.cos(2 * Math.PI * this.freq / sampleRate);
+
   };
-};
+  this.set(...args);
+
+  this.equation = (x, y, i) => {
+    this.filterOutput = this.gain * (x[i] - this.x2)
+    + 2 * this.q * this.cosPoleAngle * this.y1 - this.q * this.q * this.y2;
+
+    this.y2 = this.y1;
+    this.y1 = this.filterOutput;
+    this.x2 = this.x1;
+    this.x1 = x[i];
+
+    return this.filterOutput;
+  };
+}
+
+
 
 const adsr = (startTime, attackTime, delayTime, sustainTime, releaseTime) => t => {
   if (t < startTime) {

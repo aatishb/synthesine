@@ -1,0 +1,30 @@
+---
+layout: livecode
+title: Bandpass Filter
+blurb: |
+  A band pass filter using a biquad filter.
+
+---
+let w, alpha, q, width = 100;
+let freq = 440;
+let filter;
+
+function setup() {
+  slider('freq', 200, 10000, 1);
+  slider('width', 1, 500, 0.1);
+  filter = new biquad();
+}
+
+function loop() {
+
+  q = freq / width;
+  w = 2 * Math.PI * freq / sampleRate;
+  alpha = Math.sin(w)/(2 * q);
+
+  filter.set(alpha, 0, -alpha, 1 + alpha, -2 * Math.cos(w), 1 - alpha);
+
+  return time
+    .map(whiteNoise)
+    .applyFilter(filter)
+    .mult(0.1);
+}

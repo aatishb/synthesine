@@ -32,7 +32,7 @@ function loop() {
     myWave = myWave.add(time.map(t => sawB(f, t)));
   });
 
-  return myWave.mult(0.1);
+  return myWave.mult(0.3).div(maxIndex);
 }
 
 function sawB(f, t) {

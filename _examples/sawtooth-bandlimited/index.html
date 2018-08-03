@@ -12,9 +12,9 @@ function setup() {
 
 function sawB(f, t) {
   let mySum = 0;
-  let maxIndex = sampleRate / (4 * f);
+  let maxIndex = sampleRate / (2 * f);
 
-  for (let k = 1; k < maxIndex; k++){
+  for (let k = 1; k < maxIndex / 2; k++){
     mySum += sin(f * k)(t) / k;
   }
   mySum *= 1 / Math.PI;

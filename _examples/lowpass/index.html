@@ -3,31 +3,28 @@ layout: livecode
 title: Low Pass Filter
 category: filter
 blurb: |
-  Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character. A low pass filter leaves low frequencies unaffected, and filters out high frequencies. Low pass filters are used everywhere that you need to smooth out the jitters from noisy real-world data, like the gyroscope or acceleration sensors in smartphones. We can call it as `lowPass(a)` where the parameter `a` is called the cutoff and can range between 0 and 1. This cutoff determines the frequency spectrum of the low pass filter.
+  Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character. A low pass filter leaves low frequencies unaffected, and filters out high frequencies. Low pass filters are used everywhere that you need to smooth out the jitters from noisy real-world data, like the gyroscope or acceleration sensors in smartphones. It takes in a cutoff parameter, which controls how strongly it filters out high frequencies.
 
   What happens to the spectrum as you change the cutoff?
 
-  Mathematically, a low pass filter can be expressed as `output[i] = alpha * input[i] +  (1 - alpha) * output[i - 1]`. This type of low pass filter is sometimes also called a one-zero filter.
-
-  In this library, it's defined like this:
-  ```javascript
-  const lowPass = alpha => (input, output, i) => {
-    return ( alpha * input[i] +  (1 - alpha) * output[i - 1] )
-      || input[i];
-  };
-  ```
+  Mathematically, a low pass filter can be expressed as `y[i] = a * x[i] +  (1 - a) * y[i - 1]`, where a is a number between 0 and 1. This type of low pass filter is sometimes also called a one-zero filter.
 
 ---
 let amp = 0.05;
 let cutoff = 0.1;
+let filter;
 
 function setup() {
   slider('cutoff', 0.01, 1, 0.01);
+  filter = new lowPass(cutoff);
 }
 
 function loop() {
+
+  filter.set(cutoff);
+
   return time
     .map(whiteNoise)
-    .applyFilter(lowPass(cutoff))
+    .applyFilter(filter)
     .mult(amp);
 }

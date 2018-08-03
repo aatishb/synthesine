@@ -1,24 +1,28 @@
 ---
 layout: livecode
-title: Band Pass Filter
+title: Resonator
 category: filter
 blurb: |
-  A band pass filter, or a resonator, allows us a narrow range of frequencies to survive, and filters out the rest. Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character.
+  A resonator allows a very narrow range of frequencies to survive, and filters out the rest. Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. In this example it sounds a bit like blowing over the top of a glass bottle.
 
-  What happens as you vary the frequency of this band pass filter? What kind of natural sound does this resemble?
+  The resonator here is an implementation of the 'resonz' filter, which is an example of a constant gain band pass filter, as described [here](https://www.jstor.org/stable/pdf/4617882.pdf).
 
 ---
-let q = 0.99, freq = 2000;
+let bandwidth = 1, freq = 2000;
+let filter;
 
 function setup() {
-  slider('q', 0, 0.99, 0.01);
-  slider('freq', 20, 20000, 1);
+  slider('freq', 500, 20000, 1);
+  slider('bandwidth', 1, 500, 1);
+  filter = new resonator(freq, bandwidth);
 }
 
 function loop() {
 
+  filter.set(freq, bandwidth);
+
   return time
     .map(whiteNoise)
-    .mult(0.05)
-    .applyFilter(resonator(freq, q));
+    .applyFilter(filter)
+    .mult(0.2);
 }
