@@ -78,7 +78,7 @@ const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + (phase[i]
 const square = (f, phase = 0) => (t, i) => clip(1)(sin(f, phase)(t, i) * 1000);
 const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
 const triangle = f => t => 2 * Math.abs(saw(f)(t)) - 1;
-const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / tau) * sin(f, phase)(t);
+const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / Math.max(0.00001, tau)) * sin(f, phase)(t);
 
 const average = (e, i, x) => 0.5 * (x[i] + x[i - 1]) || x[i];
 

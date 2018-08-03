@@ -21,7 +21,7 @@ function loop() {
 
   for (var i = 0; i < numSines; i++) {
     sineWave = time
-      .map(sinDamped(freq[i], 0.4 + 0.025 * i))
+      .map(sinDamped(freq[i], 0.3 - 0.05 * i))
       .mult(amp[i]);
 
     myWave = myWave.add(sineWave);
