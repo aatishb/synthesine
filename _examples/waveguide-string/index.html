@@ -13,7 +13,7 @@ let average = new twoPointAverage();
 
 function setup() {
   let waveTableLength = Math.round(sampleRate / freq);
-  waveTable = new WaveTable(waveTableLength)
+  waveTable = new WaveTable(waveTableLength);
   waveTable.map(whiteNoise).map(e => 0.1 * e);
 }
 
