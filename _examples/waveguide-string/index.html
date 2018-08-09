@@ -1,0 +1,26 @@
+---
+layout: livecode
+title: Guitar String (Waveguide)
+category: waveguide
+blurb: |
+  The classic [Karplus-Strong Algorithm](http://sites.music.columbia.edu/cmc/MusicAndComputers/chapter4/04_09.php) for simulating the sound of a guitar string. Start with a random wave filled with white noise. Now loop a delay followed by a smoothing average.
+
+  Try changing the frequency to something else.
+---
+let output, waveTable;
+let freq = 352;
+let average = new twoPointAverage();
+
+function setup() {
+  let waveTableLength = Math.round(sampleRate / freq);
+  waveTable = new WaveTable(waveTableLength)
+  waveTable.map(whiteNoise).map(e => 0.1 * e);
+}
+
+function loop() {
+
+  output = waveTable.get().applyFilter(average);
+  waveTable.update(output);
+
+  return output;
+}

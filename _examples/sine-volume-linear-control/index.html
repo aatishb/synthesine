@@ -1,0 +1,19 @@
+---
+layout: livecode
+title: Sine Wave
+blurb: |
+  A sine wave whose amplitude and frequency are directly controlled by a slider.
+---
+let freq = 600;
+let amp = 0.1;
+
+function setup() {
+  slider('freq', 20, 1000, 1);
+  slider('amp', 0, 0.5, 0.025);
+}
+
+function loop() {
+  return time
+    .map(sin(freq))
+    .mult(amp);
+}

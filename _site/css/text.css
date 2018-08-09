@@ -1,0 +1,14 @@
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#content h1, h2, h3 {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#content p {
+  font-size: 1.25em;
+  font-weight: 500;
+}

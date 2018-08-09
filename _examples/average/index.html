@@ -9,21 +9,9 @@ blurb: |
 
   So a two-point average (also sometimes called a 'one-zero filter') is the simplest possible 'low pass filter'. However, it doesn't do as good a job of filtering out high frequencies as a standard [low pass filter](https://aatishb.com/synthfromscratch/examples/lowpass/index.html).
 
-  You could implement this from scratch like this:
-
-  ```javascript
-  function loop() {
-    return time
-      .map(whiteNoise)
-      .map((e, i, x) => 0.5 * (x[i] + x[i - 1]) || x[i];)
-      .mult(0.05);
-  }
-  ```
-
-  What happens if you flip the sign, so the + becomes -?
-
 ---
 let amp = 0.05;
+let average = new twoPointAverage();
 
 function setup() {
 
@@ -32,6 +20,6 @@ function setup() {
 function loop() {
   return time
     .map(whiteNoise)
-    .map(average)
+    .applyFilter(average)
     .mult(amp);
 }
