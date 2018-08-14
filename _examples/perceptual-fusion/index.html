@@ -1,0 +1,32 @@
+---
+layout: livecode
+title: Perceptual Fusion
+category: modulation
+blurb: |
+  Here a set of harmonic overtones sound like a unified voice-like pitch with vibrato when all their frequencies are modulated in tandem.
+
+---
+let myWave, zero;
+let carrier, vibratoStrength = 0, vibratoFrequency = 5, baseFrequency = 400;
+let numHarmonics = 1;
+
+function setup() {
+  slider('numHarmonics', 1, 5, 1);
+  slider('vibratoStrength', 0, 5, 0.01);
+  slider('vibratoFrequency', 0.1, 20, 0.1);
+  slider('baseFrequency', 50, 1000, 1);
+  zero = new Float32Array(128);
+}
+
+function loop() {
+
+  carrier = time.map(sin(vibratoFrequency));
+
+  myWave = zero;
+  let i;
+  for (i=1; i <= numHarmonics; i++) {
+    myWave = myWave.add(time.map(sin(baseFrequency * i, carrier.mult(vibratoStrength * i))).mult(0.1/i));
+  }
+
+  return myWave;
+}

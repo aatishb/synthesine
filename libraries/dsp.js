@@ -111,7 +111,7 @@ function WaveTable(waveTableSize) {
         this.data[(this.pointer + i) % waveTableSize] = arr[i];
       }
     }
-    this.pointer = (this.pointer + numSamples) % waveTableSize;
+    //this.pointer = (this.pointer + numSamples) % waveTableSize;
   };
 
 }
@@ -152,6 +152,30 @@ function highPass(...args) {
     return this.filterOutput;
   };
 }
+
+function dcBlocker(...args) {
+
+  this.alpha;
+
+  this.filterOutput = 0;
+  this.y1 = 0;
+  this.x1 = 0;
+
+  this.set = function(...args){
+    this.alpha = args[0];
+  };
+  this.set(...args);
+
+  this.equation = (x, y, i) => {
+    this.filterOutput = x[i] - this.x1 +  (1 - this.alpha) * this.y1;
+
+    this.x1 = x[i];
+    this.y1 = this.filterOutput;
+
+    return this.filterOutput;
+  };
+}
+
 
 function lowPass(...args) {
 
