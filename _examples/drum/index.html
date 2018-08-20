@@ -19,5 +19,5 @@ function loop() {
   noise = time.map(whiteNoise).mult(0.1);
   envelope = time.map(t => Math.exp(- t / decayTime));
 
-  return noise.convolve(envelope);
+  return noise.mult(envelope);
 }

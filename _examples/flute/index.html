@@ -20,14 +20,14 @@ function setup() {
   let waveTableLength = Math.round(sampleRate / freq - 0.5);
   flute = new WaveTable(waveTableLength);
   emb = new WaveTable(waveTableLength);
-  output = new Float32Array(128);
+  output = new Wave();
 }
 
 function loop() {
 
   noise = time.map(whiteNoise).mult(breath);
   // env = time.map(adsr(0, 0.5, 0.5, 0.5, 0.5));
-  // noise = noise.convolve(env);
+  // noise = noise.mult(env);
 
   emb.update(flute.get().mult(r1).add(noise));
   emb.delay(128);

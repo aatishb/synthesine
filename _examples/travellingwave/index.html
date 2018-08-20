@@ -7,7 +7,7 @@ let travellingWave;
 function setup() {
   let amp = 0.05;
 
-  travellingWave = new Float32Array(128)
+  travellingWave = new Wave()
     .map(whiteNoise)
     .mult(amp);
 }

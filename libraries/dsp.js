@@ -1,36 +1,23 @@
 const libraryCode = `
 
-const add = v => (e, i) => e + (v[i] || 0);
+const indexOf = (x, i) => {
+  if (!isNaN(x[i])) {
+    return x[i];
+  } else if (!isNaN(x) && isNaN(x.length)) {
+    return x;
+  } else {
+    return 0;
+  }
+}
 
-Float32Array.prototype.add = function(v) {
-  return this.map(add(v));
-};
-
-const sub = v => (e, i) => e - (v[i] || 0);
-
-Float32Array.prototype.sub = function(v) {
-  return this.map(sub(v));
-};
-
-const mult = s => e => e * s;
-
-Float32Array.prototype.mult = function(s) {
-  return this.map(mult(s));
-};
-
-const div = s => e => e / s;
-
-Float32Array.prototype.div = function(s) {
-  return this.map(div(s));
-};
+const add = v => (e, i) => e + indexOf(v,i);
+const sub = v => (e, i) => e - indexOf(v,i);
+const mult = v => (e, i) => e * indexOf(v,i);
+const div = v => (e, i) => e / indexOf(v,i);
 
 const delay = m => (e, i, x) => x[(i + m) % numSamples];
 
-Float32Array.prototype.delay = function(m) {
-  return this.map(delay(m));
-};
-
-const clip = (g = 0.3) => e => {
+const clip = (g = 0.5) => e => {
   let max = Math.abs(g);
   let min = -max;
   if (e > max) {
@@ -44,47 +31,49 @@ const clip = (g = 0.3) => e => {
   }
 };
 
-Float32Array.prototype.clip = function(g) {
-  return this.map(clip(g));
-};
+class Wave extends Float32Array {
 
-Float32Array.prototype.convolve = function(carrier) {
-  return this.map((e,i) => e * carrier[i]);
-};
-
-Float32Array.prototype.modulate = function(carrier) {
-  return this.map((e,i) => e * (1 + carrier[i]));
-};
-
-Float32Array.prototype.applyFilter = function(filter) {
-  // in this function, 'this' refers to the input wave
-  if (filter.equation) {filter = filter.equation;}
-
-  // make a copy of input to store output
-  let output = this.slice();
-
-  let i;
-
-  for (i = 0; i < numSamples; i++) {
-    output[i] = filter(this, output, i);
+  constructor(n = numSamples) {
+      super(n);
   }
 
-  return output;
-};
+  add(v) { return this.map(add(v)); }
 
-const indexOf = (x, i) => {
-  if (!isNan(x[i])) {
-    return x[i];
-  } else if (!isNan(x)) {
-    return x;
-  } else {
-    return 0;
+  sub(v) { return this.map(sub(v)); }
+
+  mult(s) { return this.map(mult(s)); }
+
+  div(s) { return this.map(div(s)); }
+
+  delay(m) { return this.map(delay(m)); }
+
+  clip(g) { return this.map(clip(g)); }
+
+  modulate(carrier) {
+    return this.map((e,i) => e * (1 + carrier[i]));
   }
+
+  applyFilter(filter) {
+    // in this function, 'this' refers to the input wave
+    if (filter.equation) {filter = filter.equation;}
+
+    // make a copy of input to store output
+    let output = this.slice();
+
+    let i;
+
+    for (i = 0; i < numSamples; i++) {
+      output[i] = filter(this, output, i);
+    }
+
+    return output;
+  };
+
 }
 
 const whiteNoise = () => 2 * Math.random() - 1;
 const phasor = f => t => (f * t) % 1;
-const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + (phase[i] || 0));
+const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + indexOf(phase, i));
 const square = (f, phase = 0) => (t, i) => clip(1)(sin(f, phase)(t, i) * 1000);
 const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
 const triangle = f => t => 2 * Math.abs(saw(f)(t)) - 1;
@@ -92,8 +81,8 @@ const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / Math.max(0.00001, t
 
 function WaveTable(waveTableSize) {
 
-  this.data = new Float32Array(waveTableSize);
-  this.buffer = new Float32Array(numSamples);
+  this.data = new Wave(waveTableSize);
+  this.buffer = new Wave(numSamples);
   this.pointer = 0;
 
   this.map = function(f) {
@@ -329,7 +318,7 @@ let time, numSamples;
 
 const updateTime = () => {
   if(!time){
-    time = new Float32Array(numSamples).fill(0);
+    time = new Wave(numSamples).fill(0);
     time = time.map((e,i) => e + i / sampleRate);
   }
   else{

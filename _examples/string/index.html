@@ -10,7 +10,7 @@ let noiseWave;
 let average = new twoPointAverage();
 
 function setup() {
-  noiseWave = new Float32Array(128)
+  noiseWave = new Wave()
     .map(whiteNoise)
     .mult(amp);
 }

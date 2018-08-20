@@ -15,7 +15,7 @@ function setup() {
   slider('vibratoStrength', 0, 5, 0.01);
   slider('vibratoFrequency', 0.1, 20, 0.1);
   slider('baseFrequency', 50, 1000, 1);
-  zero = new Float32Array(128);
+  zero = new Wave();
 }
 
 function loop() {

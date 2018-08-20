@@ -12,8 +12,8 @@ let zeroWave, myWave;
 let freq;
 
 function setup() {
-  zeroWave = new Float32Array(128);
-  freq = new Float32Array(maxIndex);
+  zeroWave = new Wave();
+  freq = new Wave(maxIndex);
 
   let baseFreq = 150; // play with changing this
   freq = freq.map((e,i) => baseFreq + 0.1 * i);

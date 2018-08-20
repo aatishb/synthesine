@@ -16,5 +16,5 @@ function loop() {
   sine = time.map(sin(300)).mult(0.5);
   envelope = time.map(adsr(0, 0.001, 0.05, 0.05, 0.5));
 
-  return sine.convolve(envelope);
+  return sine.mult(envelope);
 }

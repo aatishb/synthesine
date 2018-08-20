@@ -13,7 +13,7 @@ let zeroWave, filteredWave, noiseWave, envelope;
 let numSines = freq.length;
 
 function setup() {
-  zeroWave = new Float32Array(128);
+  zeroWave = new Wave();
   for (let i = 0; i < numSines; i++){
     filters.push(new resonator(freq[i], 1))
   }
@@ -32,5 +32,5 @@ function loop() {
       );
   }
 
-  return filteredWave.convolve(envelope).div(numSines);
+  return filteredWave.mult(envelope).div(numSines);
 }
