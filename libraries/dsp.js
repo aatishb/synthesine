@@ -72,6 +72,16 @@ Float32Array.prototype.applyFilter = function(filter) {
   return output;
 };
 
+const indexOf = (x, i) => {
+  if (!isNan(x[i])) {
+    return x[i];
+  } else if (!isNan(x)) {
+    return x;
+  } else {
+    return 0;
+  }
+}
+
 const whiteNoise = () => 2 * Math.random() - 1;
 const phasor = f => t => (f * t) % 1;
 const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + (phase[i] || 0));

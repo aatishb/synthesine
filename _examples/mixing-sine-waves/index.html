@@ -1,0 +1,38 @@
+---
+layout: livecode
+title: Mixing Sine Waves
+category: oscillator
+blurb: |
+  Mix sine waves together to create other periodic waves.
+
+---
+let myWave, zero;
+let harmonics;
+let baseFrequency = 300;
+let firstHarmonic = 1, secondHarmonic = 0,
+  thirdHarmonic = 0, fourthHarmonic = 0, fifthHarmonic = 0;
+
+function setup() {
+  slider('firstHarmonic', 0, 1, 0.01);
+  slider('secondHarmonic', 0, 1, 0.01);
+  slider('thirdHarmonic', 0, 1, 0.01);
+  slider('fourthHarmonic', 0, 1, 0.01);
+  slider('fifthHarmonic', 0, 1, 0.01);
+  slider('baseFrequency', 20, 1000, 1);
+  zero = new Float32Array(128);
+}
+
+function loop() {
+
+  harmonics = [firstHarmonic, secondHarmonic, thirdHarmonic, fourthHarmonic, fifthHarmonic];
+
+  myWave = zero;
+  let i;
+  for (i = 1; i <= harmonics.length; i++) {
+    myWave = myWave.
+      add(time.map(sin(baseFrequency * i))
+      .mult(harmonics[i - 1]));
+  }
+
+  return myWave.mult(0.1);
+}

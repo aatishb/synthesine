@@ -5,9 +5,9 @@ category: filter
 blurb: |
   This is a two-point average. It replaces every sample of the wave with the average of the sample and the one before it. Mathematically, this says `output[t] = 0.5 * (input[t] + input[t-1])`.
 
-  Averaging smooths out the wave a little bit, which eliminates the highest frequencies. That's why the audio spectrum isn't flat like for [white noise](https://aatishb.com/synthfromscratch/examples/whitenoise/index.html), but instead goes down to zero at the high end. This is an example of a filter. Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others.
+  Averaging smooths out the wave a little bit, which eliminates the highest frequencies. That's why the audio spectrum isn't flat like for [white noise](https://aatishb.com/sineweave/examples/whitenoise/index.html), but instead goes down to zero at the high end. This is an example of a filter. Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others.
 
-  So a two-point average (also sometimes called a 'one-zero filter') is the simplest possible 'low pass filter'. However, it doesn't do as good a job of filtering out high frequencies as a standard [low pass filter](https://aatishb.com/synthfromscratch/examples/lowpass/index.html).
+  So a two-point average (also sometimes called a 'one-zero filter') is the simplest possible 'low pass filter'. However, it doesn't do as good a job of filtering out high frequencies as a standard [low pass filter](https://aatishb.com/sineweave/examples/lowpass/index.html).
 
 ---
 let amp = 0.05;
