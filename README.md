@@ -6,7 +6,7 @@ My goal is to better understand how to synthesize sounds from the ground up, and
 
 This project relies on a new browser tool for sound synthesis, awkwardly named [Audio Worklets](https://webaudio.github.io/web-audio-api/#AudioWorklet) (currently only supported in Google Chrome). This is a fairly new way to run audio processing code in your browser in real-time, by running it in a separate audio thread where it isn't slowed down by web browsing.
 
-[/libraries/ds.js](https://github.com/aatishb/sineweave/blob/master/libraries/dsp.js) is a growing library of functions for sound synthesis that I'm adding to as I go along. It also hides all the messy details of how to launch an audio worklet. The idea is to gradually develop a tool that makes it easier to tinker with sound synthesis in your browser.
+[/libraries/ds.js](https://github.com/aatishb/synthesine/blob/master/libraries/dsp.js) is a growing library of functions for sound synthesis that I'm adding to as I go along. It also hides all the messy details of how to launch an audio worklet. The idea is to gradually develop a tool that makes it easier to tinker with sound synthesis in your browser.
 
 To get started, pull up an example from the menu.
 

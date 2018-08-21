@@ -1,4 +1,4 @@
-name: Sine Weave
+name: Synthesine
 
 collections:
   examples:
@@ -6,4 +6,4 @@ collections:
 
 category-list: [oscillator, envelope, modulation, filter, synthesis, waveguide, diffeq]
 
-baseurl: /sineweave
+baseurl: /synthesine
