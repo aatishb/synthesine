@@ -14,7 +14,7 @@ let filter;
 function setup() {
   slider('freq', 500, 20000, 1);
   slider('bandwidth', 1, 500, 1);
-  filter = new resonator(freq, bandwidth);
+  filter = resonator(freq, bandwidth);
 }
 
 function loop() {
@@ -23,6 +23,6 @@ function loop() {
 
   return time
     .map(whiteNoise)
-    .applyFilter(filter)
+    .map(filter.apply)
     .mult(0.2);
 }

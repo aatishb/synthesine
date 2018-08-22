@@ -15,7 +15,7 @@ const sub = v => (e, i) => e - indexOf(v,i);
 const mult = v => (e, i) => e * indexOf(v,i);
 const div = v => (e, i) => e / indexOf(v,i);
 
-const delay = m => (e, i, x) => x[(i + m) % numSamples];
+// const delay = m => (e, i, x) => x[(i + m) % numSamples];
 
 const clip = (g = 0.5) => e => {
   let max = Math.abs(g);
@@ -53,22 +53,6 @@ class Wave extends Float32Array {
     return this.map((e,i) => e * (1 + carrier[i]));
   }
 
-  applyFilter(filter) {
-    // in this function, 'this' refers to the input wave
-    if (filter.equation) {filter = filter.equation;}
-
-    // make a copy of input to store output
-    let output = this.slice();
-
-    let i;
-
-    for (i = 0; i < numSamples; i++) {
-      output[i] = filter(this, output, i);
-    }
-
-    return output;
-  };
-
 }
 
 const whiteNoise = () => 2 * Math.random() - 1;
@@ -79,122 +63,142 @@ const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
 const triangle = f => t => 2 * Math.abs(saw(f)(t)) - 1;
 const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / Math.max(0.00001, tau)) * sin(f, phase)(t);
 
-function WaveTable(waveTableSize) {
+const delay = (m) => {
 
-  this.data = new Wave(waveTableSize);
-  this.buffer = new Wave(numSamples);
-  this.pointer = 0;
+  let y = 0;
+  let x_arr = Array(m).fill(0);
 
-  this.map = function(f) {
-    this.data = this.data.map(f);
-    return this;
-  }
-
-  this.delay = function(samples) {
-    this.pointer = (this.pointer + samples) % waveTableSize;
-    return this;
-  }
-
-  this.get = function() {
-    let i;
-    for(i = 0; i < numSamples; i++) {
-      this.buffer[i] = this.data[(this.pointer + i) % waveTableSize];
-    }
-    return this.buffer;
+  const equation = (e, i, x) => {
+   y = x_arr.shift();
+   x_arr.push(x[i]);
+   return y;
   };
 
-  this.update = function(arr) {
-    if(arr) {
-      let i;
-      for(i = 0; i < numSamples; i++){
-        this.data[(this.pointer + i) % waveTableSize] = arr[i];
-      }
-    }
-    //this.pointer = (this.pointer + numSamples) % waveTableSize;
+  function set(newM) {
+    x_arr = Array(newM).fill(0);
   };
 
-}
-
-// const average = (e, i, x) => 0.5 * (x[i] + x[i - 1]) || x[i];
-
-function twoPointAverage() {
-
-  this.filterOutput = 0;
-  this.x1 = 0;
-
-  this.equation = (x, y, i) => {
-    this.filterOutput = 0.5 * (x[i] + this.x1);
-    this.x1 = x[i];
-    return this.filterOutput;
+  return {
+    apply: equation,
+    set: set
   };
-}
 
-const comb = (g1, m1, g2, m2) => (input, output, i) => {
-   return input[i] + g1 * (input[i - m1] || 0) - g2 * (output[i - m2] || 0);
 };
 
-function highPass(...args) {
+const comb = (g1, m1, g2, m2) => {
 
-  this.alpha;
+  let y = 0;
+  let x_arr = Array(m1).fill(0);
+  let y_arr = Array(m2).fill(0);
 
-  this.filterOutput = 0;
-  this.y1 = 0;
-
-  this.set = function(...args){
-    this.alpha = args[0];
+  const equation = (e, i, x) => {
+   y = x[i] + g1 * (x_arr.shift() || 0) - g2 * (y_arr.shift() || 0);
+   x_arr.push(x[i]);
+   y_arr.push(y);
+   return y;
   };
-  this.set(...args);
 
-  this.equation = (x, y, i) => {
-    this.filterOutput = x[i] - this.alpha * this.y1;
-    this.y1 = this.filterOutput;
-    return this.filterOutput;
+  function set(newG1, newM1, newG2, newM2) {
+    g1 = newG1;
+    g2 = newG2;
+    x_arr = Array(newM1).fill(0);
+    y_arr = Array(newM2).fill(0);
   };
+
+
+  return {
+    apply: equation,
+    set: set
+  };
+
+};
+
+const lowPass = alpha =>
+{
+  let y = 0;
+  let y1 = 0;
+
+  const equation = (e, i, x) => {
+    y = alpha * x[i] +  (1 - alpha) * y1;
+    y1 = y;
+    return y;
+  };
+
+  function set(newAlpha) {
+    alpha = newAlpha;
+  };
+
+  return {
+    apply: equation,
+    set: set
+  };
+
+};
+
+const highPass = alpha =>
+{
+  let y = 0;
+  let y1 = 0;
+
+  const equation = (e, i, x) => {
+    y = x[i] - alpha * y1;
+    y1 = y;
+    return y;
+  };
+
+  function set(newAlpha) {
+    alpha = newAlpha;
+  };
+
+  return {
+    apply: equation,
+    set: set
+  };
+
+};
+
+const twoPointAverage = () =>
+{
+  let y = 0;
+  let x1 = 0;
+
+  const equation = (e, i, x) => {
+    y = 0.5 * (x[i] + x1);
+    x1 = x[i];
+    return y;
+  };
+
+  return {
+    apply: equation
+  };
+
 }
 
-function dcBlocker(...args) {
+const dcBlocker = alpha =>
+{
+  let y = 0;
+  let y1 = 0;
+  let x1 = 0;
 
-  this.alpha;
-
-  this.filterOutput = 0;
-  this.y1 = 0;
-  this.x1 = 0;
-
-  this.set = function(...args){
-    this.alpha = args[0];
+  const equation = (e, i, x) => {
+    y = x[i] - x1 +  (1 - alpha) * y1;
+    x1 = x[i];
+    y1 = y;
+    return y;
   };
-  this.set(...args);
 
-  this.equation = (x, y, i) => {
-    this.filterOutput = x[i] - this.x1 +  (1 - this.alpha) * this.y1;
-
-    this.x1 = x[i];
-    this.y1 = this.filterOutput;
-
-    return this.filterOutput;
+  function set(newAlpha) {
+    alpha = newAlpha;
   };
+
+  return {
+    apply: equation,
+    set: set
+  };
+
 }
 
-
-function lowPass(...args) {
-
-  this.alpha;
-
-  this.filterOutput = 0;
-  this.y1 = 0;
-
-  this.set = function(...args){
-    this.alpha = args[0];
-  };
-  this.set(...args);
-
-  this.equation = (x, y, i) => {
-    this.filterOutput = this.alpha * x[i] +  (1 - this.alpha) * this.y1;
-    this.y1 = this.filterOutput;
-    return this.filterOutput;
-  };
-}
-
+/*
 function biquad(...args) {
 
   this.filterOutput = 0;
@@ -231,61 +235,57 @@ function biquad(...args) {
   };
 }
 
-
-/*
 const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
-  (input, output, i) => {
-    return gain
-    * (input[i]
-        - 2 * resZero * Math.cos(2 * Math.PI * freqZero / sampleRate) * input[i-1]
-        + resZero * resZero * input[i-2]
-    )
-      + 2 * resPole * Math.cos(2 * Math.PI * freqPole / sampleRate) * output[i-1]
-      - resPole * resPole * output[i-2]
-    || gain * input[i];
+  {
+    return (input, output, i) => {
+      return gain
+      * (input[i]
+          - 2 * resZero * Math.cos(2 * Math.PI * freqZero / sampleRate) * input[i-1]
+          + resZero * resZero * input[i-2]
+      )
+        + 2 * resPole * Math.cos(2 * Math.PI * freqPole / sampleRate) * output[i-1]
+        - resPole * resPole * output[i-2]
+      || gain * input[i];
+    };
   };
+
 */
 
-function resonator(...args) {
+const resonator = (freq, bandwidth) => {
 
-  this.freq;
-  this.bandwidth;
-  this.q;
-  this.gain;
-  this.cosPoleAngle;
+  let q = Math.exp(- Math.PI * bandwidth / sampleRate);
+  let gain = Math.sqrt((1 - q * q) / 2);
+  let cosPoleAngle = ((1 + q * q) / 2 * q) * Math.cos(2 * Math.PI * freq / sampleRate);
 
-  this.filterOutput = 0;
-  this.y1 = 0;
-  this.y2 = 0;
-  this.x1 = 0;
-  this.x2 = 0;
+  let y = 0;
+  let y1 = 0;
+  let y2 = 0;
+  let x1 = 0;
+  let x2 = 0;
 
-  this.set = function(...args){
-    this.freq = args[0];
-    this.bandwidth = args[1];
-
-    this.q = Math.exp(- Math.PI * this.bandwidth / sampleRate);
-    this.gain = Math.sqrt((1 - this.q * this.q) / 2);
-    this.cosPoleAngle = ((1 + this.q * this.q) / 2 * this.q)
-      * Math.cos(2 * Math.PI * this.freq / sampleRate);
-
+  const equation = (e, i, x) => {
+    y = gain * (x[i] - x2) + 2 * q * cosPoleAngle * y1 - q * q * y2;
+    y2 = y1;
+    y1 = y;
+    x2 = x1;
+    x1 = x[i];
+    return y;
   };
-  this.set(...args);
 
-  this.equation = (x, y, i) => {
-    this.filterOutput = this.gain * (x[i] - this.x2)
-    + 2 * this.q * this.cosPoleAngle * this.y1 - this.q * this.q * this.y2;
-
-    this.y2 = this.y1;
-    this.y1 = this.filterOutput;
-    this.x2 = this.x1;
-    this.x1 = x[i];
-
-    return this.filterOutput;
+  function set(newFreq, newBandwidth) {
+    freq = newFreq;
+    bandwidth = newBandwidth;
+    q = Math.exp(- Math.PI * bandwidth / sampleRate);
+    gain = Math.sqrt((1 - q * q) / 2);
+    cosPoleAngle = ((1 + q * q) / 2 * q) * Math.cos(2 * Math.PI * freq / sampleRate);
   };
+
+  return {
+    apply: equation,
+    set: set
+  };
+
 }
-
-
 
 const adsr = (startTime, attackTime, delayTime, sustainTime, releaseTime) => t => {
   if (t < startTime) {
@@ -313,6 +313,42 @@ const adsr = (startTime, attackTime, delayTime, sustainTime, releaseTime) => t =
     return 0;
   }
 };
+
+function WaveTable(waveTableSize) {
+
+  this.data = new Wave(waveTableSize);
+  this.buffer = new Wave(numSamples);
+  this.pointer = 0;
+
+  this.map = function(f) {
+    this.data = this.data.map(f);
+    return this;
+  }
+
+  this.delay = function(samples) {
+    this.pointer = (this.pointer + samples) % waveTableSize;
+    return this;
+  }
+
+  this.get = function() {
+    let i;
+    for(i = 0; i < numSamples; i++) {
+      this.buffer[i] = this.data[(this.pointer + i) % waveTableSize];
+    }
+    return this.buffer;
+  };
+
+  this.update = function(arr) {
+    if(arr) {
+      let i;
+      for(i = 0; i < numSamples; i++){
+        this.data[(this.pointer + i) % waveTableSize] = arr[i];
+      }
+    }
+    //this.pointer = (this.pointer + numSamples) % waveTableSize;
+  };
+
+}
 
 let time, numSamples;
 

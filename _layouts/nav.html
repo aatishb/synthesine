@@ -25,24 +25,24 @@
     <div class="wrapper">
         <!-- Sidebar  -->
         <nav id="sidebar">
-            <div class="sidebar-header">
-                <h3><a href="{{ "/" | relative_url }}">Synthesine</a></h3>
-            </div>
+        <div class="sidebar-header">
+            <h3><a href="{{ "/" | relative_url }}">Synthesine</a></h3>
+        </div>
 
-            <ul class="list-unstyled components">
-                <li class="active">
-                  {% for cat in site.category-list %}
-                    <a href="#{{cat}}Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">{{ cat | capitalize}}</a>
-                        <ul class="collapse list-unstyled" id="{{cat}}Submenu">
-                          {% for ex  in site.examples %}
-                              {% if ex.category == cat %}
-                              <li><a href="{{ ex.url | relative_url }}">{{ ex.title }}</a></li>
-                              {% endif %}
-                          {% endfor %}
-                      </ul>
-                  {% endfor %}
-                </li>
-              </ul>
+        <ul class="list-unstyled components">
+            <li class="active">
+            {%- for cat in site.category-list -%}
+                <a href="#{{cat}}Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">{{ cat | capitalize}}</a>
+                <ul class="collapse list-unstyled" id="{{cat}}Submenu">
+                {% for ex in site.examples %}
+                {%- if ex.category == cat -%}
+                <li><a href="{{ ex.url | relative_url }}">{{ ex.title }}</a></li>
+                {% endif %}
+                {%- endfor -%}
+                </ul>
+            {% endfor %}
+            </li>
+        </ul>
         </nav>
 
         <!-- Page Content  -->

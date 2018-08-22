@@ -7,8 +7,8 @@ blurb:
 let output, waveTable, noise;
 let freq = 500;
 let feedback = 1.67, breath = 0.67, cutoff = 0.3;
-let lpfilter = new lowPass(cutoff);
-let dcfilter = new dcBlocker(0.005);
+let lpfilter = lowPass(cutoff);
+let dcfilter = dcBlocker(0.005);
 
 function setup() {
   slider('feedback', 0, 2, 0.01);
@@ -28,8 +28,8 @@ function loop() {
 
   output = waveTable.get()
     .map(e => Math.tanh(e))
-    .applyFilter(dcfilter)
-    .applyFilter(lpfilter);
+    .map(dcfilter.apply)
+    .map(lpfilter.apply);
   waveTable.update(output);
 
   return output.mult(0.1);

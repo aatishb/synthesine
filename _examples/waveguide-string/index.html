@@ -9,7 +9,7 @@ blurb: |
 ---
 let output, waveTable;
 let freq = 500;
-let average = new twoPointAverage();
+let average = twoPointAverage();
 
 function setup() {
   let waveTableLength = Math.round(sampleRate / freq - 0.5);
@@ -20,7 +20,7 @@ function setup() {
 function loop() {
 
   waveTable.delay(128);
-  output = waveTable.get().applyFilter(average);
+  output = waveTable.get().map(average.apply);
   waveTable.update(output);
 
   return output;

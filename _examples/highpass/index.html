@@ -14,13 +14,13 @@ let amp = 0.05;
 let filter;
 
 function setup() {
-  filter = new highPass(0.9);
+  filter = highPass(0.9);
 }
 
 function loop() {
 
   return time
     .map(whiteNoise)
-    .applyFilter(filter)
+    .map(filter.apply)
     .mult(amp);
 }

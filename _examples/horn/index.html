@@ -7,7 +7,7 @@ blurb: |
 ---
 let output, waveTable;
 let freq = 500;
-let average = new twoPointAverage();
+let average = twoPointAverage();
 let noise;
 
 function setup() {
@@ -21,7 +21,7 @@ function loop() {
   waveTable.update(waveTable.get().add(noise));
 
   waveTable.delay(128);
-  output = waveTable.get().applyFilter(average);
+  output = waveTable.get().map(average.apply);
   waveTable.update(output);
 
   return output.mult(0.1);

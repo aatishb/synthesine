@@ -19,15 +19,16 @@ blurb: |
 
 ---
 let amp = 0.05;
-let combDelay = 20;
+let filter;
 
 function setup() {
-  slider('combDelay', 0, 40, 1);
+  filter = comb(0, 0, -0.9, 20);
 }
 
 function loop() {
+
   return time
     .map(whiteNoise)
-    .applyFilter(comb(0, 0, -0.9, combDelay))
+    .map(filter.apply)
     .mult(amp);
 }

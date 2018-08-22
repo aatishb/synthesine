@@ -12,13 +12,13 @@ let amp = 0.05;
 let filter;
 
 function setup() {
-  filter = new dcBlocker(0.05);
+  filter = dcBlocker(0.05);
 }
 
 function loop() {
 
   return time
     .map(whiteNoise)
-    .applyFilter(filter)
+    .map(filter.apply)
     .mult(amp);
 }

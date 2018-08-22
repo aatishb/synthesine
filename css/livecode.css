@@ -41,6 +41,13 @@ footer > p {
   float: left;
 }
 
+.logo {
+  height: 40px;
+  margin: 5px;
+  display: block;
+  float: right;
+}
+
 /* ---------------------------------------------------
     COLORS & BORDERS
 ----------------------------------------------------- */

@@ -16,7 +16,7 @@ let filter;
 
 function setup() {
   slider('cutoff', 0.01, 1, 0.01);
-  filter = new lowPass(cutoff);
+  filter = lowPass(cutoff);
 }
 
 function loop() {
@@ -25,6 +25,6 @@ function loop() {
 
   return time
     .map(whiteNoise)
-    .applyFilter(filter)
+    .map(filter.apply)
     .mult(amp);
 }

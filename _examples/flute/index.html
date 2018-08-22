@@ -8,8 +8,8 @@ blurb: |
 let output, flute, emb, noise, env;
 let freq = 700;
 let r1 = 0.66, r2 = 0.66, cutoff = 0.5, breath = 0.5;
-let filter = new lowPass(cutoff);
-let dcfilter = new dcBlocker(0.005);
+let lpfilter = lowPass(cutoff);
+let dcfilter = dcBlocker(0.005);
 
 
 function setup() {
@@ -33,13 +33,13 @@ function loop() {
   emb.delay(128);
   emb.update(emb.get()
   .map(e => Math.tanh(e))
-  .applyFilter(dcfilter)
+  .map(dcfilter.apply)
   );
 
   flute.update(flute.get().mult(r2).add(emb.get()));
 
-  filter.set(cutoff);
-  output = flute.get().applyFilter(filter);
+  lpfilter.set(cutoff);
+  output = flute.get().map(lpfilter.apply);
   flute.update(output);
   flute.delay(128);
 

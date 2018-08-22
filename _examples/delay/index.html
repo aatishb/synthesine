@@ -22,16 +22,16 @@ blurb: |
 ---
 let amp = 0.05;
 let myWave;
+let filter;
 
 function setup() {
-
+  filter = delay(10);
 }
 
 function loop() {
-  myWave = time
-    .map(whiteNoise);
+  myWave = time.map(whiteNoise);
 
-  myWave = myWave.delay(10).sub(myWave);
+  myWave = myWave.map(filter.apply).sub(myWave);
 
   return myWave.mult(amp);
 }

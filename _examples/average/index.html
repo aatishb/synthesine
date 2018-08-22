@@ -11,15 +11,15 @@ blurb: |
 
 ---
 let amp = 0.05;
-let average = new twoPointAverage();
+let average;
 
 function setup() {
-
+  average = twoPointAverage();
 }
 
 function loop() {
   return time
     .map(whiteNoise)
-    .applyFilter(average)
+    .map(average.apply)
     .mult(amp);
 }

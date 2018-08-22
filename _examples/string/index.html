@@ -7,15 +7,13 @@ blurb: |
 ---
 let amp = 0.1;
 let noiseWave;
-let average = new twoPointAverage();
+let average = twoPointAverage();
 
 function setup() {
-  noiseWave = new Wave()
-    .map(whiteNoise)
-    .mult(amp);
+  noiseWave = new Wave().map(whiteNoise).mult(amp);
 }
 
 function loop() {
-  noiseWave = noiseWave.applyFilter(average);
+  noiseWave = noiseWave.map(average.apply);
   return noiseWave;
 }
