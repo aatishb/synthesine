@@ -15,7 +15,7 @@ let numSines = freq.length;
 function setup() {
   zeroWave = new Wave();
   for (let i = 0; i < numSines; i++){
-    filters.push(new resonator(freq[i], 1))
+    filters.push(resonator(freq[i], 1))
   }
 }
 
@@ -27,7 +27,7 @@ function loop() {
   for (var i = 0; i < numSines; i++) {
     filteredWave = filteredWave.add(
       noiseWave
-      .applyFilter(filters[i])
+      .map(filters[i].apply)
       .mult(amp[i])
       );
   }

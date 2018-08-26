@@ -1,5 +1,7 @@
 const libraryCode = `
 
+// WAVE OPERATIONS
+
 const indexOf = (x, i) => {
   if (!isNaN(x[i])) {
     return x[i];
@@ -14,8 +16,6 @@ const add = v => (e, i) => e + indexOf(v,i);
 const sub = v => (e, i) => e - indexOf(v,i);
 const mult = v => (e, i) => e * indexOf(v,i);
 const div = v => (e, i) => e / indexOf(v,i);
-
-// const delay = m => (e, i, x) => x[(i + m) % numSamples];
 
 const clip = (g = 0.5) => e => {
   let max = Math.abs(g);
@@ -38,15 +38,9 @@ class Wave extends Float32Array {
   }
 
   add(v) { return this.map(add(v)); }
-
   sub(v) { return this.map(sub(v)); }
-
   mult(s) { return this.map(mult(s)); }
-
   div(s) { return this.map(div(s)); }
-
-  delay(m) { return this.map(delay(m)); }
-
   clip(g) { return this.map(clip(g)); }
 
   modulate(carrier) {
@@ -55,6 +49,9 @@ class Wave extends Float32Array {
 
 }
 
+
+// OSCILLATORS
+
 const whiteNoise = () => 2 * Math.random() - 1;
 const phasor = f => t => (f * t) % 1;
 const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + indexOf(phase, i));
@@ -62,6 +59,9 @@ const square = (f, phase = 0) => (t, i) => clip(1)(sin(f, phase)(t, i) * 1000);
 const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
 const triangle = f => t => 2 * Math.abs(saw(f)(t)) - 1;
 const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / Math.max(0.00001, tau)) * sin(f, phase)(t);
+
+
+// FILTERS
 
 const delay = (m) => {
 
@@ -198,59 +198,6 @@ const dcBlocker = alpha =>
 
 }
 
-/*
-function biquad(...args) {
-
-  this.filterOutput = 0;
-  this.y1 = 0;
-  this.y2 = 0;
-  this.x1 = 0;
-  this.x2 = 0;
-
-  this.set = function(...args){
-    this.b0 = args[0];
-    this.b1 = args[1];
-    this.b2 = args[2];
-    this.a0 = args[3];
-    this.a1 = args[4];
-    this.a2 = args[5];
-  };
-
-  if(args.length){
-    this.set(...args);
-  }
-
-  this.equation =  (x, y, i) => {
-    this.filterOutput = (this.b0/this.a0) * x[i] + (this.b1/this.a0) * this.x1
-    + (this.b2/this.a0) * this.x2
-    - (this.a1/this.a0) * this.y1 - (this.a2/this.a0) * this.y2;
-
-    this.y2 = this.y1;
-    this.y1 = this.filterOutput;
-
-    this.x2 = this.x1;
-    this.x1 = x[i];
-
-    return this.filterOutput;
-  };
-}
-
-const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
-  {
-    return (input, output, i) => {
-      return gain
-      * (input[i]
-          - 2 * resZero * Math.cos(2 * Math.PI * freqZero / sampleRate) * input[i-1]
-          + resZero * resZero * input[i-2]
-      )
-        + 2 * resPole * Math.cos(2 * Math.PI * freqPole / sampleRate) * output[i-1]
-        - resPole * resPole * output[i-2]
-      || gain * input[i];
-    };
-  };
-
-*/
-
 const resonator = (freq, bandwidth) => {
 
   let q = Math.exp(- Math.PI * bandwidth / sampleRate);
@@ -314,6 +261,62 @@ const adsr = (startTime, attackTime, delayTime, sustainTime, releaseTime) => t =
   }
 };
 
+/*
+function biquad(...args) {
+
+  this.filterOutput = 0;
+  this.y1 = 0;
+  this.y2 = 0;
+  this.x1 = 0;
+  this.x2 = 0;
+
+  this.set = function(...args){
+    this.b0 = args[0];
+    this.b1 = args[1];
+    this.b2 = args[2];
+    this.a0 = args[3];
+    this.a1 = args[4];
+    this.a2 = args[5];
+  };
+
+  if(args.length){
+    this.set(...args);
+  }
+
+  this.equation =  (x, y, i) => {
+    this.filterOutput = (this.b0/this.a0) * x[i] + (this.b1/this.a0) * this.x1
+    + (this.b2/this.a0) * this.x2
+    - (this.a1/this.a0) * this.y1 - (this.a2/this.a0) * this.y2;
+
+    this.y2 = this.y1;
+    this.y1 = this.filterOutput;
+
+    this.x2 = this.x1;
+    this.x1 = x[i];
+
+    return this.filterOutput;
+  };
+}
+
+const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
+  {
+    return (input, output, i) => {
+      return gain
+      * (input[i]
+          - 2 * resZero * Math.cos(2 * Math.PI * freqZero / sampleRate) * input[i-1]
+          + resZero * resZero * input[i-2]
+      )
+        + 2 * resPole * Math.cos(2 * Math.PI * freqPole / sampleRate) * output[i-1]
+        - resPole * resPole * output[i-2]
+      || gain * input[i];
+    };
+  };
+
+*/
+
+
+// WAVE TABLE
+
 function WaveTable(waveTableSize) {
 
   this.data = new Wave(waveTableSize);
@@ -350,6 +353,8 @@ function WaveTable(waveTableSize) {
 
 }
 
+// DEFAULT VARIABLES
+
 let time, numSamples;
 
 const updateTime = () => {
@@ -361,6 +366,8 @@ const updateTime = () => {
     time = time.map(t => t + numSamples / sampleRate);
   }
 };
+
+// INTERACT
 
 function askToCreateSlider(label, min, max, step) {
   this.port.postMessage(
