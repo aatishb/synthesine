@@ -7,12 +7,13 @@ blurb: |
 ---
 let output, waveTable;
 let freq = 500;
-let average = twoPointAverage();
+let average;
 let noise;
 
 function setup() {
   let waveTableLength = Math.round(sampleRate / freq - 0.5);
   waveTable = new WaveTable(waveTableLength);
+  average = twoPointAverage();
 }
 
 function loop() {

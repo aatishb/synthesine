@@ -1,4 +1,4 @@
-const libraryCode = `
+const libraryCode = processorName => `
 
 // WAVE OPERATIONS
 
@@ -16,6 +16,7 @@ const add = v => (e, i) => e + indexOf(v,i);
 const sub = v => (e, i) => e - indexOf(v,i);
 const mult = v => (e, i) => e * indexOf(v,i);
 const div = v => (e, i) => e / indexOf(v,i);
+const modulate = v => (e, i) => e * (1 + v[i])
 
 const clip = (g = 0.5) => e => {
   let max = Math.abs(g);
@@ -41,11 +42,8 @@ class Wave extends Float32Array {
   sub(v) { return this.map(sub(v)); }
   mult(s) { return this.map(mult(s)); }
   div(s) { return this.map(div(s)); }
+  modulate(v) { return this.map(modulate(v)); }
   clip(g) { return this.map(clip(g)); }
-
-  modulate(carrier) {
-    return this.map((e,i) => e * (1 + carrier[i]));
-  }
 
 }
 
@@ -384,6 +382,51 @@ function askToCreateSlider(label, min, max, step) {
 
 let slider;
 
+// stuff below is the standard way to start an audioProcessor
+class AudioProcessor extends AudioWorkletProcessor {
+
+  constructor(options) {
+    super(options);
+
+    slider = askToCreateSlider.bind(this);
+
+    // listens for messages from the node, which is in the global scope
+    this.port.onmessage = (event) => {
+      let msg = event.data;
+
+      // if receives a variable pair, it updates the variable
+      if(typeof msg === 'object') {
+        if(msg['type'] === 'update') {
+          eval(msg['var'] + ' = ' + msg['val'])
+        }
+      }
+    };
+
+  }
+
+  process(inputs, outputs, parameters) {
+    let input = inputs[0][0];
+    let output = outputs[0][0];
+
+    if(!numSamples){
+      numSamples = output.length;
+      updateTime();
+      setup.call(this); // setup runs once
+                        // pass 'this' along so we can send messages
+                        // using this page's messageport
+    }
+
+    // calls to custom functions (these run on every frame of 128 samples)
+    output.set(loop().clip(0.5));
+    updateTime();
+
+    return true;
+  }
+}
+
+registerProcessor('${processorName}', AudioProcessor);
+
+
 `;
 
 const defaultCode = `function setup() {
@@ -413,54 +456,7 @@ var synth = (function () {
 
   // this code will be loaded into the worklet
   function getCode(userCode, processorName){
-    return `data:text/javascript;utf8,
-  ${libraryCode}
-  ${userCode}
-
-  // stuff below is the standard way to start an audioProcessor
-  class AudioProcessor extends AudioWorkletProcessor {
-
-    constructor(options) {
-      super(options);
-
-      slider = askToCreateSlider.bind(this);
-
-      // listens for messages from the node, which is in the global scope
-      this.port.onmessage = (event) => {
-        let msg = event.data;
-
-        // if receives a variable pair, it updates the variable
-        if(typeof msg === 'object') {
-          if(msg['type'] === 'update') {
-            eval(msg['var'] + ' = ' + msg['val'])
-          }
-        }
-      };
-
-    }
-
-    process(inputs, outputs, parameters) {
-      let input = inputs[0][0];
-      let output = outputs[0][0];
-
-      if(!numSamples){
-        numSamples = output.length;
-        updateTime();
-        setup.call(this); // setup runs once
-                          // pass 'this' along so we can send messages
-                          // using this page's messageport
-      }
-
-      // calls to custom functions (these run on every frame of 128 samples)
-      output.set(loop().clip(0.5));
-      updateTime();
-
-      return true;
-    }
-  }
-
-  registerProcessor('${processorName}', AudioProcessor);
-    `;
+    return URL.createObjectURL(new Blob([userCode + '\n' + libraryCode(processorName)], { type: 'application/javascript' }));
   }
 
   function startWorklet(userCode){

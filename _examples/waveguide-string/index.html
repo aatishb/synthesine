@@ -9,12 +9,13 @@ blurb: |
 ---
 let output, waveTable;
 let freq = 500;
-let average = twoPointAverage();
+let average;
 
 function setup() {
   let waveTableLength = Math.round(sampleRate / freq - 0.5);
   waveTable = new WaveTable(waveTableLength);
   waveTable.map(whiteNoise).map(e => 0.1 * e);
+  average = twoPointAverage();
 }
 
 function loop() {

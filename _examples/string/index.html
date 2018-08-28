@@ -7,9 +7,10 @@ blurb: |
 ---
 let amp = 0.1;
 let noiseWave;
-let average = twoPointAverage();
+let average;
 
 function setup() {
+  average = twoPointAverage();
   noiseWave = new Wave().map(whiteNoise).mult(amp);
 }
 

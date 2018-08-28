@@ -26,6 +26,8 @@ layout: nav
 </div>
 
 <script src="{{"/libraries/ace.js" | relative_url }}" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.rawgit.com/developit/781ef9620da8a30228b9f0c6e21fa7f6/raw/b228b3fadb2284957d040057e6701a49f522198f/transpiler-lite.umd.js"></script>
+<script src="https://unpkg.com/audioworklet-polyfill/dist/audioworklet-polyfill.js" type="text/javascript" charset="utf-8"></script>
 <script src="{{"/libraries/dsp.js" | relative_url }}" type="text/javascript" charset="utf-8"></script>
 
 <script>
@@ -36,7 +38,5 @@ layout: nav
 
 <hr>
 <footer>
-  <p>The live editor loads the <a href="https://github.com/aatishb/synthesine/blob/master/libraries/dsp.js">synthesine</a> library, which includes some handy functions to synthesize sounds in your browser in real-time.</p>
-
-  <p>Spotted a typo, or have an idea for improving this page? Suggest an edit <a href="{{page.url | replace: 'examples', '_examples' | prepend: "https://github.com/aatishb/synthesine/edit/master"}}">here</a>.</p>
+  <p>The live editor loads the <a href="https://github.com/aatishb/synthesine/blob/master/libraries/dsp.js">synthesine</a> library, which includes some handy functions to synthesize sounds in your browser in real-time. Spotted a typo, or have an idea for improving this page? Suggest an edit <a href="{{page.url | replace: 'examples', '_examples' | prepend: "https://github.com/aatishb/synthesine/edit/master"}}">here</a>.</p>
 </footer>

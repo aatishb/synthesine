@@ -7,8 +7,8 @@ blurb:
 let output, waveTable, noise;
 let freq = 500;
 let feedback = 1.67, breath = 0.67, cutoff = 0.3;
-let lpfilter = lowPass(cutoff);
-let dcfilter = dcBlocker(0.005);
+let lpfilter;
+let dcfilter;
 
 function setup() {
   slider('feedback', 0, 2, 0.01);
@@ -16,6 +16,8 @@ function setup() {
   slider('cutoff', 0, 1, 0.01);
   let waveTableLength = Math.round(sampleRate / freq - 0.5);
   waveTable = new WaveTable(waveTableLength);
+  lpfilter = lowPass(cutoff);
+  dcfilter = dcBlocker(0.005);
 }
 
 function loop() {
