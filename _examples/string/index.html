@@ -11,10 +11,10 @@ let average;
 
 function setup() {
   average = twoPointAverage();
-  noiseWave = new Wave().map(whiteNoise).mult(amp);
+  noiseWave = new Wave().map(whiteNoise);
 }
 
 function loop() {
   noiseWave = noiseWave.map(average.apply);
-  return noiseWave;
+  return noiseWave.mult(amp);
 }

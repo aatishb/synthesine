@@ -7,23 +7,21 @@ blurb: |
 
   Try changing the frequency to something else.
 ---
-let output, waveTable;
+let wave, output;
 let freq = 500;
 let average;
 
 function setup() {
   let waveTableLength = Math.round(sampleRate / freq - 0.5);
-  waveTable = new WaveTable(waveTableLength)
-    .map(whiteNoise)
-    .map(e => 0.1 * e);
+  wave = new WaveTable(waveTableLength).map(whiteNoise);
   average = twoPointAverage();
 }
 
 function loop() {
 
-  waveTable.delay(128);
-  output = waveTable.get().map(average.apply);
-  waveTable.update(output);
+  wave.delay(128);
+  output = wave.get().map(average.apply);
+  wave.update(output);
 
-  return output;
+  return output.mult(0.1);
 }
