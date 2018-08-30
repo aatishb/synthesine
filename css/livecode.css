@@ -102,7 +102,7 @@ footer > p {
     width: 25px; /* Set a specific slider handle width */
     height: 25px; /* Slider handle height */
     border-radius: 50%;
-    background: #4CAF50; /* Green background */
+    background: #748e28; /* Green background */
     cursor: pointer; /* Cursor on hover */
 }
 
@@ -110,7 +110,7 @@ footer > p {
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background: #4CAF50;
+    background: #748e28;
     cursor: pointer;
 }
 
@@ -122,7 +122,7 @@ footer > p {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 50px minmax(200px, 1fr);
+  grid-template-rows: 50px 1fr;
   grid-template-columns: 3fr 2fr;
 }
 
