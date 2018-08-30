@@ -3,21 +3,9 @@ layout: livecode
 title: Delay
 category: filter
 blurb: |
-  The delay function implements a delay of m samples. You can think of it like a tiny echo. This is one of the building blocks of sound synthesis, and is used to do things like create the sound of a [plucked guitar string](https://aatishb.com/synthesine/examples/guitarstring/index.html).
+  The delay function implements a delay of m samples. You can think of it like a tiny echo. This is one of the building blocks of sound synthesis. In this example, we recreate a comb filter using a delay.
 
-  Delays are key to simulating sounds, because when a sound wave travels down something like a string, this [travelling wave](https://aatishb.com/synthesine/examples/travellingwave/index.html) can be implemented as a looped delay.
-
-  In this example, we recreate a comb filter using a delay.
-
-  We implement a delay as a circular shift, where a delay of m samples shifts an audio wave by m samples, with wrap-around.
-
-  The delay function is defined like this:
-
-  ```javascript
-  const delay = m => (e, i, x) => x[(i + m) % numSamples];
-  ```
-
-  Note that this definition only works for integer values of m, with 0 <= m <= 128.
+  Delays are key to simulating the sounds of musical instruments, because when a sound wave travels down something like a string or a pipe, this travelling sound wave can be implemented as a delay.
 
 ---
 let amp = 0.05;

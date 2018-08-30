@@ -3,11 +3,11 @@ layout: livecode
 title: Low Pass Filter
 category: filter
 blurb: |
-  Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character. A low pass filter leaves low frequencies unaffected, and filters out high frequencies. Low pass filters are used everywhere that you need to smooth out the jitters from noisy real-world data, like the gyroscope or acceleration sensors in smartphones. It takes in a cutoff parameter, which controls how strongly it filters out high frequencies.
+  Filters are used to shape noise or other sounds, so that they become louder at some frequencies and softer at others. This gives the sound some added character. A low pass filter leaves low frequencies unaffected, and filters out high frequencies. Low pass filters are used everywhere that you need to smooth out the jitters from noisy real-world data, like the gyroscope or acceleration sensors in satellites, robots, and smartphones. It takes in a cutoff parameter, which controls how strongly it filters out high frequencies.
 
   What happens to the spectrum as you change the cutoff?
 
-  Mathematically, a low pass filter can be expressed as `y[i] = a * x[i] +  (1 - a) * y[i - 1]`, where a is a number between 0 and 1. This type of low pass filter is sometimes also called a one-zero filter.
+  Mathematically, a low pass filter can be expressed as `output[i] = a * input[i] +  (1 - a) * output[i - 1]`, where a is a number between 0 and 1. This type of low pass filter is sometimes also called a one-zero filter.
 
 ---
 let amp = 0.05;

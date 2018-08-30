@@ -315,38 +315,36 @@ const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
 
 // WAVE TABLE
 
-function WaveTable(waveTableSize) {
+class WaveTable extends Wave {
 
-  this.data = new Wave(waveTableSize);
-  this.buffer = new Wave(numSamples);
-  this.pointer = 0;
+  constructor(waveTableSize = numSamples) {
+    super(waveTableSize);
+    this.waveTableSize = waveTableSize;
+    this.output = new Wave(numSamples);
+    this.pointer = 0;
+  }
 
-  this.map = function(f) {
-    this.data = this.data.map(f);
+  delay(samples) {
+    this.pointer = (this.pointer + samples) % this.waveTableSize;
     return this;
   }
 
-  this.delay = function(samples) {
-    this.pointer = (this.pointer + samples) % waveTableSize;
-    return this;
-  }
-
-  this.get = function() {
+  get() {
     let i;
     for(i = 0; i < numSamples; i++) {
-      this.buffer[i] = this.data[(this.pointer + i) % waveTableSize];
+      this.output[i] = this[(this.pointer + i) % this.waveTableSize];
     }
-    return this.buffer;
+    return this.output;
   };
 
-  this.update = function(arr) {
+  update(arr) {
     if(arr) {
       let i;
       for(i = 0; i < numSamples; i++){
-        this.data[(this.pointer + i) % waveTableSize] = arr[i];
+        this[(this.pointer + i) % this.waveTableSize] = arr[i];
       }
     }
-    //this.pointer = (this.pointer + numSamples) % waveTableSize;
+    //this.pointer = (this.pointer + numSamples) % this.waveTableSize;
   };
 
 }
@@ -379,6 +377,9 @@ function askToCreateSlider(label, min, max, step) {
     }
   );
 };
+
+
+// WORKLET SETUP
 
 let slider;
 
@@ -472,6 +473,9 @@ var synth = (function () {
     // Loads module script via AudioWorklet.
     audioCtx.audioWorklet.addModule(moduleDataUrl).then(() => {
       node = new AudioWorkletNode(audioCtx, processorName);
+      node.onprocessorerror = () => {
+        console.log('Detected error from audioworklet');
+      };
       analyser = audioCtx.createAnalyser();
       node.connect(audioCtx.destination);
       node.connect(analyser);

@@ -3,20 +3,25 @@ layout: livecode
 title: Polynomial
 category: oscillator
 blurb: |
-  Starting with a phasor, we map the wave using the polynomial `-x^3 + 1.2x^2 - 0.2x` to create a custom wave shape. By changing the polynomial, you can create all kinds of wave shapes.
+  Starting with a [phasor](https://aatishb.com/synthesine/examples/phasor/index.html), we can map the wave using a polynomial function to create a custom wave shape. By changing the polynomial, you can create all kinds of wave shapes.
 
-  BE CAREFUL when using polynomials as the output can get big very fast, so you can produce all kinds of loud sounds. It's a good idea to clip your output sound to prevent this from happening. By default, this library clips sounds at 0.5 amplitude to protect your ears.
+  BE CAREFUL when using polynomials as the output can get big very fast, so you can produce all kinds of loud sounds. You should always clip your output sound to prevent this from happening. By default, this library clips all sounds at 0.5 amplitude to protect your ears.
+
+  To smooth the sound, try adding a [low pass filter](https://aatishb.com/synthesine/examples/lowpass/index.html) to the sound before clipping it.
+
 ---
-let amp = 0.2;
 let freq = 440;
+let linear = 0.1, quadratic = 0.2, cubic = -0.3;
 
 function setup() {
-
+  slider('linear', -0.3, 0.3, 0.01);
+  slider('quadratic', -0.3, 0.3, 0.01);
+  slider('cubic', -0.3, 0.3, 0.01);
 }
 
 function loop() {
   return time
     .map(phasor(freq))
-    .map(e => -1 * Math.pow(e,3) + 1.2 * Math.pow(e,2) - 0.2 * e)
+    .map(e => linear * e + quadratic * e * e + cubic * e *e *e)
     .clip(0.3);
 }

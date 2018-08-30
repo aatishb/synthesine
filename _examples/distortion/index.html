@@ -1,0 +1,26 @@
+---
+layout: livecode
+title: Distortion
+category: oscillator
+blurb: |
+  Distortion (or nonlinear distortion) is any efffect that changes the shape of a sine wave to something else. Distortion effects are used in electric guitar sounds and in simulating acoustic musical instruments. For example ,we use a nonlinear effect in the [flute](https://aatishb.com/synthesine/examples/flute/index.html) example to model how the air in a flute interacts with the incoming breath pressure. You can read about other kinds of commonly used distortion [here](https://ccrma.stanford.edu/~jos/pasp/Memoryless_Nonlinearities.html).
+
+  In this example, we distort a sine wave with quadratic and cubic terms.
+
+  What happens if instead of a single sine wave, we apply a nonlinear distortion to the sum of two sine waves? Notice how quadratic and cubic distortion have different effects on the sound spectrum.
+
+---
+let linear = 1, quadratic = 0, cubic = 0;
+
+function setup() {
+  slider('linear', -1, 1, 0.01);
+  slider('quadratic', -1, 1, 0.01);
+  slider('cubic', -1, 1, 0.01);
+}
+
+function loop() {
+  return time
+    .map(sin(440))
+    .map(e => linear * e + quadratic * e * e - cubic * e*e*e)
+    .mult(0.1);
+}

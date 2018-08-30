@@ -4,6 +4,11 @@ title: Square Wave
 category: oscillator
 blurb: |
   A square wave jumps from -1 to 1, and repeats itself at a given frequency.
+
+  Because it contains a sudden jump (a discontinuity), there are lot of high frequency harmonics in the sound spectrum, resulting in a harsh, buzzy tone. One way to mitigate this is to synthesize a [band-limited square wave](https://aatishb.com/synthesine/examples/square-bandlimited/index.html), by adding fewer [harmonics](https://aatishb.com/synthesine/examples/adding-harmonics/index.html) to approximate the wave.
+
+  Try adding two square waves of different frequencies together. Take a look at the [adding sine waves](https://aatishb.com/synthesine/examples/adding-sine-waves/index.html) example to see how you can do this.
+
 ---
 let freq = 440;
 let amp = 0.05;

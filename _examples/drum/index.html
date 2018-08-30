@@ -3,7 +3,7 @@ layout: livecode
 title: Drum
 category: envelope
 blurb: |
-  If we apply an envelope of a decaying exponential curve to white noise, we can recreate the sound of a shot or a cymbal crash.
+  An envelope takes a sound and makes its amplitude (loudness) change in a desired way. If we apply a decaying exponential envelope to white noise, we can recreate the sound of a shot or a cymbal crash.
 
   What happens if you change the decay time?
 ---
@@ -19,5 +19,5 @@ function loop() {
   noise = time.map(whiteNoise).mult(0.1);
   envelope = time.map(t => Math.exp(- t / decayTime));
 
-  return noise.mult(envelope);
+  return noise.mult(envelope).clip(0.1);
 }

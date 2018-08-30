@@ -1,0 +1,35 @@
+---
+layout: livecode
+title: Adding Harmonics
+category: oscillator
+blurb: |
+  Harmonics are sine waves with frequencies that are integer multiples of a base frequency (f, 2f, 3f, 4f, ...). They correspond to the different ways that a musical instrument like a pipe or a string can resonate to produce sound. A surprising fact is that if you add enough harmonics together, you can re-create any wave shape! This is known as Fourier's Theorem, which you can read about [here](http://nautil.us/blog/the-math-trick-behind-mp3s-jpegs-and-homer-simpsons-face).
+
+  Can you adjust the sliders to create a sawtooth wave? Once you have a sawtooth wave, remove the even-numbered harmonics to create a square wave.
+
+---
+let wave1, wave2, wave3, wave4, wave5;
+let freq = 300;
+let firstHarmonic = 1, secondHarmonic = 0, thirdHarmonic = 0,
+  fourthHarmonic = 0, fifthHarmonic = 0;
+
+function setup() {
+  slider('firstHarmonic', -1, 1, 0.01);
+  slider('secondHarmonic', -1, 1, 0.01);
+  slider('thirdHarmonic', -1, 1, 0.01);
+  slider('fourthHarmonic', -1, 1, 0.01);
+  slider('fifthHarmonic', -1, 1, 0.01);
+  slider('freq', 20, 1000, 1);
+}
+
+function loop() {
+
+  wave1 = time.map(sin(freq)).mult(firstHarmonic);
+  wave2 = time.map(sin(2 * freq)).mult(secondHarmonic);
+  wave3 = time.map(sin(3 * freq)).mult(thirdHarmonic);
+  wave4 = time.map(sin(4 * freq)).mult(fourthHarmonic);
+  wave5 = time.map(sin(5 * freq)).mult(fifthHarmonic);
+
+  return wave1.add(wave2).add(wave3).add(wave4)
+    .add(wave5).mult(0.1);
+}

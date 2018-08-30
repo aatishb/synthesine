@@ -9,14 +9,6 @@ blurb: |
 
   What happens if you change the delay?
 
-  We can create a comb filter by calling the comb function `comb(g1, m2, g2, m2)`. The comb function is defined like this:
-
-  ```javascript
-  const comb = (g1, m1, g2, m2) => (input, output, i) => {
-   return input[i] + g1 * (input[i - m1] || 0) - g2 * (output[i - m2] || 0);
-  };
-  ```
-
 ---
 let amp = 0.05;
 let filter;
