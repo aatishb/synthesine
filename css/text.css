@@ -9,12 +9,16 @@
 }
 
 #content p {
-  font-size: 1.25em;
-  font-weight: 500;
+  font-size: 1.2em;
+  font-weight: 400;
 }
 
 body {
   font-family: 'Open Sans', sans-serif;
+}
+
+p {
+  font-family: 'Roboto', sans-serif;
 }
 
 h1,h2,h3 {

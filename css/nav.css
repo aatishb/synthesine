@@ -27,6 +27,7 @@
 
 #sidebar .sidebar-header {
     padding: 20px;
+    padding-bottom: 8px;
 }
 
 #sidebar ul.components {
@@ -121,12 +122,12 @@ a:hover {
 #sidebar ul li a {
     font-size: 1.1em;
 }
-
+/*
 #sidebar h3 > a {
     font-size: 0.8em;
     font-weight: 500;
 }
-
+*/
 #sidebar a {
     font-size: 1.1em;
     font-weight: 500;
