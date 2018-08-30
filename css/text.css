@@ -12,3 +12,15 @@
   font-size: 1.25em;
   font-weight: 500;
 }
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+h1,h2,h3 {
+  font-weight: 700;
+}
+
+.data-label {
+  font-weight: 700;
+}

@@ -511,7 +511,7 @@ var synth = (function () {
     let innerHTML =
     `
     <div class="slidercontainer">
-      <h5>${label}: <output id="parameter_${label}">${val}</output></h5>
+      <h5><span class="data-label">${label}:</span> <output id="parameter_${label}">${val}</output></h5>
       <input type="range" min="${min}" max="${max}" value="${val}" step = "${step}"
       class="slider" id="slider${label}" oninput="parameter_${label}.value=value">
     </div>
