@@ -1,0 +1,22 @@
+---
+layout: reference
+title: sinDamped
+category: oscillator
+blurb: |
+  `sinDamped(frequency, timeconstant, phase)` Returns a function whose input is a time (in seconds) and whose output is a point on a damped sine wave. You can create a 440 Hz damped sine wave with a time constant of 100 ms using `time.map(sinDamped(440, 0.1))`
+
+  `frequency` Frequency of the square wave in Hertz (Hz) or cycles per second.
+
+  `timeconstant` Time constant of the damped sine wave, in seconds. This is the time it takes to shrink to 37% (i.e. 1/e) of its size. Smaller = faster decay, larger = slower decay.
+
+  `phase (optional)` Phase shifts the wave to the left or right. A phase of PI shifts the wave a half-cycle to the right. `phase` can either be a number or it can be a wave, as used in Frequency Modulation.
+
+---
+function setup() {
+}
+
+function loop() {
+  return time
+    .map(sinDamped(440, 0.1))
+    .mult(0.1);
+}

@@ -1,0 +1,22 @@
+---
+layout: reference
+title: sin
+category: oscillator
+blurb: |
+  `sin(frequency, phase)` Returns a function whose input is a time (in seconds) and whose output is a point on a sine wave. You can create a 440 Hz sine wave by mapping a time wave to this sin function, using `time.map(sin(440))`
+
+  You can create the same sine wave from scratch using `time.map(t => Math.sin(2 * Math.PI * 440 * t))`.
+
+  `frequency` Frequency of the sine wave in Hertz (Hz) or cycles per second.
+
+  `phase (optional)` Phase shifts the wave to the left or right. A phase of PI shifts the wave a half-cycle to the right. `phase` can either be a number or it can be a wave, as used in Frequency Modulation.
+
+---
+function setup() {
+}
+
+function loop() {
+  return time
+    .map(sin(440))
+    .mult(0.1);
+}

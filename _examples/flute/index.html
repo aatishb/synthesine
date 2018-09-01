@@ -30,18 +30,18 @@ function loop() {
   // env = time.map(adsr(0, 0.5, 0.5, 0.5, 0.5));
   // noise = noise.mult(env);
 
-  emb.update(flute.get().mult(r1).add(noise));
+  emb.set(flute.get().mult(r1).add(noise));
   emb.delay(128);
-  emb.update(emb.get()
+  emb.set(emb.get()
   .map(e => Math.tanh(e))
   .map(dcfilter.apply)
   );
 
-  flute.update(flute.get().mult(r2).add(emb.get()));
+  flute.set(flute.get().mult(r2).add(emb.get()));
 
   lpfilter.set(cutoff);
   output = flute.get().map(lpfilter.apply);
-  flute.update(output);
+  flute.set(output);
   flute.delay(128);
 
   return output.mult(0.1);

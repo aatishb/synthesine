@@ -337,14 +337,13 @@ class WaveTable extends Wave {
     return this.output;
   };
 
-  update(arr) {
+  set(arr) {
     if(arr) {
       let i;
       for(i = 0; i < numSamples; i++){
         this[(this.pointer + i) % this.waveTableSize] = arr[i];
       }
     }
-    //this.pointer = (this.pointer + numSamples) % this.waveTableSize;
   };
 
 }
@@ -475,6 +474,7 @@ var synth = (function () {
       node = new AudioWorkletNode(audioCtx, processorName);
       node.onprocessorerror = () => {
         console.log('Detected error from audioworklet');
+        window.alert('Error detected. Take a look at your browser\'s javascript console.');
       };
       analyser = audioCtx.createAnalyser();
       node.connect(audioCtx.destination);
