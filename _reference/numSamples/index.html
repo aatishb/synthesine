@@ -1,0 +1,17 @@
+---
+layout: reference
+title: numSamples
+category: variables
+blurb: |
+  `numSamples` stores the number of samples processed in a single loop, which is 128 by default. The loop() function expects to be returned a wave of length numSamples. By default, any wave you create using `new Wave()` will be numSamples long.
+
+---
+function setup() {
+  console.log(numSamples);
+}
+
+function loop() {
+  return time
+    .map(sin(440))
+    .mult(0.1);
+}

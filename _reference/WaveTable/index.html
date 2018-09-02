@@ -3,19 +3,21 @@ layout: reference
 title: WaveTable
 category: object
 blurb: |
-  `WaveTable(size)` is a class that creates a wave table object. A wave table is implemented in synthesine as a circular buffer. This is an array where we can shift the point at which we start reading from. Wave tables are used in simulating musical instruments.
+  `WaveTable(size)` is a class that creates a wave table object. A wave table is implemented in synthesine as a [circular buffer](https://en.wikipedia.org/wiki/Circular_buffer). This is a type of array where we can shift the point at which we start reading from, and where the end is followed by the start. Wave tables such as these are used in simulating musical instruments.
 
-  `new WaveTable(size);` creates a new empty wave table.
+  - `size (optional)` This sets the size of the array, and can be any positive integer.
 
-  `size (optional)` This sets the size of the array, and can be any positive integer.
+  `WaveTable` is an extension of `Wave`, which is itself an extension of javascript's built-in `Float32Array`, so it inherits all the [Float32Array methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array).
 
-  `WaveTable` is an extension of `Wave`, which is itself an extension of javascript's built-in `Float32Array`, so it inherits all the [Float32Array methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array). For example, `new WaveTable().fill(0.1)` will create a new Wave Table filled with the value 0.1
+  ##### Usage
+
+  - `new WaveTable(size);` creates an empty wave table.
+  - `new WaveTable().fill(0.1)` creates a wave table filled with the value 0.1
+  - `new WaveTable(100).map((e,i) => i/100)` creates a wave table filled with 100 equally spaced values from 0 to 1
 
   ##### Wave Table Manipulation Functions
-  - `.delay(n)` shifts the current position of the wave table by `n` samples, and returns the wave table. For a full audio cycle, use 128 (i.e. `numSamples`) for `n`.
-
+  - `.delay(n)` shifts the current position of the wave table by `n` samples, and returns the wave table. To shift the wave table by a full audio cycle, use n = 128 (i.e. `numSamples`)
   - `.set(array)` sets the next 128 values of the wave table to the entries of `array`. The wave table is rewritten in a circular fashion, starting from the current position.
-
   - `.get()` returns the next 128 values of the wave table, starting from the current position.
 
 

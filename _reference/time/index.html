@@ -1,0 +1,20 @@
+---
+layout: reference
+title: time
+category: variables
+blurb: |
+  `time` is a wave of length `numSamples` (128 by default) that stores the current time values, in seconds. `time` is updated on every frame of the loop() function.
+
+  Think of `time` as the basic clock in synthesine. You can create sounds by mapping `time` to other functions, such as any of the oscillators.
+
+---
+function setup() {
+  // open the console to see what the time wave looks like
+  console.log(time);
+}
+
+function loop() {
+  return time
+    .map(sin(440))
+    .mult(0.1);
+}

@@ -350,17 +350,24 @@ class WaveTable extends Wave {
 
 // DEFAULT VARIABLES
 
-let time, numSamples;
+let time;
+const numSamples = 128;
 
-const updateTime = () => {
-  if(!time){
-    time = new Wave(numSamples).fill(0);
-    time = time.map((e,i) => e + i / sampleRate);
-  }
-  else{
-    time = time.map(t => t + numSamples / sampleRate);
-  }
+const getTime = () => {
+  let internalTime = new Wave(numSamples).map((e,i) => e + i / sampleRate);
+
+  function tick() {
+    internalTime = internalTime.map(t => t + numSamples / sampleRate);
+    return internalTime;
+  };
+
+  return {
+    tick: tick,
+    time: internalTime
+  };
 };
+
+const clock = getTime();
 
 // INTERACT
 
@@ -388,7 +395,13 @@ class AudioProcessor extends AudioWorkletProcessor {
   constructor(options) {
     super(options);
 
+    time = clock.time;
+
     slider = askToCreateSlider.bind(this);
+
+    setup.call(this); // setup runs once
+                      // pass 'this' along so we can send messages
+                      // using this page's messageport
 
     // listens for messages from the node, which is in the global scope
     this.port.onmessage = (event) => {
@@ -402,23 +415,16 @@ class AudioProcessor extends AudioWorkletProcessor {
       }
     };
 
+
   }
 
+  // runs on every frame of 128 samples
   process(inputs, outputs, parameters) {
     let input = inputs[0][0];
     let output = outputs[0][0];
 
-    if(!numSamples){
-      numSamples = output.length;
-      updateTime();
-      setup.call(this); // setup runs once
-                        // pass 'this' along so we can send messages
-                        // using this page's messageport
-    }
-
-    // calls to custom functions (these run on every frame of 128 samples)
     output.set(loop().clip(0.5));
-    updateTime();
+    time = clock.tick();
 
     return true;
   }

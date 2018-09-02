@@ -4,19 +4,15 @@ title: lowPass
 category: filter
 blurb: |
   `lowPass(a)` creates a high pass filter. `a` should be between 0 and 1.
+  - `.apply` returns a function that applies the filter equation and updates the filter state.
+  - `.set(a)` changes the filter parameter.
 
-  `.apply` returns a function that applies the filter equation and updates the filter state.
-
-  `.set(a)` changes the filter parameter.
-
-  Filter equation:
+  ##### Filter equation
   ```
   output[i] = input[i] - a * output[i - 1]
   ```
 
   In synthesine, filters are functions with methods for applying and setting the filter, and an internal memory that keeps track of the state of the filter. The technical term for the kind of object is a closure. Every time you create a filter, the state is erased, so it's a good idea to define your filters only once, in the setup function.
-
-  You can find the code for the comb function in the [synthesine library](https://github.com/aatishb/synthesine/blob/master/libraries/dsp.js).
 
 ---
 let filter;

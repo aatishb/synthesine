@@ -1,0 +1,20 @@
+---
+layout: reference
+title: sampleRate
+category: variables
+blurb: |
+  `sampleRate` stores the audio sample rate, or sampling frequency, which is [44100 Hz](https://en.wikipedia.org/wiki/44,100_Hz).
+
+  The Nyquist theorem states that the highest frequency that can be represented by a sampling rate of f is f/2. `sampleRate/2` is also referred to as the Nyquist Frequency, and in our case is above the high end of the human hearing range.
+
+---
+let wave;
+
+function setup() {
+  console.log(sampleRate);
+  wave = new Wave().map((e,i) => 512 * i / sampleRate);
+}
+
+function loop() {
+  return wave.mult(0.1);
+}

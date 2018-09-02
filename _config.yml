@@ -7,7 +7,7 @@ collections:
     output: true
 
 example-categories: [oscillator, envelope, modulation, filter, synthesis, instrument]
-reference-categories: [object, manipulation, oscillator, filter]
+reference-categories: [object, variables, manipulation, oscillator, filter]
 
 
 baseurl: /synthesine

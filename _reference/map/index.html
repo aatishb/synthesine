@@ -5,11 +5,15 @@ category: manipulation
 blurb: |
   `map` is a function associated with the `Wave` class that lets you apply any function you want to transform a wave.
 
-  For example, `wave.map(() => 0)` would fill the wave with zeroes, and `wave.map(() => Math.random())` would fill the wave with random numbers, generating white noise.
+  #### Usage
 
-  In addition to generating a wave, you can also distort or filter a wave with a map function. For example, `wave.map(e => e * e)`, squares the value of each element, and `wave.map(e => Math.abs(e))` takes the absolute value of each element. In general, `map` allows you to build any effect you like, and all the other wave manipulation functions are built using this function.
+  - `wave.map(() => 0)` fills a wave with zeroes
+  - `wave.map(() => Math.random())` fills a wave with random numbers
+  - `wave.map(e => e * e)` squares the output of a wave
+  - `wave.map(e => Math.abs(e))` returns the absolute value of a wave
+  - `wave.map((e, i) => i / 128)` returns a wave whose entries linearly increase from 0 to 1
 
-  Read more about map [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map).
+  `map` allows you to build any effect you like. All the other wave manipulation functions are built using this function. Read more about map [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map).
 
 ---
 let wave;

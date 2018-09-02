@@ -5,9 +5,8 @@ category: oscillator
 blurb: |
   `square(frequency, phase)` Returns a function whose input is a time (in seconds) and whose output is a point on a square wave. You can create a 440 Hz square wave by mapping a time wave to this square function, using `time.map(square(440))`
 
-  `frequency` Frequency of the square wave in Hertz (Hz) or cycles per second.
-
-  `phase (optional)` Phase shifts the wave to the left or right. A phase of PI shifts the wave a half-cycle to the right. `phase` can either be a number or it can be a wave, as used in Frequency Modulation.
+  - `frequency` Frequency of the square wave in Hertz (Hz) or cycles per second.
+  - `phase (optional)` Phase shifts the wave to the left or right. A phase of PI shifts the wave a half-cycle to the right. `phase` can either be a number or it can be a wave, as used in Frequency Modulation.
 
 ---
 function setup() {
