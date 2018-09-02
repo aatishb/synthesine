@@ -455,6 +455,10 @@ var synth = (function () {
   editor.session.setOptions({ tabSize: 2, useSoftTabs: true });
   editor.setFontSize(16);
 
+  // resize ace editor when live editor container height changes
+  let resizeObserver = new MutationObserver( function(){ editor.resize(); } );
+  resizeObserver.observe(document.getElementById("container"),{attributes:true});
+
   // this code will be loaded into the worklet
   function getCode(userCode, processorName){
     return URL.createObjectURL(new Blob([userCode + '\n' + libraryCode(processorName)], { type: 'application/javascript' }));
