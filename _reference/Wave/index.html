@@ -1,0 +1,31 @@
+---
+layout: reference
+title: Wave
+category: object
+blurb: |
+  `Wave(size)` is a class that creates the wave objects that store sounds in synthesine. A wave is an array of 32 bit floating point numbers, along with some prebuilt functions to manipulate waves.
+
+  `new Wave();` creates a new empty wave.
+
+  `size (optional)` This sets the size of the array. Typically we leave this empty. If unspecified, the length of a wave is set to `numSamples`, which is 128 by default.
+
+  `Wave` is an extension of javascript's built-in `Float32Array`, so it inherits all the [Float32Array methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array). For example, `new Wave().fill(0.1)` will create a new Wave filled with the value 0.1
+
+  ##### Wave Manipulation Functions
+
+  - `.add` adds two waves together
+  - `.sub` subtracts one wave from another
+  - `.mult` multiples two waves or multiplies a wave with a number
+  - `.div` divides two waves or divides a wave with a number
+  - `.modulate` modulates one wave with another wave
+
+---
+let myWave;
+
+function setup() {
+  myWave = new Wave();
+}
+
+function loop() {
+  return myWave;
+}

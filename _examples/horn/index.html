@@ -19,11 +19,11 @@ function setup() {
 function loop() {
 
   noise = time.map(whiteNoise).mult(0.1);
-  waveTable.update(waveTable.get().add(noise));
+  waveTable.set(waveTable.get().add(noise));
 
   waveTable.delay(128);
   output = waveTable.get().map(average.apply);
-  waveTable.update(output);
+  waveTable.set(output);
 
   return output.mult(0.1);
 }

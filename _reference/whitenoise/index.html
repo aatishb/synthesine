@@ -1,0 +1,21 @@
+---
+layout: reference
+title: whiteNoise
+category: oscillator
+blurb: |
+  `whiteNoise` Returns a function that requires no input, and whose output is a random number between -1 and 1. You can create White Noise by mapping any wave to the whiteNoise function, using `wave.map(whiteNoise)`
+
+  You can create white noise from scratch using `wave.map(() => Math.random())`.
+
+---
+let wave;
+
+function setup() {
+  wave = new Wave();
+}
+
+function loop() {
+  return wave
+    .map(whiteNoise)
+    .mult(0.1);
+}

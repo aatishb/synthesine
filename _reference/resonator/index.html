@@ -1,0 +1,37 @@
+---
+layout: reference
+title: resonator
+category: filter
+blurb: |
+  `resonator(freq, bandwidth)` creates a resonator filter centered at frequency `freq` (in Hz) and with a frequency width `bandwidth` (in Hz). The resonator filter implements the [resonz](https://www.jstor.org/stable/pdf/4617882.pdf) filter, which is a type of constant gain band pass filter.
+
+  `.apply` returns a function that applies the filter equation and updates the filter state.
+
+  `.set(freq, bandwidth)` changes the filter parameters.
+
+  Filter equation:
+  ```javascript
+  output[i] = gain * (input[i] - input[i - 2]) + 2 * q * cosPoleAngle * output[i - 1] - q * q * output[i - 2];
+  q = Math.exp(- Math.PI * bandwidth / sampleRate);
+  gain = Math.sqrt((1 - q * q) / 2);
+  cosPoleAngle = ((1 + q * q) / 2 * q) * Math.cos(2 * Math.PI * freq / sampleRate);
+  ```
+
+  In synthesine, filters are functions with methods for applying and setting the filter, and an internal memory that keeps track of the state of the filter. The technical term for the kind of object is a closure. Every time you create a filter, the state is erased, so it's a good idea to define your filters only once, in the setup function.
+
+  You can find the code for the comb function in the [synthesine library](https://github.com/aatishb/synthesine/blob/master/libraries/dsp.js).
+
+---
+let filter;
+
+function setup() {
+  filter = resonator(1000, 5);
+}
+
+function loop() {
+
+  return time
+    .map(whiteNoise)
+    .map(filter.apply)
+    .mult(0.1);
+}

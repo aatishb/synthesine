@@ -1,0 +1,33 @@
+---
+layout: reference
+title: delay
+category: filter
+blurb: |
+  `delay(m)` creates a delay filter. Currently this is only defined for positive integer m.
+
+  **Filter equation:** `output[i] = input[i - m]`
+
+  `.apply` returns a function that applies the filter equation and updates the filter state.
+
+  `.set(m)` changes the filter parameter.
+
+  In synthesine, filters are functions with methods for applying and setting the filter, and an internal memory that keeps track of the state of the filter. The technical term for the kind of object is a closure. Every time you create a filter, the state is erased, so it's a good idea to define your filters only once, in the setup function.
+
+  You can find the code for the comb function in the [synthesine library](https://github.com/aatishb/synthesine/blob/master/libraries/dsp.js).
+
+---
+let wave, myDelay;
+
+function setup() {
+  // create & store filter
+  myDelay = delay(10);
+}
+
+function loop() {
+  wave = time.map(whiteNoise);
+
+  // add wave to a delayed version of itself
+  wave = wave.add(wave.map(myDelay.apply)) // apply filter
+
+  return wave.mult(0.1);
+}

@@ -1,0 +1,18 @@
+---
+layout: nav
+---
+
+<h2>Reference</h2>
+
+<ul>
+    {%- for cat in site.reference-categories -%}
+        <h3>{{ cat | capitalize}}</h3>
+        <ul>
+        {% for ref in site.reference %}
+        {%- if ref.category == cat -%}
+        <li><h4><a href="{{ ref.url | relative_url }}">{{ ref.title }}</a></h4></li>
+        {% endif %}
+        {%- endfor -%}
+        </ul>
+    {% endfor %}
+</ul>

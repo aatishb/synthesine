@@ -3,7 +3,11 @@ name: Synthesine
 collections:
   examples:
     output: true
+  reference:
+    output: true
 
-category-list: [oscillator, envelope, modulation, filter, synthesis, instrument]
+example-categories: [oscillator, envelope, modulation, filter, synthesis, instrument]
+reference-categories: [object, manipulation, oscillator, filter]
+
 
 baseurl: /synthesine

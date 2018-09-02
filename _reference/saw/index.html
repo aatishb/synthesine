@@ -1,0 +1,22 @@
+---
+layout: reference
+title: saw
+category: oscillator
+blurb: |
+  `saw(frequency, phase)` Returns a function whose input is a time (in seconds) and whose output is a point on a sawtooth wave (or saw wave for short). You can create a 440 Hz sawtooth wave by mapping a time wave to this saw function, using `time.map(saw(440))`
+
+  You can create the same saw wave from scratch using `t => 2 * (f * t - Math.floor(0.5 + f * t))`.
+
+  `frequency` Frequency of the saw wave in Hertz (Hz) or cycles per second.
+
+  `phase (optional)` Phase shifts the wave to the left or right. A phase of PI shifts the wave a half-cycle to the right. `phase` can either be a number or it can be a wave.
+
+---
+function setup() {
+}
+
+function loop() {
+  return time
+    .map(saw(440))
+    .mult(0.1);
+}

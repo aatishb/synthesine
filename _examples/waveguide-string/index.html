@@ -21,7 +21,7 @@ function loop() {
 
   wave.delay(128);
   output = wave.get().map(average.apply);
-  wave.update(output);
+  wave.set(output);
 
   return output.mult(0.1);
 }

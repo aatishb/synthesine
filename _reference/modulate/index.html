@@ -1,0 +1,24 @@
+---
+layout: reference
+title: modulate
+category: manipulation
+blurb: |
+  `modulate` is a function associated with the `Wave` class that lets you modulate the amplitude (i.e. the loudness) of one wave using another wave.
+
+  `wave1.modulate(wave2)` creates a new wave whose entries are `wave1[i] * (1 + wave2[i])`. This is used in Amplitude Modulation.
+
+  Note that `wave1` and `wave2` must be the same length for this to be properly defined.
+
+---
+let wave1, wave2;
+
+function setup() {
+}
+
+function loop() {
+
+  wave1 = time.map(sin(440));
+  wave2 = time.map(square(5));
+
+  return wave1.modulate(wave2).mult(0.1);
+}

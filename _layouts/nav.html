@@ -35,7 +35,7 @@
 
         <ul class="list-unstyled components">
             <li class="active">
-            {%- for cat in site.category-list -%}
+            {%- for cat in site.example-categories -%}
                 <a href="#{{cat}}Submenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">{{ cat | capitalize}}</a>
                 <ul class="collapse list-unstyled" id="{{cat}}Submenu">
                 {% for ex in site.examples %}

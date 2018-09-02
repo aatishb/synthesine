@@ -1,0 +1,23 @@
+---
+layout: reference
+title: sub
+category: manipulation
+blurb: |
+  `sub` is a function associated with the `Wave` class that lets you subtract one wave from another.
+
+  `wave1.sub(wave2)` creates a new wave whose entries are the point-wise difference of the waves `wave1` and `wave2`. Note that `wave1` and `wave2` must be the same length for the sum to be properly defined.
+
+---
+let wave1, wave2;
+
+function setup() {
+}
+
+function loop() {
+  wave1 = time.map(sin(200));
+  wave2 = time.map(sin(300));
+
+  return wave1
+    .sub(wave2)
+    .mult(0.1);
+}

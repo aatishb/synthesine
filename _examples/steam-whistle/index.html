@@ -23,7 +23,7 @@ function setup() {
 function loop() {
 
   noise = time.map(whiteNoise).mult(breath);
-  waveTable.update(waveTable.get().mult(feedback).add(noise));
+  waveTable.set(waveTable.get().mult(feedback).add(noise));
 
   waveTable.delay(128);
   lpfilter.set(cutoff);
@@ -32,7 +32,7 @@ function loop() {
     .map(e => Math.tanh(e))
     .map(dcfilter.apply)
     .map(lpfilter.apply);
-  waveTable.update(output);
+  waveTable.set(output);
 
   return output.mult(0.1);
 }
