@@ -460,6 +460,10 @@ var synth = (function () {
   editor.session.setOptions({ tabSize: 2, useSoftTabs: true });
   editor.setFontSize(16);
 
+  // resize ace editor when live editor container height changes
+  let resizeObserver = new MutationObserver( function(){ editor.resize(); } );
+  resizeObserver.observe(document.getElementById("container"),{attributes:true});
+
   // this code will be loaded into the worklet
   function getCode(userCode, processorName){
     return URL.createObjectURL(new Blob([userCode + '\n' + libraryCode(processorName)], { type: 'application/javascript' }));
@@ -480,7 +484,8 @@ var synth = (function () {
       node = new AudioWorkletNode(audioCtx, processorName);
       node.onprocessorerror = () => {
         console.log('Detected error from audioworklet');
-        window.alert('Error detected. Take a look at your browser\'s javascript console.');
+        var errorMsg = " Error in AudioWorklet: see browser console for details";
+        document.getElementById("log").innerHTML = errorMsg;
       };
       analyser = audioCtx.createAnalyser();
       node.connect(audioCtx.destination);
@@ -547,6 +552,7 @@ var synth = (function () {
   }
 
   document.getElementById("play").onclick = function(){
+    document.getElementById("log").innerHTML = "";
     var updatedCode = editor.getSession().getValue();
     if(node) {node.disconnect();}
     $( "#dom" ).empty();

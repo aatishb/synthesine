@@ -21,7 +21,6 @@ footer > p {
 }
 
 .plot {
-  height: 50%;
   margin: 5px;
   color: #1C2541;
 }
@@ -62,6 +61,14 @@ footer > p {
 #menu {
   background-color: #fff5d2;
   border-bottom: 1px solid #1C2541;
+}
+
+#errors {
+  border-top: 1px solid #1C2541;
+}
+
+#log {
+  color: #fe5f55;
 }
 
 #display {
@@ -122,12 +129,19 @@ footer > p {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 50px 1fr;
+  grid-template-rows: 50px 1fr 1.3em;
   grid-template-columns: 3fr 2fr;
+  resize: vertical;
+  overflow: auto;
 }
 
 #menu {
   grid-area: 1 / 1 / 2 / 3;
+}
+
+#errors {
+  grid-area: 3 / 1 / 4 / 3;
+  overflow: hidden;
 }
 
 @media (max-width: 768px) {
@@ -135,7 +149,7 @@ footer > p {
     height: 100%;
     width: 100%;
     display: grid;
-    grid-template-rows: 50px 1fr 1fr;
+    grid-template-rows: 50px 1fr 1fr 1.3em;
     grid-template-columns: 1fr;
   }
 
@@ -149,5 +163,9 @@ footer > p {
 
   #display {
     grid-row: 3 / 4;
+  }
+
+  #errors {
+    grid-row: 4 / 5;
   }
 }
