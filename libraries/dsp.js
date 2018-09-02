@@ -475,6 +475,8 @@ var synth = (function () {
       node = new AudioWorkletNode(audioCtx, processorName);
       node.onprocessorerror = () => {
         console.log('Detected error from audioworklet');
+        var errorMsg = " Error in AudioWorklet: see browser console for details";
+        document.getElementById("log").innerHTML = errorMsg;
       };
       analyser = audioCtx.createAnalyser();
       node.connect(audioCtx.destination);
@@ -541,6 +543,7 @@ var synth = (function () {
   }
 
   document.getElementById("play").onclick = function(){
+    document.getElementById("log").innerHTML = "";
     var updatedCode = editor.getSession().getValue();
     if(node) {node.disconnect();}
     $( "#dom" ).empty();
