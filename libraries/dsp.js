@@ -384,6 +384,20 @@ function askToCreateSlider(label, min, max, step) {
   );
 };
 
+// ERROR HANDLING
+
+function getLineNo(error) {
+
+  let errorStack = error.stack.split('at');
+  errorStack = errorStack[errorStack.length - 2];
+  let blobStart = errorStack.indexOf('(');
+  let blobEnd = errorStack.indexOf(')');
+  let blob = errorStack.substring(blobStart+1, blobEnd).split(":");
+  let lineNo = blob[blob.length - 2];
+
+  return lineNo;
+}
+
 
 // WORKLET SETUP
 
@@ -395,13 +409,25 @@ class AudioProcessor extends AudioWorkletProcessor {
   constructor(options) {
     super(options);
 
-    time = clock.time;
+    try {
+      time = clock.time;
+      slider = askToCreateSlider.bind(this);
+      setup.call(this); // setup runs once
+                        // pass 'this' along so we can send messages
+                        // using this page's messageport
+    } catch (error) {
 
-    slider = askToCreateSlider.bind(this);
 
-    setup.call(this); // setup runs once
-                      // pass 'this' along so we can send messages
-                      // using this page's messageport
+      this.port.postMessage(
+        {
+          type: 'error',
+          error: error.message,
+          lineNo: getLineNo(error)
+        }
+      );
+
+      throw error;
+    }
 
     // listens for messages from the node, which is in the global scope
     this.port.onmessage = (event) => {
@@ -420,11 +446,23 @@ class AudioProcessor extends AudioWorkletProcessor {
 
   // runs on every frame of 128 samples
   process(inputs, outputs, parameters) {
-    let input = inputs[0][0];
-    let output = outputs[0][0];
+    try {
+      let input = inputs[0][0];
+      let output = outputs[0][0];
 
-    output.set(loop().clip(0.5));
-    time = clock.tick();
+      output.set(loop().clip(0.5));
+      time = clock.tick();
+    } catch (error) {
+      this.port.postMessage(
+        {
+          type: 'error',
+          error: error.message,
+          lineNo: getLineNo(error)
+        }
+      );
+
+      throw error;
+    }
 
     return true;
   }
@@ -482,11 +520,6 @@ var synth = (function () {
     // Loads module script via AudioWorklet.
     audioCtx.audioWorklet.addModule(moduleDataUrl).then(() => {
       node = new AudioWorkletNode(audioCtx, processorName);
-      node.onprocessorerror = () => {
-        console.log('Detected error from audioworklet');
-        var errorMsg = " Error in AudioWorklet: see browser console for details";
-        document.getElementById("log").innerHTML = errorMsg;
-      };
       analyser = audioCtx.createAnalyser();
       node.connect(audioCtx.destination);
       node.connect(analyser);
@@ -500,9 +533,29 @@ var synth = (function () {
         let msg = event.data;
 
         if (typeof msg === 'object') {
+
           if (msg["type"] == "slider") {
             makeSlider(msg["label"], msg["val"], msg["min"], msg["max"], msg["step"]);
           }
+
+          else if (msg["type"] == "error") {
+            let errorMsg = ' Error (line ';
+            errorMsg += msg.lineNo;
+            errorMsg += '): ';
+            if(msg.error.includes('Cannot read property') &&
+              msg.error.includes('of undefined'))
+            {
+              errorMsg += 'A function is expecting input that it isn\'t receiving';
+            } else if (msg.error.includes('is not a function'))
+            {
+              errorMsg += 'Expected a function as input but didn\'t receive one';
+            }
+            else {
+              errorMsg += msg.error;
+            }
+            document.getElementById("log").innerHTML = errorMsg;
+          }
+
         }
 
       };
