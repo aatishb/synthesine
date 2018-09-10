@@ -1,4 +1,4 @@
-const libraryCode = processorName => `
+const libraryCode = (processorName, sampleRate, numSamples) => `
 
 // WAVE OPERATIONS
 
@@ -348,11 +348,14 @@ class WaveTable extends Wave {
 
 }
 
+
 // DEFAULT VARIABLES
 
 let time;
-const numSamples = 128;
+const sampleRate = ${sampleRate};
+let numSamples = ${numSamples};
 
+// clock function to update time on every loop
 const getTime = () => {
   let internalTime = new Wave(numSamples).map((e,i) => e + i / sampleRate);
 
@@ -368,6 +371,7 @@ const getTime = () => {
 };
 
 const clock = getTime();
+
 
 // INTERACT
 
@@ -387,7 +391,6 @@ function askToCreateSlider(label, min, max, step) {
 // ERROR HANDLING
 
 function getLineNo(error) {
-
   let errorStack = error.stack.split('at');
   errorStack = errorStack[errorStack.length - 2];
   let blobStart = errorStack.indexOf('(');
@@ -417,12 +420,11 @@ class AudioProcessor extends AudioWorkletProcessor {
                         // using this page's messageport
     } catch (error) {
 
-
       this.port.postMessage(
         {
           type: 'error',
-          error: error.message,
-          lineNo: getLineNo(error)
+          error: error.message
+          // lineNo: getLineNo(error)
         }
       );
 
@@ -444,7 +446,7 @@ class AudioProcessor extends AudioWorkletProcessor {
 
   }
 
-  // runs on every frame of 128 samples
+  // runs on every sound frame
   process(inputs, outputs, parameters) {
     try {
       let input = inputs[0][0];
@@ -456,8 +458,8 @@ class AudioProcessor extends AudioWorkletProcessor {
       this.port.postMessage(
         {
           type: 'error',
-          error: error.message,
-          lineNo: getLineNo(error)
+          error: error.message
+          // lineNo: getLineNo(error)
         }
       );
 
@@ -503,19 +505,39 @@ var synth = (function () {
   resizeObserver.observe(document.getElementById("container"),{attributes:true});
 
   // this code will be loaded into the worklet
-  function getCode(userCode, processorName){
-    return URL.createObjectURL(new Blob([userCode + '\n' + libraryCode(processorName)], { type: 'application/javascript' }));
+  function getCode(userCode, processorName, sampleRate, numSamples){
+    return URL.createObjectURL(
+      new Blob([userCode + '\n' + libraryCode(processorName, sampleRate, numSamples)],
+        { type: 'application/javascript' })
+    );
   }
 
   function startWorklet(userCode){
     let processorName = 'audio-processor' + processorCount;
     processorCount++;
 
-    let moduleDataUrl = getCode(userCode, processorName);
-
     if (!audioCtx) {
       audioCtx = new AudioContext();
     }
+
+    // this is a truly awful hack.. I need a better way to detect the buffer size
+    // (i.e. size of the output wave) across browsers, etc.
+
+    let numSamples;
+
+    if (!numSamples) {
+      if(typeof webkitAudioContext !== 'undefined'){
+        numSamples = 256; // safari
+      }
+      else if (Object.keys(audioCtx.audioWorklet).length > 0) {
+        numSamples = 4096; // firefox
+      }
+      else {
+        numSamples = 128; // chrome
+      }
+    }
+
+    let moduleDataUrl = getCode(userCode, processorName, audioCtx.sampleRate, numSamples);
 
     // Loads module script via AudioWorklet.
     audioCtx.audioWorklet.addModule(moduleDataUrl).then(() => {
@@ -539,16 +561,20 @@ var synth = (function () {
           }
 
           else if (msg["type"] == "error") {
-            let errorMsg = ' Error (line ';
-            errorMsg += msg.lineNo;
-            errorMsg += '): ';
+            let errorMsg = ' Error';
+            if(msg.lineNo) {
+              errorMsg += ' (line ';
+              errorMsg += msg.lineNo;
+              errorMsg += ')';
+            }
+            errorMsg += ': ';
             if(msg.error.includes('Cannot read property') &&
               msg.error.includes('of undefined'))
             {
               errorMsg += 'A function is expecting input that it isn\'t receiving';
-            } else if (msg.error.includes('is not a function'))
-            {
-              errorMsg += 'Expected a function as input but didn\'t receive one';
+            }
+            else if (msg.error.includes('undefined is not a function')){
+              errorMsg += 'A function is expecting input that it isn\'t receiving';
             }
             else {
               errorMsg += msg.error;
