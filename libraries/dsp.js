@@ -408,7 +408,6 @@ let numSamples;
 const sampleRate = ${sampleRate};
 let slider;
 let time;
-
 let initialized = false;
 
 class AudioProcessor extends AudioWorkletProcessor {
@@ -439,12 +438,14 @@ class AudioProcessor extends AudioWorkletProcessor {
       if (!initialized) {
         numSamples = output.length;
 
-        time = clock.init();
+        time = clock.init(); // initialize time
 
         slider = askToCreateSlider.bind(this);
-        setup.call(this); // setup runs once
-                          // pass 'this' along so we can send messages
-                          // using this page's messageport
+
+        // setup runs once. pass 'this' along so we can send messages
+        // using the worklet messageport
+        setup.call(this);
+
         initialized = true;
       }
 
@@ -517,6 +518,8 @@ var synth = (function () {
     if (!audioCtx) {
       audioCtx = new AudioContext();
     }
+
+    audioCtx.resume();
 
     let moduleDataUrl = getCode(userCode, processorName, audioCtx.sampleRate);
 
