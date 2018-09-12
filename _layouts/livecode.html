@@ -30,7 +30,7 @@ layout: nav
 
 <script src="{{"/libraries/ace.js" | relative_url }}" type="text/javascript" charset="utf-8"></script>
 <script>
-// General Web Audio API polyfills / fixes for Safari:
+// Safari fix
 if (typeof AudioContext==='undefined' && typeof webkitAudioContext!=='undefined')
 {
   AudioContext = webkitAudioContext;

@@ -1,4 +1,4 @@
-const libraryCode = (processorName, sampleRate, numSamples) => `
+const libraryCode = (processorName, sampleRate) => `
 
 // WAVE OPERATIONS
 
@@ -349,30 +349,6 @@ class WaveTable extends Wave {
 }
 
 
-// DEFAULT VARIABLES
-
-let time;
-const sampleRate = ${sampleRate};
-let numSamples = ${numSamples};
-
-// clock function to update time on every loop
-const getTime = () => {
-  let internalTime = new Wave(numSamples).map((e,i) => e + i / sampleRate);
-
-  function tick() {
-    internalTime = internalTime.map(t => t + numSamples / sampleRate);
-    return internalTime;
-  };
-
-  return {
-    tick: tick,
-    time: internalTime
-  };
-};
-
-const clock = getTime();
-
-
 // INTERACT
 
 function askToCreateSlider(label, min, max, step) {
@@ -402,34 +378,43 @@ function getLineNo(error) {
 }
 
 
+// clock function to update time on every loop
+
+const getTime = () => {
+
+  let internalTime;
+
+  function init() {
+    internalTime = new Wave(numSamples).map((e,i) => e + i / sampleRate);
+    return internalTime;
+  }
+
+  function tick() {
+    internalTime = internalTime.map(t => t + numSamples / sampleRate);
+    return internalTime;
+  };
+
+  return {
+    init: init,
+    tick: tick
+  };
+};
+
+const clock = getTime();
+
 // WORKLET SETUP
 
+let numSamples;
+const sampleRate = ${sampleRate};
 let slider;
+let time;
 
-// stuff below is the standard way to start an audioProcessor
+let initialized = false;
+
 class AudioProcessor extends AudioWorkletProcessor {
 
   constructor(options) {
     super(options);
-
-    try {
-      time = clock.time;
-      slider = askToCreateSlider.bind(this);
-      setup.call(this); // setup runs once
-                        // pass 'this' along so we can send messages
-                        // using this page's messageport
-    } catch (error) {
-
-      this.port.postMessage(
-        {
-          type: 'error',
-          error: error.message
-          // lineNo: getLineNo(error)
-        }
-      );
-
-      throw error;
-    }
 
     // listens for messages from the node, which is in the global scope
     this.port.onmessage = (event) => {
@@ -443,7 +428,6 @@ class AudioProcessor extends AudioWorkletProcessor {
       }
     };
 
-
   }
 
   // runs on every sound frame
@@ -452,9 +436,23 @@ class AudioProcessor extends AudioWorkletProcessor {
       let input = inputs[0][0];
       let output = outputs[0][0];
 
+      if (!initialized) {
+        numSamples = output.length;
+
+        time = clock.init();
+
+        slider = askToCreateSlider.bind(this);
+        setup.call(this); // setup runs once
+                          // pass 'this' along so we can send messages
+                          // using this page's messageport
+        initialized = true;
+      }
+
       output.set(loop().clip(0.5));
       time = clock.tick();
+
     } catch (error) {
+
       this.port.postMessage(
         {
           type: 'error',
@@ -505,14 +503,14 @@ var synth = (function () {
   resizeObserver.observe(document.getElementById("container"),{attributes:true});
 
   // this code will be loaded into the worklet
-  function getCode(userCode, processorName, sampleRate, numSamples){
+  function getCode(userCode, processorName, sampleRate){
     return URL.createObjectURL(
-      new Blob([userCode + '\n' + libraryCode(processorName, sampleRate, numSamples)],
+      new Blob([userCode + '\n' + libraryCode(processorName, sampleRate)],
         { type: 'application/javascript' })
     );
   }
 
-  function startWorklet(userCode){
+  function startWorklet(userCode) {
     let processorName = 'audio-processor' + processorCount;
     processorCount++;
 
@@ -520,24 +518,7 @@ var synth = (function () {
       audioCtx = new AudioContext();
     }
 
-    // this is a truly awful hack.. I need a better way to detect the buffer size
-    // (i.e. size of the output wave) across browsers, etc.
-
-    let numSamples;
-
-    if (!numSamples) {
-      if(typeof webkitAudioContext !== 'undefined'){
-        numSamples = 256; // safari
-      }
-      else if (Object.keys(audioCtx.audioWorklet).length > 0) {
-        numSamples = 4096; // firefox
-      }
-      else {
-        numSamples = 128; // chrome
-      }
-    }
-
-    let moduleDataUrl = getCode(userCode, processorName, audioCtx.sampleRate, numSamples);
+    let moduleDataUrl = getCode(userCode, processorName, audioCtx.sampleRate);
 
     // Loads module script via AudioWorklet.
     audioCtx.audioWorklet.addModule(moduleDataUrl).then(() => {
