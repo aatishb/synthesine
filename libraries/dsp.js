@@ -442,7 +442,8 @@ class AudioProcessor extends AudioWorkletProcessor {
 
         slider = askToCreateSlider.bind(this);
 
-        // setup runs once. pass 'this' along so we can send messages
+        // setup runs once
+        // pass 'this' along so we can send messages
         // using the worklet messageport
         setup.call(this);
 
@@ -518,8 +519,6 @@ var synth = (function () {
     if (!audioCtx) {
       audioCtx = new AudioContext();
     }
-
-    audioCtx.resume();
 
     let moduleDataUrl = getCode(userCode, processorName, audioCtx.sampleRate);
 
