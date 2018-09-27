@@ -4,7 +4,7 @@ title: Steam Whistle
 category: instrument
 blurb:
 ---
-let output, waveTable, noise;
+let output, waveGuide, noise;
 let freq = 500;
 let feedback = 1.67, breath = 0.67, cutoff = 0.3;
 let lpfilter;
@@ -14,8 +14,8 @@ function setup() {
   slider('feedback', 0, 2, 0.01);
   slider('breath', 0, 1, 0.01);
   slider('cutoff', 0, 1, 0.01);
-  let waveTableLength = Math.round(sampleRate / freq - 0.5);
-  waveTable = new WaveTable(waveTableLength);
+  let waveGuideLength = Math.round(sampleRate / freq - 0.5);
+  waveGuide = new WaveGuide(waveGuideLength);
   lpfilter = lowPass(cutoff);
   dcfilter = dcBlocker(0.005);
 }
@@ -23,16 +23,16 @@ function setup() {
 function loop() {
 
   noise = time.map(whiteNoise).mult(breath);
-  waveTable.set(waveTable.get().mult(feedback).add(noise));
+  waveGuide.set(waveGuide.get().mult(feedback).add(noise));
 
-  waveTable.delay(128);
+  waveGuide.delay(128);
   lpfilter.set(cutoff);
 
-  output = waveTable.get()
+  output = waveGuide.get()
     .map(e => Math.tanh(e))
     .map(dcfilter.apply)
     .map(lpfilter.apply);
-  waveTable.set(output);
+  waveGuide.set(output);
 
   return output.mult(0.1);
 }

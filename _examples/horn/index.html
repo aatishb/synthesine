@@ -5,25 +5,25 @@ category: instrument
 blurb: |
   A (overly) simplified physical waveguide model of resonance in a wind instrument. This is essentially the same as the guitar string model, but we start with an empty buffer and load it with noise on each loop.
 ---
-let output, waveTable;
+let output, waveGuide;
 let freq = 500;
 let average;
 let noise;
 
 function setup() {
-  let waveTableLength = Math.round(sampleRate / freq - 0.5);
-  waveTable = new WaveTable(waveTableLength);
+  let waveGuideLength = Math.round(sampleRate / freq - 0.5);
+  waveGuide = new WaveGuide(waveGuideLength);
   average = twoPointAverage();
 }
 
 function loop() {
 
   noise = time.map(whiteNoise).mult(0.1);
-  waveTable.set(waveTable.get().add(noise));
+  waveGuide.set(waveGuide.get().add(noise));
 
-  waveTable.delay(128);
-  output = waveTable.get().map(average.apply);
-  waveTable.set(output);
+  waveGuide.delay(128);
+  output = waveGuide.get().map(average.apply);
+  waveGuide.set(output);
 
   return output.mult(0.1);
 }

@@ -20,5 +20,5 @@ function loop() {
 
   envelope = time.map(adsr(0, 0.001, 0.05, 0.05, 0.5));
 
-  return sinWave(330).mult(envelope).mult(0.5);
+  return sinWave(440).mult(envelope).mult(0.5);
 }

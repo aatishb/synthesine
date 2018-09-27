@@ -18,9 +18,9 @@ function setup() {
   slider('r1', 0, 1, 0.01);
   slider('r2', 0, 1, 0.01);
   slider('cutoff', 0, 1, 0.01);
-  let waveTableLength = Math.round(sampleRate / freq - 0.5);
-  flute = new WaveTable(waveTableLength);
-  emb = new WaveTable(waveTableLength);
+  let waveGuideLength = Math.round(sampleRate / freq - 0.5);
+  flute = new WaveGuide(waveGuideLength);
+  emb = new WaveGuide(waveGuideLength);
   output = new Wave();
 }
 

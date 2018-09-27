@@ -12,8 +12,8 @@ let freq = 500;
 let average;
 
 function setup() {
-  let waveTableLength = Math.round(sampleRate / freq - 0.5);
-  wave = new WaveTable(waveTableLength).map(whiteNoise);
+  let waveGuideLength = Math.round(sampleRate / freq - 0.5);
+  wave = new WaveGuide(waveGuideLength).map(whiteNoise);
   average = twoPointAverage();
 }
 

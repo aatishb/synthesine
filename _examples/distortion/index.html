@@ -14,13 +14,12 @@ let linear = 1, quadratic = 0, cubic = 0;
 
 function setup() {
   slider('linear', -1, 1, 0.01);
-  slider('quadratic', -1, 1, 0.01);
-  slider('cubic', -1, 1, 0.01);
+  slider('quadratic', -0.5, 0.5, 0.01);
+  slider('cubic', -0.5, 0.5, 0.01);
 }
 
 function loop() {
-  return time
-    .map(sin(440))
-    .map(e => linear * e + quadratic * e * e - cubic * e*e*e)
+  return sinWave(440)
+    .map(e => linear * e + quadratic * e * e + cubic * e*e*e)
     .mult(0.1);
 }

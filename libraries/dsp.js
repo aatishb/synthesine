@@ -329,24 +329,24 @@ const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
 
 // WAVE TABLE
 
-class WaveTable extends Wave {
+class WaveGuide extends Wave {
 
-  constructor(waveTableSize = numSamples) {
-    super(waveTableSize);
-    this.waveTableSize = waveTableSize;
+  constructor(waveGuideSize = numSamples) {
+    super(waveGuideSize);
+    this.waveGuideSize = waveGuideSize;
     this.output = new Wave(numSamples);
     this.pointer = 0;
   }
 
   delay(samples) {
-    this.pointer = (this.pointer + samples) % this.waveTableSize;
+    this.pointer = (this.pointer + samples) % this.waveGuideSize;
     return this;
   }
 
   get() {
     let i;
     for(i = 0; i < numSamples; i++) {
-      this.output[i] = this[(this.pointer + i) % this.waveTableSize];
+      this.output[i] = this[(this.pointer + i) % this.waveGuideSize];
     }
     return this.output;
   };
@@ -355,7 +355,7 @@ class WaveTable extends Wave {
     if(arr) {
       let i;
       for(i = 0; i < numSamples; i++){
-        this[(this.pointer + i) % this.waveTableSize] = arr[i];
+        this[(this.pointer + i) % this.waveGuideSize] = arr[i];
       }
     }
   };
