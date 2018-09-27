@@ -8,7 +8,6 @@ blurb: |
   Can you make the sound into a minor chord? What happends when two of the notes are very close together?
 ---
 let freq = 440, mult1 = 1.25, mult2 = 1.5;
-let myWave, myWave2, myWave3;
 
 function setup() {
   slider('freq', 50, 1000, 1);
@@ -17,12 +16,9 @@ function setup() {
 }
 
 function loop() {
-  myWave = time.map(sin(freq));
-  myWave2 = time.map(sin(mult1 * freq));
-  myWave3 = time.map(sin(mult2 * freq));
 
-  return myWave
-    .add(myWave2)
-    .add(myWave3)
+  return sinWave(freq)
+    .add(sinWave(mult1 * freq))
+    .add(sinWave(mult2 * freq))
     .mult(0.1);
 }

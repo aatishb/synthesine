@@ -18,8 +18,7 @@ function setup() {
 }
 
 function loop() {
-  return time
-    .map(whiteNoise)
+  return noiseWave()
     .map(average.apply)
     .mult(amp);
 }

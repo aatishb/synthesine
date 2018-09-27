@@ -19,6 +19,6 @@ function setup() {
 
 function loop() {
   return time
-    .map(sinDamped(freq, 1))
+    .map(sinDamped(freq, 0.11))
     .mult(amp);
 }

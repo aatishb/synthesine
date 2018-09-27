@@ -6,14 +6,11 @@ blurb: |
   A triangle wave climbs linearly from -1 to 1, and then descends linearly back to -1. Unlike the sawtooth wave or the square wave, the triangle wave has no sudden changes (no discontinuities), and this results in a less harsh sound with fewer high harmonics.
 ---
 let freq = 440;
-let amp = 0.1;
 
 function setup() {
   slider('freq', 20, 600, 1);
 }
 
 function loop() {
- return time
-  .map(triangle(freq))
-  .mult(amp);
+ return triWave(freq).mult(0.1);
 }

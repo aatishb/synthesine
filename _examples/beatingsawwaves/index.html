@@ -11,6 +11,7 @@ let baseFreq = 150; // play with changing this
 let mySum;
 let zero, myWave;
 let freq;
+const bandSaw = f => time.map(t => sawB(f, t));
 
 function setup() {
   zero = new Wave();
@@ -26,17 +27,18 @@ function setup() {
 function loop() {
   myWave = zero;
 
-  freq.forEach(f => {
-    myWave = myWave.add(time.map(t => sawB(f, t)));
-  });
+  let i;
+  for (i = 0; i < numSaws; i++){
+    myWave = myWave.add(bandSaw(freq[i]));
+  }
 
   return myWave.mult(0.3).div(numSaws);
 }
 
 function sawB(f, t) {
   mySum = 0;
-
-  for (let k = 1; k < numSaws; k++){
+  let k;
+  for (k = 1; k < 10; k++){
     mySum += Math.sin(2 * Math.PI * k * f * t) / k;
   }
   mySum *= 1 / Math.PI;

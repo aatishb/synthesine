@@ -14,7 +14,5 @@ function setup() {
 }
 
 function loop() {
-  return time
-    .map(sin(440))
-    .mult(0.1);
+  return sinWave(440).mult(0.1);
 }

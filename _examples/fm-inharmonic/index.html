@@ -5,7 +5,7 @@ category: modulation
 blurb: |
   Here we're using FM synthesis to create inharmonic bell-like sounds. This example relies on the fact that 500/273 is not a simple ratio. We're slowly varying the modulation index as well, by amplitude modulating a triangle wave. This gives a more dynamic, changing sound.
 ---
-let carrier, signal, mySine;
+let carrier, modulation;
 
 function setup() {
 
@@ -13,12 +13,10 @@ function setup() {
 
 function loop() {
 
-  mySine = time.map(triangle(0.5)).mult(5);
+  modulation = triWave(0.5).mult(5);
+  carrier = sinWave(273).modulate(modulation);
 
-  carrier = time.map(sin(273)).modulate(mySine);
-  signal = time.map(sin(500, carrier));
-
-  return signal.mult(0.1);
+  return sinWave(500, carrier).mult(0.1);
 }
 
 

@@ -10,20 +10,19 @@ blurb: |
   What happens if you turn down the modulation index, and increase the modulation frequency so that it's in the audio frequency range? You've just entered the strange world of FM synthesis!
 
 ---
-let carrier, signal;
-let modulationFrequency = 1, modulationIndex = 200;
+let carrier;
+let modulationFrequency = 1, modulation = 200;
 let signalFrequency = 300;
 
 function setup() {
   slider('signalFrequency', 20, 600, 1);
   slider('modulationFrequency', 1, 600, 1);
-  slider('modulationIndex', 1, 600, 1);
+  slider('modulation', 1, 600, 1);
 }
 
 function loop() {
 
-  carrier = time.map(sin(modulationFrequency)).mult(modulationIndex);
-  signal = time.map(sin(signalFrequency, carrier));
+  carrier = sinWave(modulationFrequency).mult(modulation);
 
-  return signal.mult(0.1);
+  return sinWave(signalFrequency, carrier).mult(0.1);
 }

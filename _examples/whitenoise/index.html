@@ -7,14 +7,10 @@ blurb: |
 
   To give white noise a 'color', you can use a filter, similar to how a prism can filter white light. In the filter section, we'll see how we can 'carve' white noise into a non-flat frequency spectrum, adding character to the sound.
 ---
-let amp = 0.05;
-
 function setup() {
 
 }
 
 function loop() {
-  return time
-    .map(whiteNoise)
-    .mult(amp);
+  return noiseWave().mult(0.05);
 }

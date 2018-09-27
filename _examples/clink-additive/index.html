@@ -5,28 +5,32 @@ category: synthesis
 blurb: |
   Simulating the sound of a spoon clinking a glass by additive synthesis. Here, we're adding a bunch of damped sine waves of different amplitudes and frequencies.
 ---
-let freq = [754, 1938, 3628, 5642, 7816, 9388];
-let amp = [0.7, 0.8, 1.0, 0.5, 0.3, 0.1];
+let peaks = [
+  {freq: 754, amp: 0.7},
+  {freq: 1938, amp: 0.8},
+  {freq: 3628, amp: 1.0},
+  {freq: 5642, amp: 0.5},
+  {freq: 7816, amp: 0.3},
+  {freq: 9388, amp: 0.1}
+];
 
-let zeroWave, myWave, sineWave;
-let numSines;
+let zero, myWave;
+let numPeaks = peaks.length;
+let i;
 
 function setup() {
-  zeroWave = new Wave();
-  numSines = freq.length;
+  zero = new Wave();
 }
 
 function loop() {
-  myWave = zeroWave;
+  myWave = zero;
 
-  for (var i = 0; i < numSines; i++) {
-    sineWave = time
-      .map(sinDamped(freq[i], 0.3 - 0.05 * i))
-      .mult(amp[i]);
-
-    myWave = myWave.add(sineWave);
+  for (i = 0; i < numPeaks; i++) {
+    myWave = myWave.add(
+      dsinWave(peaks[i].freq, 0.3 - 0.05 * i)
+      .mult(peaks[i].amp)
+    );
   }
 
   return myWave.mult(0.1);
 }
-

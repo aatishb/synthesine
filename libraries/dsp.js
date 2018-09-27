@@ -47,17 +47,28 @@ class Wave extends Float32Array {
 
 }
 
-
 // OSCILLATORS
 
 const whiteNoise = () => 2 * Math.random() - 1;
 const phasor = f => t => (f * t) % 1;
 const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + indexOf(phase, i));
 const square = (f, phase = 0) => (t, i) => clip(1)(sin(f, phase)(t, i) * 1000);
-const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
-const triangle = f => t => 2 * Math.abs(saw(f)(t)) - 1;
+const saw = (f, phase = 0) => (t, i) => 2 * ( (f * t + indexOf(phase, i)/(2 * Math.PI)) - Math.floor(0.5 + (f * t + indexOf(phase, i)/(2 * Math.PI))));
+const triangle = (f, phase = 0) => (t, i) => 2 * Math.abs(saw(f, indexOf(phase, i))(t)) - 1;
 const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / Math.max(0.00001, tau)) * sin(f, phase)(t);
 
+// WAVE OBJECTS
+
+const sinWave = (f, phase = 0) => time.map(sin(f,phase));
+const sqrWave = (f, phase = 0) => time.map(square(f,phase));
+const sawWave = (f, phase = 0) => time.map(saw(f,phase));
+const triWave = (f, phase = 0) => time.map(triangle(f,phase));
+const dsinWave = (f, tau, phase = 0) => time.map(sinDamped(f, tau, phase));
+const noiseWave = () => time.map(whiteNoise);
+
+// VARIABLES
+
+const PI = Math.PI;
 
 // FILTERS
 

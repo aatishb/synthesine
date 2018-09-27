@@ -21,8 +21,7 @@ function loop() {
 
   filter.set(freq, bandwidth);
 
-  return time
-    .map(whiteNoise)
+  return noiseWave()
     .map(filter.apply)
     .mult(0.2);
 }
