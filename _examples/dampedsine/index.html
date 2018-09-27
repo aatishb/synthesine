@@ -10,15 +10,12 @@ blurb: |
   What happens to the sound as you make the time constant smaller?
 
 ---
-let amp = 0.5;
-let freq = 440;
-
 function setup() {
 
 }
 
 function loop() {
-  return time
-    .map(sinDamped(freq, 0.11))
-    .mult(amp);
+  return sinWave(440)
+    .fade(0.1)
+    .mult(0.5);
 }

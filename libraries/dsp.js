@@ -17,6 +17,7 @@ const sub = v => (e, i) => e - indexOf(v,i);
 const mult = v => (e, i) => e * indexOf(v,i);
 const div = v => (e, i) => e / indexOf(v,i);
 const modulate = v => (e, i) => e * (1 + v[i])
+const fade = decayTime => time.map(t => Math.exp(- t / decayTime));
 
 const clip = (g = 0.5) => e => {
   let max = Math.abs(g);
@@ -32,6 +33,8 @@ const clip = (g = 0.5) => e => {
   }
 };
 
+// WAVE OBJECT
+
 class Wave extends Float32Array {
 
   constructor(n = numSamples) {
@@ -42,8 +45,9 @@ class Wave extends Float32Array {
   sub(v) { return this.map(sub(v)); }
   mult(s) { return this.map(mult(s)); }
   div(s) { return this.map(div(s)); }
-  modulate(v) { return this.map(modulate(v)); }
   clip(g) { return this.map(clip(g)); }
+  modulate(v) { return this.map(modulate(v)); }
+  fade(t) { return this.mult(fade(t)); }
 
 }
 
@@ -57,16 +61,15 @@ const saw = (f, phase = 0) => (t, i) => 2 * ( (f * t + indexOf(phase, i)/(2 * Ma
 const triangle = (f, phase = 0) => (t, i) => 2 * Math.abs(saw(f, indexOf(phase, i))(t)) - 1;
 const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / Math.max(0.00001, tau)) * sin(f, phase)(t);
 
-// WAVE OBJECTS
+// PRE-BUILT WAVES
 
 const sinWave = (f, phase = 0) => time.map(sin(f,phase));
 const sqrWave = (f, phase = 0) => time.map(square(f,phase));
 const sawWave = (f, phase = 0) => time.map(saw(f,phase));
 const triWave = (f, phase = 0) => time.map(triangle(f,phase));
-const dsinWave = (f, tau, phase = 0) => time.map(sinDamped(f, tau, phase));
 const noiseWave = () => time.map(whiteNoise);
 
-// VARIABLES
+// PRE-DEFINED VARIABLES
 
 const PI = Math.PI;
 

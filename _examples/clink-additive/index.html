@@ -27,8 +27,9 @@ function loop() {
 
   for (i = 0; i < numPeaks; i++) {
     myWave = myWave.add(
-      dsinWave(peaks[i].freq, 0.3 - 0.05 * i)
+      sinWave(peaks[i].freq)
       .mult(peaks[i].amp)
+      .fade(0.3 - 0.05 * i)
     );
   }
 
