@@ -2,16 +2,6 @@ const libraryCode = (processorName, sampleRate) => `
 
 // WAVE OPERATIONS
 
-const indexOf = (x, i) => {
-  if (!isNaN(x[i])) {
-    return x[i];
-  } else if (!isNaN(x) && isNaN(x.length)) {
-    return x;
-  } else {
-    return 0;
-  }
-}
-
 const add = v => (e, i) => e + indexOf(v,i);
 const sub = v => (e, i) => e - indexOf(v,i);
 const mult = v => (e, i) => e * indexOf(v,i);
@@ -32,6 +22,22 @@ const clip = (g = 0.5) => e => {
     return e;
   }
 };
+
+// HELPER FUNCTIONS
+
+const indexOf = (x, i) => {
+  if (!isNaN(x[i])) {
+    return x[i];
+  } else if (!isNaN(x) && isNaN(x.length)) {
+    return x;
+  } else {
+    return 0;
+  }
+}
+
+const range = n => [...Array(n).keys()];
+const repeat = (n, wave, func) => range(n).reduce(func, wave);
+
 
 // WAVE OBJECT
 

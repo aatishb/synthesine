@@ -27,8 +27,7 @@ function setup() {
 function loop() {
   myWave = zero;
 
-  let i;
-  for (i = 0; i < numSaws; i++){
+  for (let i = 0; i < numSaws; i++){
     myWave = myWave.add(bandSaw(freq[i]));
   }
 
@@ -37,8 +36,8 @@ function loop() {
 
 function sawB(f, t) {
   mySum = 0;
-  let k;
-  for (k = 1; k < 10; k++){
+
+  for (let k = 1; k < 10; k++){
     mySum += Math.sin(2 * Math.PI * k * f * t) / k;
   }
   mySum *= 1 / Math.PI;

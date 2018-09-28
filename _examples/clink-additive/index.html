@@ -16,7 +16,6 @@ let peaks = [
 
 let zero, wave;
 let numPeaks = peaks.length;
-let i;
 
 function setup() {
   zero = new Wave();
@@ -25,7 +24,7 @@ function setup() {
 function loop() {
   wave = zero;
 
-  for (i = 0; i < numPeaks; i++) {
+  for (let i = 0; i < numPeaks; i++) {
     wave = wave.add(
       sinWave(peaks[i].freq)
       .mult(peaks[i].amp)

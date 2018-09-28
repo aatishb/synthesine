@@ -23,8 +23,7 @@ function loop() {
 
   myWave = zero;
 
-  let i;
-  for (i = 1; i <= numHarmonics; i++) {
+  for (let i = 1; i <= numHarmonics; i++) {
     carrier = sinWave(vibratoFrequency).mult(i * vibratoStrength);
     myWave = myWave.add(sinWave(baseFrequency * i, carrier).mult(0.1/i));
   }

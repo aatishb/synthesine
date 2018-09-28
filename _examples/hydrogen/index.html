@@ -17,8 +17,8 @@ function setup() {
 
 function loop() {
   myWave = zero;
-  let i;
-  for (i = 2; i < 2 + numLines; i++) {
+
+  for (let i = 2; i < 2 + numLines; i++) {
     myWave = myWave.add(sinWave(freq * (1 - 1/(i*i)) ).mult(1/i));
   }
 
