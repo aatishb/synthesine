@@ -3,48 +3,32 @@ layout: livecode
 title: Flute
 category: instrument
 blurb: |
-  A simplified physical waveguide model of a flute, based on the model by Perry Cook described [here](https://ccrma.stanford.edu/software/clm/compmus/clm-tutorials/pm.html#s-f) and [here](http://quod.lib.umich.edu/cgi/p/pod/dod-idx?c=icmc;idno=bbp2372.1992.072).
+  A waveguide model of a flute, based on the model by Perry Cook described [here](https://ccrma.stanford.edu/software/clm/compmus/clm-tutorials/pm.html#s-f) and [here](http://quod.lib.umich.edu/cgi/p/pod/dod-idx?c=icmc;idno=bbp2372.1992.072). Here the waveguide is implemented using Wave(), so the flute length or pitch can't be changed. For an adjustable flute length, we need to use a waveguide instead.
+
 ---
-let output, flute, emb, noise, env;
-let freq = 700;
-let r1 = 0.66, r2 = 0.66, cutoff = 0.5, breath = 0.5;
-let lpfilter;
-let dcfilter;
+let flute, emb;
+let lpfilter, dcfilter;
+let r1 = 0.5, r2 = 0.66, cutoff = 0.25, breath = 0.5;
 
 function setup() {
   lpfilter = lowPass(cutoff);
   dcfilter = dcBlocker(0.005);
+  slider('cutoff', 0, 1, 0.01);
   slider('breath', 0, 1, 0.01);
   slider('r1', 0, 1, 0.01);
   slider('r2', 0, 1, 0.01);
-  slider('cutoff', 0, 1, 0.01);
-  let waveGuideLength = Math.round(sampleRate / freq - 0.5);
-  flute = new WaveGuide(waveGuideLength);
-  emb = new WaveGuide(waveGuideLength);
-  output = new Wave();
+
+  flute = new Wave();
+  emb = new Wave();
 }
 
 function loop() {
 
-  noise = time.map(whiteNoise).mult(breath);
-  // env = time.map(adsr(0, 0.5, 0.5, 0.5, 0.5));
-  // noise = noise.mult(env);
-
-  emb.set(flute.get().mult(r1).add(noise));
-  emb.delay(128);
-  emb.set(emb.get()
-  .map(e => Math.tanh(e))
-  .map(dcfilter.apply)
-  );
-
-  flute.set(flute.get().mult(r2).add(emb.get()));
+  emb = flute.mult(r1).add(noiseWave().mult(breath));
+  emb = emb.map(e => Math.tanh(e)).map(dcfilter.apply);
 
   lpfilter.set(cutoff);
-  output = flute.get().map(lpfilter.apply);
-  flute.set(output);
-  flute.delay(128);
+  flute = flute.mult(r2).add(emb).map(lpfilter.apply);
 
-  return output.mult(0.1);
+  return flute.mult(0.1);
 }
-
-

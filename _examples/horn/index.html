@@ -3,27 +3,19 @@ layout: livecode
 title: Horn
 category: instrument
 blurb: |
-  A (overly) simplified physical waveguide model of resonance in a wind instrument. This is essentially the same as the guitar string model, but we start with an empty buffer and load it with noise on each loop.
+  A simple physical waveguide model of a wind instrument. This is essentially the same as the guitar string model, but we start with an empty wave instead, and add noise to it in each loop.
 ---
-let output, waveGuide;
-let freq = 500;
-let average;
-let noise;
+let wave, noise, filter;
 
 function setup() {
-  let waveGuideLength = Math.round(sampleRate / freq - 0.5);
-  waveGuide = new WaveGuide(waveGuideLength);
-  average = twoPointAverage();
+  wave = new Wave();
+  filter = twoPointAverage();
 }
 
 function loop() {
 
-  noise = time.map(whiteNoise).mult(0.1);
-  waveGuide.set(waveGuide.get().add(noise));
+  noise = noiseWave().mult(0.1);
+  wave = wave.add(noise).map(filter.apply);
 
-  waveGuide.delay(128);
-  output = waveGuide.get().map(average.apply);
-  waveGuide.set(output);
-
-  return output.mult(0.1);
+  return wave.mult(0.05);
 }

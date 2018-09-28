@@ -19,7 +19,7 @@ function setup() {
 
 function loop() {
 
-  wave.delay(128);
+  wave.delay(numSamples);
   output = wave.get().map(average.apply);
   wave.set(output);
 
