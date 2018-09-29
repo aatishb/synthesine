@@ -2,21 +2,12 @@ const libraryCode = (processorName, sampleRate) => `
 
 // WAVE OPERATIONS
 
-const indexOf = (x, i) => {
-  if (!isNaN(x[i])) {
-    return x[i];
-  } else if (!isNaN(x) && isNaN(x.length)) {
-    return x;
-  } else {
-    return 0;
-  }
-}
-
 const add = v => (e, i) => e + indexOf(v,i);
 const sub = v => (e, i) => e - indexOf(v,i);
 const mult = v => (e, i) => e * indexOf(v,i);
 const div = v => (e, i) => e / indexOf(v,i);
 const modulate = v => (e, i) => e * (1 + v[i])
+const fade = decayTime => time.map(t => Math.exp(- t / decayTime));
 
 const clip = (g = 0.5) => e => {
   let max = Math.abs(g);
@@ -32,6 +23,24 @@ const clip = (g = 0.5) => e => {
   }
 };
 
+// HELPER FUNCTIONS
+
+const indexOf = (x, i) => {
+  if (!isNaN(x[i])) {
+    return x[i];
+  } else if (!isNaN(x) && isNaN(x.length)) {
+    return x;
+  } else {
+    return 0;
+  }
+}
+
+const range = n => [...Array(n).keys()];
+const repeat = (n, wave, func) => range(n).reduce(func, wave);
+
+
+// WAVE OBJECT
+
 class Wave extends Float32Array {
 
   constructor(n = numSamples) {
@@ -42,11 +51,11 @@ class Wave extends Float32Array {
   sub(v) { return this.map(sub(v)); }
   mult(s) { return this.map(mult(s)); }
   div(s) { return this.map(div(s)); }
-  modulate(v) { return this.map(modulate(v)); }
   clip(g) { return this.map(clip(g)); }
+  modulate(v) { return this.map(modulate(v)); }
+  fade(t) { return this.mult(fade(t)); }
 
 }
-
 
 // OSCILLATORS
 
@@ -54,10 +63,21 @@ const whiteNoise = () => 2 * Math.random() - 1;
 const phasor = f => t => (f * t) % 1;
 const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + indexOf(phase, i));
 const square = (f, phase = 0) => (t, i) => clip(1)(sin(f, phase)(t, i) * 1000);
-const saw = f => t => 2 * (f * t - Math.floor(0.5 + f * t));
-const triangle = f => t => 2 * Math.abs(saw(f)(t)) - 1;
+const saw = (f, phase = 0) => (t, i) => 2 * ( (f * t + indexOf(phase, i)/(2 * Math.PI)) - Math.floor(0.5 + (f * t + indexOf(phase, i)/(2 * Math.PI))));
+const triangle = (f, phase = 0) => (t, i) => 2 * Math.abs(saw(f, indexOf(phase, i))(t)) - 1;
 const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / Math.max(0.00001, tau)) * sin(f, phase)(t);
 
+// PRE-BUILT WAVES
+
+const sinWave = (f, phase = 0) => time.map(sin(f,phase));
+const sqrWave = (f, phase = 0) => time.map(square(f,phase));
+const sawWave = (f, phase = 0) => time.map(saw(f,phase));
+const triWave = (f, phase = 0) => time.map(triangle(f,phase));
+const noiseWave = () => time.map(whiteNoise);
+
+// PRE-DEFINED VARIABLES
+
+const PI = Math.PI;
 
 // FILTERS
 
@@ -315,24 +335,24 @@ const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
 
 // WAVE TABLE
 
-class WaveTable extends Wave {
+class WaveGuide extends Wave {
 
-  constructor(waveTableSize = numSamples) {
-    super(waveTableSize);
-    this.waveTableSize = waveTableSize;
+  constructor(waveGuideSize = numSamples) {
+    super(waveGuideSize);
+    this.waveGuideSize = waveGuideSize;
     this.output = new Wave(numSamples);
     this.pointer = 0;
   }
 
   delay(samples) {
-    this.pointer = (this.pointer + samples) % this.waveTableSize;
+    this.pointer = (this.pointer + samples) % this.waveGuideSize;
     return this;
   }
 
   get() {
     let i;
     for(i = 0; i < numSamples; i++) {
-      this.output[i] = this[(this.pointer + i) % this.waveTableSize];
+      this.output[i] = this[(this.pointer + i) % this.waveGuideSize];
     }
     return this.output;
   };
@@ -341,7 +361,7 @@ class WaveTable extends Wave {
     if(arr) {
       let i;
       for(i = 0; i < numSamples; i++){
-        this[(this.pointer + i) % this.waveTableSize] = arr[i];
+        this[(this.pointer + i) % this.waveGuideSize] = arr[i];
       }
     }
   };

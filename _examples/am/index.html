@@ -10,7 +10,7 @@ blurb: |
   What happens if instead of using a sine wave as the carrier wave, you use one of the other oscillators (saw, triangle, square)?
 
 ---
-let carrier, signal;
+let carrierWave;
 
 function setup() {
 
@@ -18,10 +18,9 @@ function setup() {
 
 function loop() {
 
-  carrier = time.map(sin(5)).mult(0.5);
-  signal = time.map(sin(440));
+  carrierWave = sinWave(5).mult(0.5);
 
-  signal = signal.modulate(carrier);
-
-  return signal.mult(0.1);
+  return sinWave(440)
+    .modulate(carrierWave)
+    .mult(0.1);
 }

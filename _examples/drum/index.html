@@ -7,8 +7,7 @@ blurb: |
 
   What happens if you change the decay time?
 ---
-let noise, envelope;
-let decayTime = 0.1;
+let envelope;
 
 function setup() {
 
@@ -16,8 +15,5 @@ function setup() {
 
 function loop() {
 
-  noise = time.map(whiteNoise).mult(0.1);
-  envelope = time.map(t => Math.exp(- t / decayTime));
-
-  return noise.mult(envelope).clip(0.1);
+  return noiseWave().fade(0.1).mult(0.1).clip(0.1);
 }

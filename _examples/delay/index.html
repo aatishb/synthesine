@@ -17,8 +17,7 @@ function setup() {
 }
 
 function loop() {
-  myWave = time.map(whiteNoise);
-
+  myWave = noiseWave();
   myWave = myWave.map(filter.apply).sub(myWave);
 
   return myWave.mult(amp);

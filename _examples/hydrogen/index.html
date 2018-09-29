@@ -1,0 +1,26 @@
+---
+layout: livecode
+title: Hydrogen
+category: synthesis
+blurb: |
+  A recreation of the sound of the Hydrogen spectrum in different pitches. The frequencies are set using the Rydberg formula, which tells you the frequencies of light emitted by a hydrogen atom. Inspired by [Minute Physics](https://www.youtube.com/watch?v=qyi5SvPlMXc).
+---
+let zero, myWave;
+let freq = 440;
+let numLines = 5;
+
+function setup() {
+  zero = new Wave();
+  slider('freq', 20, 1000, 1);
+  slider('numLines', 1, 10, 1);
+}
+
+function loop() {
+  myWave = zero;
+
+  for (let i = 2; i < 2 + numLines; i++) {
+    myWave = myWave.add(sinWave(freq * (1 - 1/(i*i)) ).mult(1/i));
+  }
+
+  return myWave.mult(0.2);
+}

@@ -5,7 +5,7 @@ category: modulation
 blurb: |
   An FM synthesis example where we take it one step further, by varying the modulation index using a sine wave. This gives us a sound whose timbre varies over time, a bit like a vibrato effect.
 ---
-let modIndex, carrier, signal;
+let modulation, carrier, signal;
 
 function setup() {
 
@@ -13,12 +13,8 @@ function setup() {
 
 function loop() {
 
-  modIndex = time.map(sin(1)).mult(0.5);
+  modulation = sinWave(1).mult(0.5);
+  carrier = sinWave(220).modulate(modulation);
 
-  carrier = time.map(sin(220));
-  carrier = carrier.modulate(modIndex);
-
-  signal = time.map(sin(220, carrier)).mult(0.1);
-
-  return signal;
+  return sinWave(220, carrier).mult(0.1);
 }

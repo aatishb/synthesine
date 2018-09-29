@@ -1,0 +1,43 @@
+---
+layout: reference
+title: WaveGuide
+category: object
+blurb: |
+  `WaveGuide(size)` is a class that creates a wave guide object. A wave guide is implemented in synthesine as a [circular buffer](https://en.wikipedia.org/wiki/Circular_buffer). This is a type of array where we can shift the point at which we start reading from, and where the end is followed by the start. Wave guides such as these are used in simulating musical instruments.
+
+  - `size (optional)` This sets the size of the array, and can be any positive integer.
+
+  `WaveGuide` is an extension of `Wave`, which is itself an extension of javascript's built-in `Float32Array`, so it inherits all the [Float32Array methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array).
+
+  ##### Usage
+
+  - `new WaveGuide(size);` creates an empty wave guide.
+  - `new WaveGuide().fill(0.1)` creates a wave guide filled with the value 0.1
+  - `new WaveGuide(100).map((e,i) => i/100)` creates a wave guide filled with 100 equally spaced values from 0 to 1
+
+  ##### Wave Guide Manipulation Functions
+  - `.delay(n)` shifts the current position of the wave guide by `n` samples, and returns the wave guide. To shift the wave guide by a full audio cycle, use n = 128 (i.e. `numSamples`)
+  - `.set(array)` sets the next 128 values of the wave guide to the entries of `array`. The wave guide is rewritten in a circular fashion, starting from the current position.
+  - `.get()` returns the next 128 values of the wave guide, starting from the current position.
+
+
+  ##### Wave Manipulation Functions
+
+  - `.add` adds two waves together
+  - `.sub` subtracts one wave from another
+  - `.mult` multiples two waves or multiplies a wave with a number
+  - `.div` divides two waves or divides a wave with a number
+  - `.modulate` modulates one wave with another wave
+  - `.map` applies any function onto the wave entries
+
+---
+let wave;
+
+function setup() {
+  wave = new WaveGuide(500).map((e,i) => i/500);
+}
+
+function loop() {
+  wave.delay(128);
+  return wave.get().mult(0.1);
+}

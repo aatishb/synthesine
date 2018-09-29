@@ -8,7 +8,6 @@ blurb: |
   Can you adjust the sliders to create a sawtooth wave? Once you have a sawtooth wave, remove the even-numbered harmonics to create a square wave.
 
 ---
-let wave1, wave2, wave3, wave4, wave5;
 let freq = 300;
 let firstHarmonic = 1, secondHarmonic = 0, thirdHarmonic = 0,
   fourthHarmonic = 0, fifthHarmonic = 0;
@@ -24,12 +23,10 @@ function setup() {
 
 function loop() {
 
-  wave1 = time.map(sin(freq)).mult(firstHarmonic);
-  wave2 = time.map(sin(2 * freq)).mult(secondHarmonic);
-  wave3 = time.map(sin(3 * freq)).mult(thirdHarmonic);
-  wave4 = time.map(sin(4 * freq)).mult(fourthHarmonic);
-  wave5 = time.map(sin(5 * freq)).mult(fifthHarmonic);
-
-  return wave1.add(wave2).add(wave3).add(wave4)
-    .add(wave5).mult(0.1);
+  return sinWave(freq).mult(firstHarmonic)
+  .add(sinWave(2 * freq).mult(secondHarmonic))
+  .add(sinWave(3 * freq).mult(thirdHarmonic))
+  .add(sinWave(4 * freq).mult(fourthHarmonic))
+  .add(sinWave(5 * freq).mult(fifthHarmonic))
+  .mult(0.1);
 }

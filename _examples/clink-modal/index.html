@@ -5,32 +5,38 @@ category: synthesis
 blurb: |
   Modal synthesis of the sound of a spoon clinking a glass by filtering white noise through a bunch of resonators at different amplitudes and frequencies.
 ---
-let freq = [754, 1938, 3628, 5642, 7816, 9388];
-let amp = [0.7, 0.8, 1.0, 0.5, 0.3, 0.1];
-let filters = [];
 
-let zeroWave, filteredWave, noiseWave, envelope;
-let numSines = freq.length;
+let peaks = [
+  {freq: 754, amp: 0.7},
+  {freq: 1938, amp: 0.8},
+  {freq: 3628, amp: 1.0},
+  {freq: 5642, amp: 0.5},
+  {freq: 7816, amp: 0.3},
+  {freq: 9388, amp: 0.1}
+];
+
+let filters = [];
+let zero, myWave, envelope;
+let numSines = peaks.length;
 
 function setup() {
-  zeroWave = new Wave();
+  zero = new Wave();
   for (let i = 0; i < numSines; i++){
-    filters.push(resonator(freq[i], 1))
+    filters.push(resonator(peaks[i].freq, 1));
   }
 }
 
 function loop() {
-  filteredWave = zeroWave;
-  noiseWave = time.map(whiteNoise);
+  myWave = zero;
   envelope = time.map(adsr(0, 0.001, 0.05, 0.05, 0.5));
 
-  for (var i = 0; i < numSines; i++) {
-    filteredWave = filteredWave.add(
-      noiseWave
+  for (let i = 0; i < numSines; i++) {
+    myWave = myWave.add(
+      noiseWave()
       .map(filters[i].apply)
-      .mult(amp[i])
+      .mult(peaks[i].amp)
       );
   }
 
-  return filteredWave.mult(envelope).div(numSines);
+  return myWave.mult(envelope).div(numSines);
 }
