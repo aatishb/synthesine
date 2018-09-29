@@ -15,7 +15,7 @@ blurb: |
   - `new WaveGuide().fill(0.1)` creates a wave guide filled with the value 0.1
   - `new WaveGuide(100).map((e,i) => i/100)` creates a wave guide filled with 100 equally spaced values from 0 to 1
 
-  ##### Wave Table Manipulation Functions
+  ##### Wave Guide Manipulation Functions
   - `.delay(n)` shifts the current position of the wave guide by `n` samples, and returns the wave guide. To shift the wave guide by a full audio cycle, use n = 128 (i.e. `numSamples`)
   - `.set(array)` sets the next 128 values of the wave guide to the entries of `array`. The wave guide is rewritten in a circular fashion, starting from the current position.
   - `.get()` returns the next 128 values of the wave guide, starting from the current position.
