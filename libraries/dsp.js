@@ -7,7 +7,7 @@ const sub = v => (e, i) => e - indexOf(v,i);
 const mult = v => (e, i) => e * indexOf(v,i);
 const div = v => (e, i) => e / indexOf(v,i);
 const modulate = v => (e, i) => e * (1 + v[i])
-const fade = decayTime => time.map(t => Math.exp(- t / decayTime));
+const fade = decayTime => time.map(t => Math.exp(- t / Math.abs(decayTime) ));
 
 const clip = (g = 0.5) => e => {
   let max = Math.abs(g);
