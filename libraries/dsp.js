@@ -532,12 +532,34 @@ var synth = (function () {
     );
   }
 
+  function resumeContextOnInteraction(audioContext) {
+    // from https://audio-dsp-playground-polyfilled.surge.sh/livecode.js
+    // from https://github.com/captbaritone/winamp2-js/blob/a5a76f554c369637431fe809d16f3f7e06a21969/js/media/index.js#L8-L27
+    if (audioContext.state === "suspended") {
+      const resume = async () => {
+        await audioContext.resume();
+
+        if (audioContext.state === "running") {
+          document.body.removeEventListener("touchend", resume, false);
+          document.body.removeEventListener("click", resume, false);
+          document.body.removeEventListener("keydown", resume, false);
+        }
+      };
+
+      document.body.addEventListener("touchend", resume, false);
+      document.body.addEventListener("click", resume, false);
+      document.body.addEventListener("keydown", resume, false);
+    }
+  }
+
+
   function startWorklet(userCode) {
     let processorName = 'audio-processor' + processorCount;
     processorCount++;
 
     if (!audioCtx) {
       audioCtx = new AudioContext();
+      resumeContextOnInteraction(audioCtx);
     }
 
     let moduleDataUrl = getCode(userCode, processorName, audioCtx.sampleRate);
