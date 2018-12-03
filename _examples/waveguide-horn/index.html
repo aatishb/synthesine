@@ -5,7 +5,7 @@ category: instrument
 blurb: |
   A simple physical waveguide model of a wind instrument. This is essentially the same as the guitar string model, but we start with an empty wave instead, and add noise to it in each loop. The average filter is replaced with a low pass filter for greater control.
 ---
-let output, waveGuide;
+let waveGuide;
 let freq = 500;
 let average;
 let noise;
@@ -19,11 +19,6 @@ function setup() {
 function loop() {
 
   noise = noiseWave().mult(0.1);
-  waveGuide.set(waveGuide.get().add(noise));
-
-  waveGuide.delay(numSamples);
-  output = waveGuide.get().map(average.apply);
-  waveGuide.set(output);
-
-  return output.mult(0.1);
+  waveGuide.delay(numSamples).update(add(noise)).apply(average);
+  return waveGuide.get().mult(0.1);
 }

@@ -26,8 +26,8 @@ function loop() {
 
   wave = wave
     .map(e => Math.tanh(e))
-    .map(dcfilter.apply)
-    .map(lpfilter.apply);
+    .apply(lpfilter)
+    .apply(dcfilter);
 
   return wave.mult(0.1);
 }

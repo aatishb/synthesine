@@ -54,6 +54,7 @@ class Wave extends Float32Array {
   clip(g) { return this.map(clip(g)); }
   modulate(v) { return this.map(modulate(v)); }
   fade(t) { return this.mult(fade(t)); }
+  apply(filter) {return this.map(filter.apply);}
 
 }
 
@@ -100,7 +101,6 @@ const delay = (m) => {
     apply: equation,
     set: set
   };
-
 };
 
 const comb = (g1, m1, g2, m2) => {
@@ -128,7 +128,6 @@ const comb = (g1, m1, g2, m2) => {
     apply: equation,
     set: set
   };
-
 };
 
 const lowPass = alpha =>
@@ -150,7 +149,6 @@ const lowPass = alpha =>
     apply: equation,
     set: set
   };
-
 };
 
 const highPass = alpha =>
@@ -172,7 +170,6 @@ const highPass = alpha =>
     apply: equation,
     set: set
   };
-
 };
 
 const twoPointAverage = () =>
@@ -189,8 +186,7 @@ const twoPointAverage = () =>
   return {
     apply: equation
   };
-
-}
+};
 
 const dcBlocker = alpha =>
 {
@@ -213,8 +209,23 @@ const dcBlocker = alpha =>
     apply: equation,
     set: set
   };
+};
 
-}
+const allPass = function(c) {
+  let y, x1 = 0, y1 = 0;
+
+  const equation = function(x) {
+    y = c*x + x1 - c*y1;
+
+    x1 = x; // update previous input to current input
+    y1 = y; // update previous output to current output
+    return y;
+  };
+
+  return {
+    apply: equation
+  };
+};
 
 const resonator = (freq, bandwidth) => {
 
@@ -250,7 +261,7 @@ const resonator = (freq, bandwidth) => {
     set: set
   };
 
-}
+};
 
 const adsr = (startTime, attackTime, delayTime, sustainTime, releaseTime) => t => {
   if (t < startTime) {
@@ -333,7 +344,7 @@ const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
 */
 
 
-// WAVE TABLE
+// WAVEGUIDE
 
 class WaveGuide extends Wave {
 
@@ -355,7 +366,7 @@ class WaveGuide extends Wave {
       this.output[i] = this[(this.pointer + i) % this.waveGuideSize];
     }
     return this.output;
-  };
+  }
 
   set(arr) {
     if(arr) {
@@ -364,7 +375,17 @@ class WaveGuide extends Wave {
         this[(this.pointer + i) % this.waveGuideSize] = arr[i];
       }
     }
-  };
+  }
+
+  update(f) {
+    this.set(this.get().map(f));
+    return this;
+  }
+
+  apply(filter) {
+    this.set(this.get().map(filter.apply));
+    return this;
+  }
 
 }
 

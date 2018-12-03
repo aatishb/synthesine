@@ -15,7 +15,7 @@ function setup() {
 function loop() {
 
   noise = noiseWave().mult(0.1);
-  wave = wave.add(noise).map(filter.apply);
+  wave = wave.add(noise).apply(filter);
 
   return wave.mult(0.05);
 }

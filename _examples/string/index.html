@@ -13,6 +13,6 @@ function setup() {
 }
 
 function loop() {
-  wave = wave.map(average.apply);
+  wave = wave.apply(average);
   return wave.mult(0.1);
 }

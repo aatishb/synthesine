@@ -7,7 +7,7 @@ blurb: |
 
   Try changing the frequency to something else.
 ---
-let wave, output;
+let wave;
 let freq = 500;
 let average;
 
@@ -19,9 +19,6 @@ function setup() {
 
 function loop() {
 
-  wave.delay(numSamples);
-  output = wave.get().map(average.apply);
-  wave.set(output);
-
-  return output.mult(0.1);
+  wave.delay(numSamples).apply(average);
+  return wave.get().mult(0.1);
 }
