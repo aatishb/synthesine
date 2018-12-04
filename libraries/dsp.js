@@ -349,8 +349,8 @@ const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
 class WaveGuide extends Wave {
 
   constructor(waveGuideSize = numSamples) {
-    super(waveGuideSize);
-    this.waveGuideSize = waveGuideSize;
+    super(Math.floor(waveGuideSize));
+    this.waveGuideSize = Math.floor(waveGuideSize);
     this.output = new Wave(numSamples);
     this.pointer = 0;
   }
