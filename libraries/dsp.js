@@ -66,7 +66,23 @@ const sin = (f, phase = 0) => (t, i) => Math.sin(2 * Math.PI * f * t + indexOf(p
 const square = (f, phase = 0) => (t, i) => clip(1)(sin(f, phase)(t, i) * 1000);
 const saw = (f, phase = 0) => (t, i) => 2 * ( (f * t + indexOf(phase, i)/(2 * Math.PI)) - Math.floor(0.5 + (f * t + indexOf(phase, i)/(2 * Math.PI))));
 const triangle = (f, phase = 0) => (t, i) => 2 * Math.abs(saw(f, indexOf(phase, i))(t)) - 1;
+
+// deprecate sinDamped in favor of .fade
 const sinDamped = (f, tau, phase = 0) => t => Math.exp(- t / Math.max(0.00001, tau)) * sin(f, phase)(t);
+
+const glottalPulse = (f, phase = 0) => (t, i) => {
+  let t0 = (f * t + indexOf(phase, i)/(2 * Math.PI)) % 1;
+  // time from onset of pulse to peak = 0.3 cycles
+  // pulse duration (time from onset to zero) = 0.6 cycles
+
+  if (t0 < 0.3) {
+    return(1 - Math.cos(Math.PI * t0 / 0.3))/2;
+  } else if (t0 < 0.6) {
+    return Math.cos((Math.PI/2) * (t0 - 0.3) / (0.6 - 0.3) );
+  } else {
+    return 0;
+  }
+};
 
 // PRE-BUILT WAVES
 
@@ -75,6 +91,7 @@ const sqrWave = (f, phase = 0) => time.map(square(f,phase));
 const sawWave = (f, phase = 0) => time.map(saw(f,phase));
 const triWave = (f, phase = 0) => time.map(triangle(f,phase));
 const noiseWave = () => time.map(whiteNoise);
+const glottalWave = (freq, phase = 0) => time.map(glottalPulse(freq, phase));
 
 // PRE-DEFINED VARIABLES
 
@@ -311,7 +328,7 @@ function vocalTract(a) {
   function equation(x) {
     f[0] = x + rg * b[0];
 
-    for (let j = 0; j <= 1; j++){
+    for (let j = 1; j >= 0; j--){
       for (let i = j; i < numSegments - 1; i+=2) {
         delta = r[i] * (f[i] - b[i+1]);
         f[i+1] = f[i] + delta;
