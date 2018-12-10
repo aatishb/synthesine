@@ -25,7 +25,7 @@ const clip = (g = 0.5) => e => {
 
 // HELPER FUNCTIONS
 
-const indexOf = (x, i) => {
+function indexOf(x, i) {
   if (!isNaN(x[i])) {
     return x[i];
   } else if (!isNaN(x) && isNaN(x.length)) {
@@ -82,14 +82,14 @@ const PI = Math.PI;
 
 // FILTERS
 
-const delay = (m) => {
+function delay(m) {
 
   let y = 0;
   let x_arr = Array(m).fill(0);
 
-  const equation = (e, i, x) => {
+  function equation(x) {
    y = x_arr.shift();
-   x_arr.push(x[i]);
+   x_arr.push(x);
    return y;
   };
 
@@ -103,15 +103,15 @@ const delay = (m) => {
   };
 };
 
-const comb = (g1, m1, g2, m2) => {
+function comb(g1, m1, g2, m2) {
 
   let y = 0;
   let x_arr = Array(m1).fill(0);
   let y_arr = Array(m2).fill(0);
 
-  const equation = (e, i, x) => {
-   y = x[i] + g1 * (x_arr.shift() || 0) - g2 * (y_arr.shift() || 0);
-   x_arr.push(x[i]);
+  function equation(x) {
+   y = x + g1 * (x_arr.shift() || 0) - g2 * (y_arr.shift() || 0);
+   x_arr.push(x);
    y_arr.push(y);
    return y;
   };
@@ -130,13 +130,12 @@ const comb = (g1, m1, g2, m2) => {
   };
 };
 
-const lowPass = alpha =>
-{
+function lowPass(alpha) {
   let y = 0;
   let y1 = 0;
 
-  const equation = (e, i, x) => {
-    y = alpha * x[i] +  (1 - alpha) * y1;
+  function equation(x) {
+    y = alpha * x +  (1 - alpha) * y1;
     y1 = y;
     return y;
   };
@@ -151,13 +150,12 @@ const lowPass = alpha =>
   };
 };
 
-const highPass = alpha =>
-{
+function highPass(alpha) {
   let y = 0;
   let y1 = 0;
 
-  const equation = (e, i, x) => {
-    y = x[i] - alpha * y1;
+  function equation(x) {
+    y = x - alpha * y1;
     y1 = y;
     return y;
   };
@@ -172,14 +170,13 @@ const highPass = alpha =>
   };
 };
 
-const twoPointAverage = () =>
-{
+function twoPointAverage() {
   let y = 0;
   let x1 = 0;
 
-  const equation = (e, i, x) => {
-    y = 0.5 * (x[i] + x1);
-    x1 = x[i];
+  function equation(x) {
+    y = 0.5 * (x + x1);
+    x1 = x;
     return y;
   };
 
@@ -188,15 +185,14 @@ const twoPointAverage = () =>
   };
 };
 
-const dcBlocker = alpha =>
-{
+function dcBlocker(alpha) {
   let y = 0;
   let y1 = 0;
   let x1 = 0;
 
-  const equation = (e, i, x) => {
-    y = x[i] - x1 +  (1 - alpha) * y1;
-    x1 = x[i];
+  function equation(x) {
+    y = x - x1 +  (1 - alpha) * y1;
+    x1 = x;
     y1 = y;
     return y;
   };
@@ -211,10 +207,10 @@ const dcBlocker = alpha =>
   };
 };
 
-const allPass = function(c) {
+function allPass(c) {
   let y, x1 = 0, y1 = 0;
 
-  const equation = function(x) {
+  function equation(x) {
     y = c*x + x1 - c*y1;
 
     x1 = x; // update previous input to current input
@@ -222,16 +218,21 @@ const allPass = function(c) {
     return y;
   };
 
+  function set(newC) {
+    c = newC;
+  };
+
   return {
-    apply: equation
+    apply: equation,
+    set: set
   };
 };
 
-const resonator = (freq, bandwidth) => {
 
-  let q = Math.exp(- Math.PI * bandwidth / sampleRate);
-  let gain = Math.sqrt((1 - q * q) / 2);
-  let cosPoleAngle = ((1 + q * q) / 2 * q) * Math.cos(2 * Math.PI * freq / sampleRate);
+function bandPass(freq, bandwidth) {
+
+  let r, gain, cosPoleAngle;
+  set(freq, bandwidth);
 
   let y = 0;
   let y1 = 0;
@@ -239,12 +240,48 @@ const resonator = (freq, bandwidth) => {
   let x1 = 0;
   let x2 = 0;
 
-  const equation = (e, i, x) => {
-    y = gain * (x[i] - x2) + 2 * q * cosPoleAngle * y1 - q * q * y2;
+  function equation(x) {
+    y = gain * (x - r * x2) + 2 * r * cosPoleAngle * y1 - r * r * y2;
     y2 = y1;
     y1 = y;
     x2 = x1;
-    x1 = x[i];
+    x1 = x;
+    return y;
+  };
+
+  function set(newFreq, newBandwidth) {
+    freq = newFreq;
+    bandwidth = newBandwidth;
+    r = Math.exp(- Math.PI * bandwidth / sampleRate);
+    gain = 1 - r;
+    cosPoleAngle = Math.cos(2 * Math.PI * freq / sampleRate);
+  };
+
+  return {
+    apply: equation,
+    set: set
+  };
+
+};
+
+
+function resonator(freq, bandwidth) {
+
+  let q, gain, cosPoleAngle;
+  set(freq, bandwidth);
+
+  let y = 0;
+  let y1 = 0;
+  let y2 = 0;
+  let x1 = 0;
+  let x2 = 0;
+
+  function equation(x) {
+    y = gain * (x - x2) + 2 * q * cosPoleAngle * y1 - q * q * y2;
+    y2 = y1;
+    y1 = y;
+    x2 = x1;
+    x1 = x;
     return y;
   };
 
@@ -262,6 +299,52 @@ const resonator = (freq, bandwidth) => {
   };
 
 };
+
+function vocalTract(a) {
+
+  let rl = -0.99, rg = 0.75;
+  let delta;
+  let r, numSegments, f, b;
+
+  set(a);
+
+  function equation(x) {
+    f[0] = x + rg * b[0];
+
+    for (let j = 0; j <= 1; j++){
+      for (let i = j; i < numSegments - 1; i+=2) {
+        delta = r[i] * (f[i] - b[i+1]);
+        f[i+1] = f[i] + delta;
+        b[i] = b[i+1] + delta;
+      }
+    }
+
+    b[numSegments - 1] = rl * f[numSegments - 1];
+
+    return f[numSegments - 1];
+  };
+
+  function set(newA) {
+    a = newA;
+
+    numSegments = a.length;
+    f = new Wave(numSegments);
+    b = new Wave(numSegments);
+    r = [];
+
+    for (let i = 0; i < numSegments - 1; i++){
+      r.push( (a[i] - a[i+1])/(a[i] + a[i+1]) );
+    }
+  };
+
+  return {
+    apply: equation,
+    set: set
+  };
+};
+
+
+// TIME FUNCTIONS
 
 const adsr = (startTime, attackTime, delayTime, sustainTime, releaseTime) => t => {
   if (t < startTime) {
@@ -289,59 +372,6 @@ const adsr = (startTime, attackTime, delayTime, sustainTime, releaseTime) => t =
     return 0;
   }
 };
-
-/*
-function biquad(...args) {
-
-  this.filterOutput = 0;
-  this.y1 = 0;
-  this.y2 = 0;
-  this.x1 = 0;
-  this.x2 = 0;
-
-  this.set = function(...args){
-    this.b0 = args[0];
-    this.b1 = args[1];
-    this.b2 = args[2];
-    this.a0 = args[3];
-    this.a1 = args[4];
-    this.a2 = args[5];
-  };
-
-  if(args.length){
-    this.set(...args);
-  }
-
-  this.equation =  (x, y, i) => {
-    this.filterOutput = (this.b0/this.a0) * x[i] + (this.b1/this.a0) * this.x1
-    + (this.b2/this.a0) * this.x2
-    - (this.a1/this.a0) * this.y1 - (this.a2/this.a0) * this.y2;
-
-    this.y2 = this.y1;
-    this.y1 = this.filterOutput;
-
-    this.x2 = this.x1;
-    this.x1 = x[i];
-
-    return this.filterOutput;
-  };
-}
-
-const biQuad = (gain, freqZero, resZero, freqPole, resPole) =>
-  {
-    return (input, output, i) => {
-      return gain
-      * (input[i]
-          - 2 * resZero * Math.cos(2 * Math.PI * freqZero / sampleRate) * input[i-1]
-          + resZero * resZero * input[i-2]
-      )
-        + 2 * resPole * Math.cos(2 * Math.PI * freqPole / sampleRate) * output[i-1]
-        - resPole * resPole * output[i-2]
-      || gain * input[i];
-    };
-  };
-
-*/
 
 
 // WAVEGUIDE
