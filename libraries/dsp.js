@@ -452,6 +452,16 @@ function askToCreateSlider(label, min, max, step) {
   );
 };
 
+function askToRecord(filename) {
+  this.port.postMessage(
+    {
+      'type': 'record',
+      'filename': filename
+    }
+  );
+};
+
+
 // ERROR HANDLING
 
 function getLineNo(error) {
@@ -495,6 +505,7 @@ const clock = getTime();
 let numSamples;
 const sampleRate = ${sampleRate};
 let slider;
+let record;
 let time;
 let initialized = false;
 
@@ -529,6 +540,7 @@ class AudioProcessor extends AudioWorkletProcessor {
         time = clock.init(); // initialize time
 
         slider = askToCreateSlider.bind(this);
+        record = askToRecord.bind(this);
 
         // setup runs once
         // pass 'this' along so we can send messages
@@ -577,6 +589,7 @@ function loop() {
 var synth = (function () {
   let analyser;
   let node, audioCtx;
+  let rec;
   let editor;
   let processorCount = 0;
 
@@ -651,6 +664,17 @@ var synth = (function () {
 
           if (msg["type"] == "slider") {
             makeSlider(msg["label"], msg["val"], msg["min"], msg["max"], msg["step"]);
+          }
+
+          else if (msg["type"] == "record") {
+            // setting up recorder following https://blog.addpipe.com/using-recorder-js-to-capture-wav-audio-in-your-html5-web-site/
+            //let input = audioCtx.destination;
+            rec = new Recorder(node, {
+              numChannels: 1
+            });
+            rec.filename = msg["filename"];
+            //start the recording process
+            rec.record();
           }
 
           else if (msg["type"] == "error") {
@@ -733,10 +757,33 @@ var synth = (function () {
   };
 
   document.getElementById("stop").onclick = function(){
-    if (node) {node.disconnect();}
+    if (node) {
+      node.disconnect();
+    }
+    if (rec) {
+      rec.stop();
+      rec.exportWAV(blob => createDownloadLink(blob, rec.filename));
+    }
     $( "#dom" ).empty();
     editor.resize();
   };
+
+  // from https://stackoverflow.com/a/33542499
+  function createDownloadLink(blob, filename = 'output.wav') {
+
+    if(window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+    }
+    else{
+        var elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = filename;
+        document.body.appendChild(elem);
+        elem.click();
+        document.body.removeChild(elem);
+    }
+  }
+
 
   // Spectrum Analyser from https://codepen.io/ContemporaryInsanity/pen/Mwvqpb
 
