@@ -649,6 +649,7 @@ var synth = (function () {
     audioCtx.audioWorklet.addModule(moduleDataUrl).then(() => {
       node = new AudioWorkletNode(audioCtx, processorName);
       analyser = audioCtx.createAnalyser();
+      rec = false; // reset recorded variable to false
       node.connect(audioCtx.destination);
       node.connect(analyser);
 
@@ -673,8 +674,7 @@ var synth = (function () {
               numChannels: 1
             });
             rec.filename = msg["filename"];
-            //start the recording process
-            rec.record();
+            rec.record(); // start recording
           }
 
           else if (msg["type"] == "error") {
@@ -760,8 +760,10 @@ var synth = (function () {
     if (node) {
       node.disconnect();
     }
+
+    // check if recorded has started
     if (rec) {
-      rec.stop();
+      rec.stop(); // stop recording
       rec.exportWAV(blob => createDownloadLink(blob, rec.filename));
     }
     $( "#dom" ).empty();
