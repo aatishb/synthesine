@@ -544,12 +544,19 @@ const clock = getTime();
 
 // WORKLET SETUP
 
-let numSamples;
+let numSamples = 128;
 const sampleRate = ${sampleRate};
+
+let bufferSize;
 let slider;
 let record;
 let time;
+let buffer;
+let zeroBuffer;
+let frame;
+let outputLength;
 let initialized = false;
+let i;
 
 class AudioProcessor extends AudioWorkletProcessor {
 
@@ -577,7 +584,10 @@ class AudioProcessor extends AudioWorkletProcessor {
       let output = outputs[0][0];
 
       if (!initialized) {
-        numSamples = output.length;
+        bufferSize = output.length;
+        outputLength = 0;
+        buffer = new Float32Array(bufferSize);
+        zeroBuffer = new Float32Array(bufferSize);
 
         time = clock.init(); // initialize time
 
@@ -592,8 +602,35 @@ class AudioProcessor extends AudioWorkletProcessor {
         initialized = true;
       }
 
-      output.set(loop().clip(0.5));
-      time = clock.tick();
+      // here, the output of loop is being sent directly to the speaker
+      // this creates an issue with different browsers, where
+      // the output size differs, so each loop takes up a different amount of time
+      // which means we get different sound effects depending on browsers
+      // output.set(loop().clip(0.5));
+
+      // what if, instead, we split the output of loop into frames (chunks) of 128 samples
+      // then we wait until they add up to add up to the buffer size for each browser
+      // and concatenate the loop outputs, then send to the speaker?
+
+      //console.log(time[0], outputLength, bufferSize, buffer.length);
+
+      while (outputLength < bufferSize) {
+
+        frame = loop().clip(0.5);
+
+        // push frame to buffer
+        for (i=0; i<numSamples; i++) {
+          buffer[outputLength + i] = frame[i];
+        }
+
+        outputLength += numSamples;
+        time = clock.tick();
+
+      }
+
+      output.set(buffer);
+      outputLength = 0;
+      buffer = zeroBuffer;
 
     } catch (error) {
 
