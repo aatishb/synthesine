@@ -393,46 +393,88 @@ const adsr = (startTime, attackTime, delayTime, sustainTime, releaseTime) => t =
 
 // WAVEGUIDE
 
-class WaveGuide extends Wave {
+class WaveGuide extends Float32Array {
 
-  constructor(waveGuideSize = numSamples) {
-    super(Math.floor(waveGuideSize));
-    this.waveGuideSize = Math.floor(waveGuideSize);
-    this.output = new Wave(numSamples);
+  constructor(n = numSamples) {
+    super(numSamples);
+
+    this.waveGuideSize = n;
+    this.waveGuideBuffer = new Wave(this.waveGuideSize);
+
     this.pointer = 0;
   }
 
-  delay(samples) {
-    this.pointer = (this.pointer + samples) % this.waveGuideSize;
-    return this;
+  initialize(f) {
+
+    if (typeof f == 'number') {
+      this.waveGuideBuffer = this.waveGuideBuffer.fill(f);
+    }
+    else if (f instanceof Function) {
+      this.waveGuideBuffer = this.waveGuideBuffer.map(f);
+    }
+
+    return this.loadBufferToWave();
   }
 
-  get() {
+  loadBufferToWave() {
+
     let i;
+
     for(i = 0; i < numSamples; i++) {
-      this.output[i] = this[(this.pointer + i) % this.waveGuideSize];
+      this[i] = this.waveGuideBuffer[(this.pointer + i) % this.waveGuideSize];
     }
-    return this.output;
-  }
 
-  set(arr) {
-    if(arr) {
-      let i;
-      for(i = 0; i < numSamples; i++){
-        this[(this.pointer + i) % this.waveGuideSize] = arr[i];
-      }
-    }
-  }
-
-  update(f) {
-    this.set(this.get().map(f));
     return this;
+  }
+
+  update(array) {
+    let i;
+
+    for(i = 0; i < numSamples; i++) {
+      this.waveGuideBuffer[(this.pointer + i) % this.waveGuideSize] = array[i];
+    }
+
+    return this.loadBufferToWave();
+  }
+
+  set(array) {
+
+    let i;
+
+    for(i = 0; i < numSamples; i++) {
+      this[i] = array[i];
+    }
+
+    return this;
+
+  }
+
+
+  delay(n = numSamples) {
+    this.pointer = (this.pointer + n) % this.waveGuideSize;
+
+    return this.loadBufferToWave();
+  }
+
+  add(s) {
+    return this.set(this.map(add(s)));
+  }
+
+  mult(s) {
+    return this.set(this.map(mult(s)));
+  }
+
+  clip(g) {
+    return this.set(this.map(clip(g)));
   }
 
   apply(filter) {
-    this.set(this.get().map(filter.apply));
-    return this;
+    return this.set(this.map(filter.apply));
   }
+
+
+
+
 
 }
 
