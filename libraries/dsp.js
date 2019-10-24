@@ -393,7 +393,7 @@ const adsr = (startTime, attackTime, delayTime, sustainTime, releaseTime) => t =
 
 // WAVEGUIDE
 
-class WaveGuide extends Float32Array {
+class WaveGuide extends Wave {
 
   constructor(n = numSamples) {
     super(numSamples);
@@ -404,78 +404,77 @@ class WaveGuide extends Float32Array {
     this.pointer = 0;
   }
 
+  clone() {
+    let wg = new WaveGuide(this.waveGuideSize);
+    wg.waveGuideSize = this.waveGuideSize;
+    wg.waveGuideBuffer = this.waveGuideBuffer.slice();
+    wg.pointer = this.pointer;
+
+    return wg;
+  }
+
   initialize(f) {
 
+    let wg = this.clone();
+
     if (typeof f == 'number') {
-      this.waveGuideBuffer = this.waveGuideBuffer.fill(f);
+      wg.waveGuideBuffer = wg.waveGuideBuffer.fill(f);
     }
     else if (f instanceof Function) {
-      this.waveGuideBuffer = this.waveGuideBuffer.map(f);
+      wg.waveGuideBuffer = wg.waveGuideBuffer.map(f);
     }
 
-    return this.loadBufferToWave();
+    return wg.loadBufferToWave();
   }
 
   loadBufferToWave() {
 
-    let i;
-
-    for(i = 0; i < numSamples; i++) {
-      this[i] = this.waveGuideBuffer[(this.pointer + i) % this.waveGuideSize];
-    }
-
-    return this;
-  }
-
-  update(array) {
-    let i;
-
-    for(i = 0; i < numSamples; i++) {
-      this.waveGuideBuffer[(this.pointer + i) % this.waveGuideSize] = array[i];
-    }
-
-    return this.loadBufferToWave();
-  }
-
-  set(array) {
+    let wg = this.clone();
 
     let i;
-
     for(i = 0; i < numSamples; i++) {
-      this[i] = array[i];
+      wg[i] = wg.waveGuideBuffer[(wg.pointer + i) % wg.waveGuideSize];
     }
 
-    return this;
-
+    return wg;
   }
 
+  loadWaveToBuffer(array) {
+
+    let wg = this.clone();
+
+    let i;
+    for(i = 0; i < numSamples; i++) {
+      wg[i] = array[i];
+      wg.waveGuideBuffer[(wg.pointer + i) % wg.waveGuideSize] = wg[i];
+    }
+
+    return wg;
+  }
 
   delay(n = numSamples) {
-    this.pointer = (this.pointer + n) % this.waveGuideSize;
-
-    return this.loadBufferToWave();
+    let wg = this.clone();
+    wg.pointer = (wg.pointer + n) % wg.waveGuideSize;
+    return wg.loadBufferToWave();
   }
 
-  add(s) {
-    return this.set(this.map(add(s)));
+  map(f) {
+    let wave = this.slice();
+
+    let i;
+    for (i = 0; i < numSamples; i++) {
+      wave[i] = f(wave[i], i, wave);
+    }
+
+    return this.loadWaveToBuffer(wave);
   }
 
-  mult(s) {
-    return this.set(this.map(mult(s)));
-  }
+}
 
-  clip(g) {
-    return this.set(this.map(clip(g)));
-  }
-
-  apply(filter) {
-    return this.set(this.map(filter.apply));
-  }
-
-
-
-
-
+// PREBUILT WAVEGUIDES
+function noiseWaveGuide(size) {
+  let wg = new WaveGuide(size);
+  return wg.initialize(whiteNoise);
 }
 
 

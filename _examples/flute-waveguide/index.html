@@ -5,11 +5,9 @@ category: instrument
 blurb: |
   A simplified physical waveguide model of a flute, based on the model by Perry Cook described [here](https://ccrma.stanford.edu/software/clm/compmus/clm-tutorials/pm.html#s-f) and [here](http://quod.lib.umich.edu/cgi/p/pod/dod-idx?c=icmc;idno=bbp2372.1992.072). Here the frequency is adjustable.
 ---
-let output, flute, emb, noise, env;
-let freq = 700;
+let flute, emb, noise;
+let lpfilter, dcfilter;
 let r1 = 0.5, r2 = 0.66, cutoff = 0.25, breath = 0.5;
-let lpfilter;
-let dcfilter;
 
 function setup() {
   lpfilter = lowPass(cutoff);
@@ -18,29 +16,29 @@ function setup() {
   slider('breath', 0, 1, 0.01);
   slider('r1', 0, 1, 0.01);
   slider('r2', 0, 1, 0.01);
-  let waveGuideLength = Math.round(sampleRate / freq - 0.5);
-  flute = new WaveGuide(waveGuideLength);
-  emb = new WaveGuide(waveGuideLength);
-  output = new Wave();
+
+  flute = new WaveGuide(128);
+  emb = new WaveGuide(64);
 }
 
 function loop() {
 
+  lpfilter.set(cutoff);
+
   noise = noiseWave().mult(breath);
 
-  emb.set(flute.get().mult(r1).add(noise));
-  emb.delay(numSamples);
-  emb.set(emb.get()
-  .map(e => Math.tanh(e))
-  .map(dcfilter.apply)
-  );
+  emb = flute
+    .mult(r1)
+    .add(noise)
+    .delay()
+    .map(e => Math.tanh(e))
+    .apply(dcfilter);
 
-  flute.set(flute.get().mult(r2).add(emb.get()));
+  flute = flute
+    .mult(r2)
+    .add(emb)
+    .apply(lpfilter)
+    .delay();
 
-  lpfilter.set(cutoff);
-  output = flute.get().map(lpfilter.apply);
-  flute.set(output);
-  flute.delay(numSamples);
-
-  return output.mult(0.1);
+  return flute.mult(0.1);
 }

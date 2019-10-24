@@ -19,12 +19,13 @@ function setup() {
 
 function loop() {
 
-  noise = noiseWave().mult(breath);
-  wave = wave.mult(feedback).add(noise);
-
   lpfilter.set(cutoff);
 
+  noise = noiseWave().mult(breath);
+
   wave = wave
+    .mult(feedback)
+    .add(noise)
     .map(e => Math.tanh(e))
     .apply(lpfilter)
     .apply(dcfilter);
