@@ -44,7 +44,7 @@ const repeat = (n, wave, func) => range(n).reduce(func, wave);
 class Wave extends Float32Array {
 
   constructor(n = numSamples) {
-      super(n);
+      super(Math.round(n));
   }
 
   add(v) { return this.map(add(v)); }
@@ -317,6 +317,9 @@ function resonator(freq, bandwidth) {
 
 };
 
+// Vocal tract modeling: implementation of continuous length variations in a half-sample delay Kelly-Lochbaum model
+// https://ieeexplore.ieee.org/abstract/document/1341230/
+
 function vocalTract(a) {
 
   let rl = -0.99, rg = 0.75;
@@ -395,45 +398,86 @@ const adsr = (startTime, attackTime, delayTime, sustainTime, releaseTime) => t =
 
 class WaveGuide extends Wave {
 
-  constructor(waveGuideSize = numSamples) {
-    super(Math.floor(waveGuideSize));
-    this.waveGuideSize = Math.floor(waveGuideSize);
-    this.output = new Wave(numSamples);
+  constructor(n = numSamples) {
+    super(numSamples);
+
+    this.waveGuideSize = Math.round(n);
+    this.waveGuideBuffer = new Wave(this.waveGuideSize);
+
     this.pointer = 0;
   }
 
-  delay(samples) {
-    this.pointer = (this.pointer + samples) % this.waveGuideSize;
-    return this;
+  clone() {
+    let wg = new WaveGuide(this.waveGuideSize);
+    wg.waveGuideSize = this.waveGuideSize;
+    wg.waveGuideBuffer = this.waveGuideBuffer.slice();
+    wg.pointer = this.pointer;
+
+    return wg;
   }
 
-  get() {
+  initialize(f) {
+
+    let wg = this.clone();
+
+    if (typeof f == 'number') {
+      wg.waveGuideBuffer = wg.waveGuideBuffer.fill(f);
+    }
+    else if (f instanceof Function) {
+      wg.waveGuideBuffer = wg.waveGuideBuffer.map(f);
+    }
+
+    return wg.loadBufferToWave();
+  }
+
+  loadBufferToWave() {
+
+    let wg = this.clone();
+
     let i;
     for(i = 0; i < numSamples; i++) {
-      this.output[i] = this[(this.pointer + i) % this.waveGuideSize];
+      wg[i] = wg.waveGuideBuffer[(wg.pointer + i) % wg.waveGuideSize];
     }
-    return this.output;
+
+    return wg;
   }
 
-  set(arr) {
-    if(arr) {
-      let i;
-      for(i = 0; i < numSamples; i++){
-        this[(this.pointer + i) % this.waveGuideSize] = arr[i];
-      }
+  loadWaveToBuffer(array) {
+
+    let wg = this.clone();
+
+    let i;
+    for(i = 0; i < numSamples; i++) {
+      wg[i] = array[i];
+      wg.waveGuideBuffer[(wg.pointer + i) % wg.waveGuideSize] = wg[i];
     }
+
+    return wg;
   }
 
-  update(f) {
-    this.set(this.get().map(f));
-    return this;
+  delay(n = numSamples) {
+    let wg = this.clone();
+    wg.pointer = (wg.pointer + n) % wg.waveGuideSize;
+    return wg.loadBufferToWave();
   }
 
-  apply(filter) {
-    this.set(this.get().map(filter.apply));
-    return this;
+  map(f) {
+    let wave = this.slice();
+
+    let i;
+    for (i = 0; i < numSamples; i++) {
+      wave[i] = f(wave[i], i, wave);
+    }
+
+    return this.loadWaveToBuffer(wave);
   }
 
+}
+
+// PREBUILT WAVEGUIDES
+function noiseWaveGuide(size) {
+  let wg = new WaveGuide(size);
+  return wg.initialize(whiteNoise);
 }
 
 
@@ -502,12 +546,21 @@ const clock = getTime();
 
 // WORKLET SETUP
 
-let numSamples;
+
+// protected variables in Synthesine
+
+const numSamples = 128;
 const sampleRate = ${sampleRate};
+
 let slider;
 let record;
 let time;
-let initialized = false;
+
+let audioFrame;
+let browserBufferSize;
+let audioBuffer;
+let audioBufferLength;
+let zeroBuffer;
 
 class AudioProcessor extends AudioWorkletProcessor {
 
@@ -534,8 +587,13 @@ class AudioProcessor extends AudioWorkletProcessor {
       let input = inputs[0][0];
       let output = outputs[0][0];
 
-      if (!initialized) {
-        numSamples = output.length;
+      if (!browserBufferSize) {
+
+        browserBufferSize = output.length;
+
+        audioBufferLength = 0;
+        audioBuffer = new Float32Array(browserBufferSize);
+        zeroBuffer = new Float32Array(browserBufferSize);
 
         time = clock.init(); // initialize time
 
@@ -546,12 +604,34 @@ class AudioProcessor extends AudioWorkletProcessor {
         // pass 'this' along so we can send messages
         // using the worklet messageport
         setup.call(this);
-
-        initialized = true;
       }
 
-      output.set(loop().clip(0.5));
-      time = clock.tick();
+      // the output of the loop comes in frames (chunks) of 128 samples
+      // wait until we've gathered enough frames to add up to the browser's buffer size
+
+      while (audioBufferLength < browserBufferSize) {
+
+        // push each audio frame (loop output) to an audio buffer
+
+        audioFrame = loop().clip(0.5);
+
+        let i;
+        for (i = 0; i < numSamples; i++) {
+          audioBuffer[audioBufferLength + i] = audioFrame[i];
+        }
+
+        audioBufferLength += numSamples;
+
+        time = clock.tick();
+
+      }
+
+      // then, send the concatenated output to the speaker
+      output.set(audioBuffer);
+
+      // zero the audio buffer
+      audioBuffer = zeroBuffer;
+      audioBufferLength = 0;
 
     } catch (error) {
 

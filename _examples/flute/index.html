@@ -6,7 +6,7 @@ blurb: |
   A waveguide model of a flute, based on the model by Perry Cook described [here](https://ccrma.stanford.edu/software/clm/compmus/clm-tutorials/pm.html#s-f) and [here](http://quod.lib.umich.edu/cgi/p/pod/dod-idx?c=icmc;idno=bbp2372.1992.072). Here the waveguide is implemented using Wave(), so the flute length or pitch can't be changed. For an adjustable flute length, we need to use a waveguide instead.
 
 ---
-let flute, emb;
+let flute, emb, noise;
 let lpfilter, dcfilter;
 let r1 = 0.5, r2 = 0.66, cutoff = 0.25, breath = 0.5;
 
@@ -24,11 +24,20 @@ function setup() {
 
 function loop() {
 
-  emb = flute.mult(r1).add(noiseWave().mult(breath));
-  emb = emb.map(e => Math.tanh(e)).map(dcfilter.apply);
-
   lpfilter.set(cutoff);
-  flute = flute.mult(r2).add(emb).map(lpfilter.apply);
+
+  noise = noiseWave().mult(breath);
+
+  emb = flute
+    .mult(r1)
+    .add(noise)
+    .map(e => Math.tanh(e))
+    .apply(dcfilter);
+
+  flute = flute
+    .mult(r2)
+    .add(emb)
+    .apply(lpfilter);
 
   return flute.mult(0.1);
 }

@@ -4,8 +4,7 @@ title: Steam Whistle (WaveGuide)
 category: instrument
 blurb:
 ---
-let waveGuide;
-let freq = 500;
+let output, wave, noise;
 let feedback = 1.67, breath = 0.67, cutoff = 0.3;
 let lpfilter, dcfilter;
 
@@ -13,8 +12,7 @@ function setup() {
   slider('feedback', 0, 2, 0.01);
   slider('breath', 0, 1, 0.01);
   slider('cutoff', 0, 1, 0.01);
-  let waveGuideLength = Math.round(sampleRate / freq - 0.5);
-  waveGuide = new WaveGuide(waveGuideLength);
+  wave = new WaveGuide(128);
   lpfilter = lowPass(cutoff);
   dcfilter = dcBlocker(0.005);
 }
@@ -23,13 +21,15 @@ function loop() {
 
   lpfilter.set(cutoff);
 
-  waveGuide
-    .delay(numSamples)
-    .update(mult(feedback))
-    .update(add(noiseWave().mult(breath)))
-    .update(e => Math.tanh(e))
+  noise = noiseWave().mult(breath);
+
+  wave = wave
+    .delay()
+    .mult(feedback)
+    .add(noise)
+    .map(e => Math.tanh(e))
     .apply(lpfilter)
     .apply(dcfilter);
 
-  return waveGuide.get().mult(0.1);
+  return wave.mult(0.1);
 }
