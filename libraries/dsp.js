@@ -44,7 +44,7 @@ const repeat = (n, wave, func) => range(n).reduce(func, wave);
 class Wave extends Float32Array {
 
   constructor(n = numSamples) {
-      super(n);
+      super(Math.floor(n));
   }
 
   add(v) { return this.map(add(v)); }
@@ -317,6 +317,9 @@ function resonator(freq, bandwidth) {
 
 };
 
+// Vocal tract modeling: implementation of continuous length variations in a half-sample delay Kelly-Lochbaum model
+// https://ieeexplore.ieee.org/abstract/document/1341230/
+
 function vocalTract(a) {
 
   let rl = -0.99, rg = 0.75;
@@ -398,7 +401,7 @@ class WaveGuide extends Wave {
   constructor(n = numSamples) {
     super(numSamples);
 
-    this.waveGuideSize = n;
+    this.waveGuideSize = Math.floor(n);
     this.waveGuideBuffer = new Wave(this.waveGuideSize);
 
     this.pointer = 0;
@@ -543,19 +546,21 @@ const clock = getTime();
 
 // WORKLET SETUP
 
-let numSamples = 128;
+
+// protected variables in Synthesine
+
+const numSamples = 128;
 const sampleRate = ${sampleRate};
 
-let bufferSize;
 let slider;
 let record;
 let time;
-let buffer;
+
+let audioFrame;
+let browserBufferSize;
+let audioBuffer;
+let audioBufferLength;
 let zeroBuffer;
-let frame;
-let outputLength;
-let initialized = false;
-let i;
 
 class AudioProcessor extends AudioWorkletProcessor {
 
@@ -582,11 +587,13 @@ class AudioProcessor extends AudioWorkletProcessor {
       let input = inputs[0][0];
       let output = outputs[0][0];
 
-      if (!initialized) {
-        bufferSize = output.length;
-        outputLength = 0;
-        buffer = new Float32Array(bufferSize);
-        zeroBuffer = new Float32Array(bufferSize);
+      if (!browserBufferSize) {
+
+        browserBufferSize = output.length;
+
+        audioBufferLength = 0;
+        audioBuffer = new Float32Array(browserBufferSize);
+        zeroBuffer = new Float32Array(browserBufferSize);
 
         time = clock.init(); // initialize time
 
@@ -597,39 +604,34 @@ class AudioProcessor extends AudioWorkletProcessor {
         // pass 'this' along so we can send messages
         // using the worklet messageport
         setup.call(this);
-
-        initialized = true;
       }
 
-      // here, the output of loop is being sent directly to the speaker
-      // this creates an issue with different browsers, where
-      // the output size differs, so each loop takes up a different amount of time
-      // which means we get different sound effects depending on browsers
-      // output.set(loop().clip(0.5));
+      // the output of the loop comes in frames (chunks) of 128 samples
+      // wait until we've gathered enough frames to add up to the browser's buffer size
 
-      // what if, instead, we split the output of loop into frames (chunks) of 128 samples
-      // then we wait until they add up to add up to the buffer size for each browser
-      // and concatenate the loop outputs, then send to the speaker?
+      while (audioBufferLength < browserBufferSize) {
 
-      //console.log(time[0], outputLength, bufferSize, buffer.length);
+        // push each audio frame (loop output) to an audio buffer
 
-      while (outputLength < bufferSize) {
+        audioFrame = loop().clip(0.5);
 
-        frame = loop().clip(0.5);
-
-        // push frame to buffer
-        for (i=0; i<numSamples; i++) {
-          buffer[outputLength + i] = frame[i];
+        let i;
+        for (i = 0; i < numSamples; i++) {
+          audioBuffer[audioBufferLength + i] = audioFrame[i];
         }
 
-        outputLength += numSamples;
+        audioBufferLength += numSamples;
+
         time = clock.tick();
 
       }
 
-      output.set(buffer);
-      outputLength = 0;
-      buffer = zeroBuffer;
+      // then, send the concatenated output to the speaker
+      output.set(audioBuffer);
+
+      // zero the audio buffer
+      audioBuffer = zeroBuffer;
+      audioBufferLength = 0;
 
     } catch (error) {
 

@@ -1,10 +1,9 @@
 ---
 layout: livecode
-title: Square Wave (Bandlimited)
+title: Square Wave (Band Limited)
 category: synthesis
 ---
 let freq = 440;
-let amp = 0.1;
 
 function setup() {
 
@@ -25,5 +24,5 @@ const squareB = f => t => {
 function loop() {
   return time
     .map(squareB(freq))
-    .mult(amp);
+    .mult(0.05);
 }

@@ -1,0 +1,32 @@
+---
+layout: livecode
+title: Bell
+category: synthesis
+blurb: |
+  Simulating the sound of a bell with additive synthesis, using partial frequencies from [this link](https://www.computermusicresource.com/Simple.bell.tutorial.html). The amplitudes of each partial are set randomly, so each time you press play the bell has a different timbre. The decay times of each partial fall off with the partial number.
+
+---
+let zero, wave, freq, amp, decay;
+let fadetime = 1;
+let pitch = 500;
+
+function setup() {
+  zero = new Wave();
+  freq = [0.56, 0.92, 1.19, 1.71, 2, 2.74, 3, 3.76, 4.07];
+  amp = new Wave(10).map((e,i) => Math.random());
+  decay = new Wave(10).map((e,i) => fadetime * (1 - i/10));
+}
+
+function loop() {
+  wave = zero;
+
+  for (let i = 0; i < 9; i++) {
+    wave = wave.add(
+      sinWave(pitch * freq[i])
+      .mult(amp[i])
+      .fade(decay[i])
+    );
+  }
+
+  return wave.mult(0.1);
+}
