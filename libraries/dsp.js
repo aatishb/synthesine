@@ -44,7 +44,7 @@ const repeat = (n, wave, func) => range(n).reduce(func, wave);
 class Wave extends Float32Array {
 
   constructor(n = numSamples) {
-      super(Math.round(n));
+      super(Math.floor(n));
   }
 
   add(v) { return this.map(add(v)); }
@@ -401,7 +401,7 @@ class WaveGuide extends Wave {
   constructor(n = numSamples) {
     super(numSamples);
 
-    this.waveGuideSize = Math.round(n);
+    this.waveGuideSize = Math.floor(n);
     this.waveGuideBuffer = new Wave(this.waveGuideSize);
 
     this.pointer = 0;
