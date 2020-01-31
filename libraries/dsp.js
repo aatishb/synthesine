@@ -55,6 +55,7 @@ class Wave extends Float32Array {
   modulate(v) { return this.map(modulate(v)); }
   fade(t) { return this.mult(fade(t)); }
   apply(filter) {return this.map(filter.apply);}
+  init(f) {return this.map((e,i) => f(i + 1));}
 
 }
 
