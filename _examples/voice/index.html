@@ -3,11 +3,11 @@ layout: livecode
 title: Voice
 category: synthesis
 blurb: |
-Implementing the [Kelly-Lochbaum model](https://ccrma.stanford.edu/~jos/pasp/Singing_Kelly_Lochbaum_Vocal_Tract.html) to simulate vowel sounds.
+  This example implements the [Kelly-Lochbaum model](https://ccrma.stanford.edu/~jos/pasp/Singing_Kelly_Lochbaum_Vocal_Tract.html) to simulate vowel sounds.
 
-This model was first implemented by John Kelly and Carol Lochbaum in 1962. It was used to create the singing voice of the HAL 9000 computer in 2001: A Space Odyssey.
+  This model was first implemented by John Kelly and Carol Lochbaum in 1962. It was used to create the singing voice of the HAL 9000 computer in 2001: A Space Odyssey.
 
-The vocal tract is modeled as a series of 44 cylindrical segments, each with a specific cross-sectional area. It is passed a glottal wave and a list of 44 numbers that represent the cross-sectional areas of each part of the vocal tract.
+  It models the vocal tract as an audio filter, which consistes of a series of 44 cylindrical segments, each with a specific cross-sectional area. The filter is fed in a glottal wave (which represents the sound made by the vocal chords), and a list of 44 numbers which denote the cross-sectional area of the vocal tract.
 
 ---
 // vowel measurements from https://www.sciencedirect.com/science/article/pii/S0095447098900766
